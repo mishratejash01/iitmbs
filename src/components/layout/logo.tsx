@@ -23,7 +23,10 @@ export function Logo({ siteName, className }: { siteName: string; className?: st
   return (
     <Link
       href="/"
-      className={cn('flex min-h-11 items-center gap-2.5 rounded-control font-semibold text-text', className)}
+      className={cn(
+        'flex min-h-11 items-center gap-2.5 rounded-control font-semibold text-text',
+        className,
+      )}
       data-track="nav_click"
       data-track-label="logo"
     >
