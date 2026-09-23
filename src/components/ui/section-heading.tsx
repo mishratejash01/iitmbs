@@ -21,7 +21,10 @@ export function SectionHeading({
   return (
     <div className={cn('mb-4 flex flex-wrap items-end justify-between gap-x-4 gap-y-1', className)}>
       <div>
-        <Tag id={id} className={cn('font-semibold text-text', Tag === 'h2' ? 'text-h3 sm:text-h2' : 'text-h3')}>
+        <Tag
+          id={id}
+          className={cn('font-semibold text-text', Tag === 'h2' ? 'text-h3 sm:text-h2' : 'text-h3')}
+        >
           {title}
         </Tag>
         {description ? <p className="mt-1 text-small text-muted">{description}</p> : null}
