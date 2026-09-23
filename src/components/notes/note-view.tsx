@@ -17,7 +17,12 @@ import type { NotePageData } from '@/lib/data/notes'
 import { formatTerm } from '@/lib/routes'
 import { learningResourceJsonLd, type Crumb } from '@/lib/seo/jsonld'
 
-const PAGE_TYPE = { week: 'week_notes', topic: 'notes', formula_sheet: 'formula_sheet', exam_prep: 'exam_prep' } as const
+const PAGE_TYPE = {
+  week: 'week_notes',
+  topic: 'notes',
+  formula_sheet: 'formula_sheet',
+  exam_prep: 'exam_prep',
+} as const
 const RESOURCE_TYPE = {
   week: 'Lecture notes',
   topic: 'Lecture notes',
@@ -80,7 +85,12 @@ export async function NoteView({
       />
 
       <ArticleShell toc={toc}>
-        <Byline author={data.author} reviewer={data.reviewer} reviewedAt={note.reviewedAt} updatedAt={note.updatedAt} />
+        <Byline
+          author={data.author}
+          reviewer={data.reviewer}
+          reviewedAt={note.reviewedAt}
+          updatedAt={note.updatedAt}
+        />
         {content ? <div className="prose-content mt-6">{content}</div> : null}
 
         {data.practiceSets.length > 0 ? (
