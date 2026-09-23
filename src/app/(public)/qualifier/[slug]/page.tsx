@@ -12,7 +12,9 @@ export async function generateStaticParams() {
   )
 }
 
-export async function generateMetadata({ params }: PageProps<'/qualifier/[slug]'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/qualifier/[slug]'>): Promise<Metadata> {
   const { slug } = await params
   return cmsMetadata(`qualifier/${slug}`)
 }
