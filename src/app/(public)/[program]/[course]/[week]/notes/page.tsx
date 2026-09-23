@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 
-import { noteCrumbs, noteMetadata, noteTitle, weekNoteNeighbours } from '@/components/notes/note-route'
+import {
+  noteCrumbs,
+  noteMetadata,
+  noteTitle,
+  weekNoteNeighbours,
+} from '@/components/notes/note-route'
 import { NoteView } from '@/components/notes/note-view'
 import { getCourseCore, getCourseParams } from '@/lib/data/courses'
 import { getWeekNotePage } from '@/lib/data/notes'
@@ -20,7 +25,11 @@ export async function generateStaticParams() {
       }),
     )
   ).flat()
-  return withPlaceholder(params, { program: PLACEHOLDER_SEGMENT, course: PLACEHOLDER_SEGMENT, week: PLACEHOLDER_SEGMENT })
+  return withPlaceholder(params, {
+    program: PLACEHOLDER_SEGMENT,
+    course: PLACEHOLDER_SEGMENT,
+    week: PLACEHOLDER_SEGMENT,
+  })
 }
 
 async function load(params: PageProps<'/[program]/[course]/[week]/notes'>['params']) {
@@ -29,16 +38,28 @@ async function load(params: PageProps<'/[program]/[course]/[week]/notes'>['param
   return n === null ? null : getWeekNotePage(program, course, n)
 }
 
-export async function generateMetadata({ params }: PageProps<'/[program]/[course]/[week]/notes'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/[program]/[course]/[week]/notes'>): Promise<Metadata> {
   return noteMetadata(await load(params))
 }
 
-export default async function WeekNotesPage({ params }: PageProps<'/[program]/[course]/[week]/notes'>) {
+export default async function WeekNotesPage({
+  params,
+}: PageProps<'/[program]/[course]/[week]/notes'>) {
   const data = await load(params)
   if (!data) {
     const { program, course, week } = await params
     return redirectOrNotFound(`/${program}/${course}/${week}/notes`)
   }
   const { previous, next } = weekNoteNeighbours(data)
-  return <NoteView data={data} title={noteTitle(data)} crumbs={noteCrumbs(data)} previous={previous} next={next} />
+  return (
+    <NoteView
+      data={data}
+      title={noteTitle(data)}
+      crumbs={noteCrumbs(data)}
+      previous={previous}
+      next={next}
+    />
+  )
 }
