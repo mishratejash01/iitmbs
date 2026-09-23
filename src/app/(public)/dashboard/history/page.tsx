@@ -10,6 +10,9 @@ import { formatDateTime } from '@/lib/utils/dates'
 
 import { clearHistory } from '../actions'
 
+// Reads the session, so it renders on each request.
+export const instant = false
+
 export async function generateMetadata(): Promise<Metadata> {
   return privateMetadata('Reading history', await getSiteSettings())
 }
@@ -58,7 +61,8 @@ export default async function HistoryPage() {
               <Link href={item.path} className="block px-4 py-3 hover:bg-surface">
                 <span className="block font-medium text-text">{item.title}</span>
                 <span className="block text-xs text-muted">
-                  {formatDateTime(item.last_visited_at)} · {item.visit_count} visit{item.visit_count === 1 ? '' : 's'}
+                  {formatDateTime(item.last_visited_at)} · {item.visit_count} visit
+                  {item.visit_count === 1 ? '' : 's'}
                 </span>
               </Link>
             </li>
