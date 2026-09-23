@@ -34,7 +34,12 @@ export async function CmsPageView({
         title={page.title}
         description={page.summary}
         meta={
-          <Byline author={page.author} reviewer={page.reviewer} reviewedAt={page.lastReviewedAt} updatedAt={page.updatedAt} />
+          <Byline
+            author={page.author}
+            reviewer={page.reviewer}
+            reviewedAt={page.lastReviewedAt}
+            updatedAt={page.updatedAt}
+          />
         }
       />
       <ArticleShell toc={isLegal ? toc : toc.length >= 3 ? toc : []}>
