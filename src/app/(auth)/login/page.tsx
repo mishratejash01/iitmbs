@@ -10,6 +10,9 @@ import { getLoginAvailability } from '@/lib/data/auth-availability'
 import { getSiteSettings } from '@/lib/data/settings'
 import { privateMetadata } from '@/lib/seo/metadata'
 
+// Reads the session, so it renders on each request.
+export const instant = false
+
 export async function generateMetadata(): Promise<Metadata> {
   return privateMetadata('Log in', await getSiteSettings())
 }
@@ -31,7 +34,8 @@ export default async function LoginPage({ searchParams }: PageProps<'/login'>) {
     <div className="w-full max-w-sm">
       <h1 className="text-h2 font-semibold text-text">Log in to {settings.site_name}</h1>
       <p className="mt-2 text-muted">
-        Everything is free to read without an account. Signing in adds bookmarks, reading history and progress ticks.
+        Everything is free to read without an account. Signing in adds bookmarks, reading history
+        and progress ticks.
       </p>
 
       <div className="mt-8">
