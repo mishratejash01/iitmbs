@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { CourseCard } from '@/components/content/course-card'
@@ -12,6 +11,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { SectionHeading } from '@/components/ui/section-heading'
 import { getChildPages } from '@/lib/data/pages'
 import { getProgramPage, getProgramSlugs } from '@/lib/data/programs'
+import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { buildMetadata } from '@/lib/seo/metadata'
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: PageProps<'/[program]'>): Pro
 export default async function ProgramPage({ params }: PageProps<'/[program]'>) {
   const { program } = await params
   const [data, guides] = await Promise.all([getProgramPage(program), getChildPages('qualifier')])
-  if (!data) notFound()
+  if (!data) return redirectOrNotFound(`/${program}`)
   const intro = await renderMdx(data.program.introMdx)
 
   return (
