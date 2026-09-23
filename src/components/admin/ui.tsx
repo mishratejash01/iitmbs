@@ -91,7 +91,7 @@ export function Panel({
   className?: string
 }) {
   return (
-    <section className={cn('rounded-card border border-border bg-card', className)}>
+    <section className={cn('min-w-0 rounded-card border border-border bg-card', className)}>
       {title || actions ? (
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
           {title ? <h2 className="font-semibold text-text">{title}</h2> : <span />}
