@@ -1,9 +1,10 @@
-import { Clock, Printer } from 'lucide-react'
+import { Clock } from 'lucide-react'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { QuestionCard } from '@/components/assignment/question-card'
 import { ArticleShell } from '@/components/content/article-shell'
 import { BookmarkButton } from '@/components/content/bookmark-button'
+import { PrintButton } from '@/components/content/print-button'
 import { Byline } from '@/components/content/byline'
 import { FeedbackWidget } from '@/components/content/feedback-widget'
 import { LinkList } from '@/components/content/link-list'
@@ -70,16 +71,7 @@ export async function NoteView({
         actions={
           <>
             <BookmarkButton title={title} entityType="note" entityId={note.id} />
-            {note.kind === 'formula_sheet' ? (
-              <a
-                href="#print"
-                className="inline-flex min-h-11 items-center gap-2 rounded-control border border-border px-3 text-small font-medium text-text hover:border-accent"
-                data-print-button=""
-              >
-                <Printer aria-hidden="true" className="size-4" />
-                Print
-              </a>
-            ) : null}
+            {note.kind === 'formula_sheet' ? <PrintButton pageType="formula_sheet" /> : null}
           </>
         }
       />
