@@ -2,7 +2,9 @@ import { serializeJsonLd } from '@/lib/seo/jsonld'
 
 /** Server-rendered structured data. Pass one object or several. */
 export function JsonLd({ data }: { data: object | Array<object | null> | null }) {
-  const items = (Array.isArray(data) ? data : [data]).filter((item): item is object => item !== null)
+  const items = (Array.isArray(data) ? data : [data]).filter(
+    (item): item is object => item !== null,
+  )
   if (items.length === 0) return null
   return (
     <>
