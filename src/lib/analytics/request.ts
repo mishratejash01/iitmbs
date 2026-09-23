@@ -58,7 +58,11 @@ export function parseUserAgent(ua: string): { device: DeviceType; browser: strin
 
 export function isBotRequest(ua: string | null): boolean {
   if (!ua) return true
-  return isbot(ua) || /HeadlessChrome|Lighthouse|PageSpeed|GTmetrix|Pingdom|UptimeRobot/i.test(ua)
+  // "Playwright" is added by our own end-to-end tests (playwright.config.ts).
+  return (
+    isbot(ua) ||
+    /HeadlessChrome|Playwright|Lighthouse|PageSpeed|GTmetrix|Pingdom|UptimeRobot/i.test(ua)
+  )
 }
 
 const SEARCH_ENGINES: Array<[RegExp, string]> = [
