@@ -80,9 +80,7 @@ export const env = {
   // production build is treated as production.
   deploymentEnv: (process.env.VERCEL_ENV ??
     (process.env.NODE_ENV === 'production' ? 'production' : 'development')) as
-    | 'production'
-    | 'preview'
-    | 'development',
+    'production' | 'preview' | 'development',
 } as const
 
 /** Which optional integrations are configured in this environment. */
