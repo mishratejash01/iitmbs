@@ -22,6 +22,7 @@ export const CLIENT_EVENTS = [
   'copy_text',
   'code_copy',
   'formula_sheet_open',
+  'print_click',
   'download_click',
   'search_result_click',
   'login_click',
