@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
-import { notFound, permanentRedirect } from 'next/navigation'
+import { permanentRedirect } from 'next/navigation'
 
 import { getAssignmentPage, getAssignmentParams } from '@/lib/data/assignments'
+import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { assignmentPath, parseWeekSegment, type AssignmentKind } from '@/lib/routes'
@@ -57,7 +58,10 @@ export async function assignmentMetadata(params: RouteParams, kind: AssignmentKi
 
 export async function AssignmentRoute({ params, kind }: { params: RouteParams; kind: AssignmentKind }) {
   const data = await load(params, kind)
-  if (!data) notFound()
+  if (!data) {
+    const term = params.term ? `/${params.term}` : ''
+    return redirectOrNotFound(`/${params.program}/${params.course}/${params.week}/${kind}-assignment${term}`)
+  }
   // The latest term lives at the evergreen URL; its /<term> twin redirects there.
   if (params.term && data.assignment.isLatest) {
     permanentRedirect(assignmentPath(params.program, params.course, data.week.number, kind))
