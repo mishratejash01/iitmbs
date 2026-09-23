@@ -64,7 +64,10 @@ const CORE_TAGS = [
 ]
 
 /** Everything about a course that its hub, week, notes and assignment pages share. */
-export async function getCourseCore(programSlug: string, courseSlug: string): Promise<CourseCore | null> {
+export async function getCourseCore(
+  programSlug: string,
+  courseSlug: string,
+): Promise<CourseCore | null> {
   'use cache'
   cacheTag(...CORE_TAGS)
   const profile = await contentCacheProfile()
@@ -100,18 +103,16 @@ export async function getCourseCore(programSlug: string, courseSlug: string): Pr
         .order('week_number'),
       db
         .from('notes')
-        .select('id, slug, kind, title, summary, week_id, reading_time_minutes, updated_at, sort_order')
+        .select(
+          'id, slug, kind, title, summary, week_id, reading_time_minutes, updated_at, sort_order',
+        )
         .eq('course_id', course.id)
         .order('sort_order'),
       db
         .from('assignments')
         .select('id, week_id, type, term, title, summary, due_at, solutions_release_at, updated_at')
         .eq('course_id', course.id),
-      db
-        .from('resources')
-        .select(RESOURCE_COLUMNS)
-        .eq('course_id', course.id)
-        .order('sort_order'),
+      db.from('resources').select(RESOURCE_COLUMNS).eq('course_id', course.id).order('sort_order'),
       db
         .from('courses')
         .select('id, slug, name, short_name')
@@ -243,7 +244,9 @@ export async function getCourseCore(programSlug: string, courseSlug: string): Pr
   const livePrograms = new Map(programs.map((p) => [p.id, p]))
   const alsoIn = (crossRes.data ?? []).flatMap((row) => {
     const p = livePrograms.get(row.program_id)
-    return p && p.id !== program.id ? [{ id: p.id, slug: p.slug, name: p.name, shortName: p.shortName, path: p.path }] : []
+    return p && p.id !== program.id
+      ? [{ id: p.id, slug: p.slug, name: p.name, shortName: p.shortName, path: p.path }]
+      : []
   })
 
   return {
@@ -255,7 +258,13 @@ export async function getCourseCore(programSlug: string, courseSlug: string): Pr
       code: course.code,
       aliases: course.aliases,
       path: coursePath(program.slug, course.slug),
-      program: { id: program.id, slug: program.slug, name: program.name, shortName: program.shortName, path: program.path },
+      program: {
+        id: program.id,
+        slug: program.slug,
+        name: program.name,
+        shortName: program.shortName,
+        path: program.path,
+      },
       description: course.description,
       introMdx: course.intro_mdx,
       officialUrl: course.official_url,
@@ -280,7 +289,10 @@ export async function getCourseCore(programSlug: string, courseSlug: string): Pr
 }
 
 /** Course hub: the core plus course-level FAQs. */
-export async function getCoursePage(programSlug: string, courseSlug: string): Promise<CoursePageData | null> {
+export async function getCoursePage(
+  programSlug: string,
+  courseSlug: string,
+): Promise<CoursePageData | null> {
   'use cache'
   cacheLife(await contentCacheProfile())
   cacheTag(...CORE_TAGS, tableTag('faqs'))
@@ -328,14 +340,21 @@ export async function getCourseAliasIndex(): Promise<
 
   const programs = await getPrograms()
   const bySlug = new Map(programs.map((p) => [p.id, p.slug]))
+  // Programme order decides which course a shared name ("maths 1") means first.
+  const programOrder = new Map(programs.map((p, index) => [p.id, index]))
   const { data, error } = await getPublicClient()
     .from('courses')
-    .select('id, slug, name, short_name, code, aliases, program_id')
+    .select('id, slug, name, short_name, code, aliases, program_id, sort_order')
   if (error) {
     console.error('[data/courses] alias index failed:', error.message)
     return []
   }
-  return data.flatMap((row) => {
+  const ordered = [...data].sort(
+    (a, b) =>
+      (programOrder.get(a.program_id) ?? 99) - (programOrder.get(b.program_id) ?? 99) ||
+      a.sort_order - b.sort_order,
+  )
+  return ordered.flatMap((row) => {
     const programSlug = bySlug.get(row.program_id)
     if (!programSlug) return []
     return [
@@ -344,7 +363,13 @@ export async function getCourseAliasIndex(): Promise<
         programSlug,
         slug: row.slug,
         shortName: row.short_name,
-        terms: [row.name, row.short_name, row.code ?? '', row.slug.replace(/-/g, ' '), ...row.aliases].filter(Boolean),
+        terms: [
+          row.name,
+          row.short_name,
+          row.code ?? '',
+          row.slug.replace(/-/g, ' '),
+          ...row.aliases,
+        ].filter(Boolean),
       },
     ]
   })
