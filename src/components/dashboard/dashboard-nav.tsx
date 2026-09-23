@@ -15,7 +15,7 @@ const LINKS = [
 export function DashboardNav() {
   const pathname = usePathname()
   return (
-    <nav aria-label="Dashboard" className="-mx-4 overflow-x-auto px-4 no-scrollbar">
+    <nav aria-label="Dashboard" className="no-scrollbar -mx-4 overflow-x-auto px-4">
       <ul className="flex gap-1 border-b border-border">
         {LINKS.map((link) => {
           const active = pathname === link.href
@@ -26,7 +26,9 @@ export function DashboardNav() {
                 aria-current={active ? 'page' : undefined}
                 className={cn(
                   '-mb-px flex min-h-11 items-center border-b-2 px-3 text-small font-medium whitespace-nowrap',
-                  active ? 'border-accent text-text' : 'border-transparent text-muted hover:text-text',
+                  active
+                    ? 'border-accent text-text'
+                    : 'border-transparent text-muted hover:text-text',
                 )}
               >
                 {link.label}
