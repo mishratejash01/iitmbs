@@ -2171,6 +2171,15 @@ export type Database = {
           solutions_released: boolean
         }[]
       }
+      get_link_index: {
+        Args: never
+        Returns: {
+          kind: string
+          path: string
+          summary: string
+          title: string
+        }[]
+      }
       get_route_manifest: { Args: never; Returns: Json }
       get_sitemap_entries: {
         Args: never
