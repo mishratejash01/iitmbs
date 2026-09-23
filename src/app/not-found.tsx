@@ -33,14 +33,18 @@ export default async function NotFound() {
             <p className="text-small font-semibold text-accent-ink">404</p>
             <h1 className="mt-2 text-h1 font-semibold text-text">We couldn’t find that page</h1>
             <p className="mt-3 text-muted">
-              The link may be old, or the page may have moved. Search for the course, week or topic you need:
+              The link may be old, or the page may have moved. Search for the course, week or topic
+              you need:
             </p>
             <form action="/search" role="search" className="mt-6 flex gap-2">
               <label htmlFor="notfound-search" className="sr-only">
                 Search the site
               </label>
               <div className="relative flex-1">
-                <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted" />
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted"
+                />
                 <input
                   id="notfound-search"
                   name="q"
