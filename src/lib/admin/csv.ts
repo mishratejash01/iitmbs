@@ -51,3 +51,10 @@ export function parseCsv(input: string): Array<Record<string, string>> {
     Object.fromEntries(keys.map((key, index) => [key, (cells[index] ?? '').trim()])),
   )
 }
+
+/** Quotes a CSV cell and neutralises spreadsheet formulas (=, +, -, @). */
+export function csvCell(value: unknown): string {
+  let text = value === null || value === undefined ? '' : String(value)
+  if (/^[=+\-@\t\r]/.test(text) && !/^-?\d+(\.\d+)?$/.test(text)) text = `'${text}`
+  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
+}
