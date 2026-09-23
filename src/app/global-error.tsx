@@ -6,7 +6,13 @@ import './globals.css'
  * Last-resort error page (the root layout itself failed). It cannot rely on
  * the database, so it uses the default design tokens only.
  */
-export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function GlobalError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
   return (
     <html lang="en">
       <head>
@@ -17,7 +23,9 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           <h1 className="text-h2 font-semibold">Something went wrong</h1>
           <p className="mt-2 text-muted">
             We couldn’t load the site just now. Please try again in a moment.
-            {error.digest ? <span className="mt-2 block text-xs">Reference: {error.digest}</span> : null}
+            {error.digest ? (
+              <span className="mt-2 block text-xs">Reference: {error.digest}</span>
+            ) : null}
           </p>
           <button
             type="button"
