@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { sanitizeThemeOverrides } from '@/lib/theme/tokens'
+import { sanitizeThemeOverrides, type ThemeOverrides } from '@/lib/theme/tokens'
 
 /**
  * Shape of `site_settings.data`. Every key has a safe fallback so the site
@@ -44,9 +44,8 @@ export const siteSettingsSchema = section({
     .catch(null)
     .default(null),
   revalidate_seconds: int(3600, 60, 604800),
-  theme: z
-    .unknown()
-    .transform((value) => sanitizeThemeOverrides(value)),
+  // Missing or malformed themes become {} (defaults); only valid hex tokens survive.
+  theme: z.preprocess((value) => sanitizeThemeOverrides(value), z.custom<ThemeOverrides>(() => true)),
   social: section({
     telegram: httpsUrl(),
     whatsapp: httpsUrl(),
