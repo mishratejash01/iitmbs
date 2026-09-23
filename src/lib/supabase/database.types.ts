@@ -2180,6 +2180,15 @@ export type Database = {
           title: string
         }[]
       }
+      get_program_week_numbers: {
+        Args: never
+        Returns: {
+          has_content: boolean
+          program_slug: string
+          updated_at: string
+          week_number: number
+        }[]
+      }
       get_route_manifest: { Args: never; Returns: Json }
       get_sitemap_entries: {
         Args: never
