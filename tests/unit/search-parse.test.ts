@@ -3,11 +3,49 @@ import { describe, expect, it } from 'vitest'
 import { normalizeQuery, parseSearchQuery, type CourseAliasEntry } from '@/lib/search/parse'
 
 const courses: CourseAliasEntry[] = [
-  { id: 'm1', programSlug: 'data-science', slug: 'maths-1', shortName: 'Maths 1', terms: ['Mathematics for Data Science I', 'Maths 1', 'BSMA1001', 'maths 1', 'math 1', 'mathematics 1', 'm1'] },
-  { id: 's1', programSlug: 'data-science', slug: 'stats-1', shortName: 'Stats 1', terms: ['Statistics for Data Science I', 'Stats 1', 'stats 1', 'statistics 1'] },
-  { id: 'ct', programSlug: 'data-science', slug: 'computational-thinking', shortName: 'CT', terms: ['Computational Thinking', 'CT', 'ct'] },
-  { id: 'e1', programSlug: 'data-science', slug: 'english-1', shortName: 'English 1', terms: ['English I', 'english 1'] },
-  { id: 'e2', programSlug: 'electronic-systems', slug: 'english-1', shortName: 'English 1', terms: ['English I', 'english 1', 'es english'] },
+  {
+    id: 'm1',
+    programSlug: 'data-science',
+    slug: 'maths-1',
+    shortName: 'Maths 1',
+    terms: [
+      'Mathematics for Data Science I',
+      'Maths 1',
+      'BSMA1001',
+      'maths 1',
+      'math 1',
+      'mathematics 1',
+      'm1',
+    ],
+  },
+  {
+    id: 's1',
+    programSlug: 'data-science',
+    slug: 'stats-1',
+    shortName: 'Stats 1',
+    terms: ['Statistics for Data Science I', 'Stats 1', 'stats 1', 'statistics 1'],
+  },
+  {
+    id: 'ct',
+    programSlug: 'data-science',
+    slug: 'computational-thinking',
+    shortName: 'CT',
+    terms: ['Computational Thinking', 'CT', 'ct'],
+  },
+  {
+    id: 'e1',
+    programSlug: 'data-science',
+    slug: 'english-1',
+    shortName: 'English 1',
+    terms: ['English I', 'english 1'],
+  },
+  {
+    id: 'e2',
+    programSlug: 'electronic-systems',
+    slug: 'english-1',
+    shortName: 'English 1',
+    terms: ['English I', 'english 1', 'es english'],
+  },
 ]
 
 describe('parseSearchQuery', () => {
@@ -29,19 +67,26 @@ describe('parseSearchQuery', () => {
 
   it('detects notes, formula sheets and practice', () => {
     expect(parseSearchQuery('ct notes week 4', courses)).toMatchObject({ kind: 'note', week: 4 })
-    expect(parseSearchQuery('stats 1 formula sheet', courses)).toMatchObject({ kind: 'formula_sheet' })
+    expect(parseSearchQuery('stats 1 formula sheet', courses)).toMatchObject({
+      kind: 'formula_sheet',
+    })
     expect(parseSearchQuery('stats 1 week 1 practice assignment', courses).kind).toBe('practice')
   })
 
-  it('leaves ambiguous courses unresolved and keeps the words for text search', () => {
+  it('resolves shared course names to the first programme and offers the others', () => {
     const parsed = parseSearchQuery('english 1 week 2', courses)
-    expect(parsed.course).toBeNull()
-    expect(parsed.text).toBe('english 1')
-    expect(parseSearchQuery('es english week 2', courses).course?.id).toBe('e2')
+    expect(parsed.course?.id).toBe('e1')
+    expect(parsed.alternatives.map((c) => c.id)).toEqual(['e2'])
+    expect(parsed.text).toBe('')
+    const specific = parseSearchQuery('es english week 2', courses)
+    expect(specific.course?.id).toBe('e2')
+    expect(specific.alternatives).toEqual([])
   })
 
   it('keeps topic words for full-text search', () => {
-    expect(parseSearchQuery('quartiles and percentiles', courses).text).toBe('quartiles percentiles')
+    expect(parseSearchQuery('quartiles and percentiles', courses).text).toBe(
+      'quartiles percentiles',
+    )
   })
 
   it('normalises input safely', () => {
