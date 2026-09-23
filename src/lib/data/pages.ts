@@ -34,8 +34,11 @@ export type PageLink = { path: string; title: string; summary: string | null }
 function toSources(value: unknown): PageSource[] {
   if (!Array.isArray(value)) return []
   return value.flatMap((item) =>
-    item && typeof item === 'object' && typeof item.title === 'string' && typeof item.url === 'string'
-      && /^https:\/\//.test(item.url)
+    item &&
+    typeof item === 'object' &&
+    typeof item.title === 'string' &&
+    typeof item.url === 'string' &&
+    /^https:\/\//.test(item.url)
       ? [{ title: item.title, url: item.url }]
       : [],
   )
