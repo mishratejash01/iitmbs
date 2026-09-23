@@ -9,10 +9,19 @@ const ICONS = { pdf: FileText, sheet: Sheet, link: ExternalLink, video: PlayCirc
  * Every resource goes through /api/download/<id> so downloads and outbound
  * clicks are counted server-side before redirecting to the file or site.
  */
-export function ResourceList({ items, label = 'Resources' }: { items: ResourceItem[]; label?: string }) {
+export function ResourceList({
+  items,
+  label = 'Resources',
+}: {
+  items: ResourceItem[]
+  label?: string
+}) {
   if (items.length === 0) return null
   return (
-    <ul aria-label={label} className="divide-y divide-border rounded-card border border-border bg-card">
+    <ul
+      aria-label={label}
+      className="divide-y divide-border rounded-card border border-border bg-card"
+    >
       {items.map((item) => {
         const Icon = ICONS[item.kind]
         const size = formatBytes(item.fileBytes)
@@ -29,8 +38,12 @@ export function ResourceList({ items, label = 'Resources' }: { items: ResourceIt
             >
               <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent-ink" />
               <span className="min-w-0 flex-1">
-                <span className="block font-medium text-text group-hover:text-accent-ink">{item.title}</span>
-                {item.description ? <span className="mt-0.5 block text-small text-muted">{item.description}</span> : null}
+                <span className="block font-medium text-text group-hover:text-accent-ink">
+                  {item.title}
+                </span>
+                {item.description ? (
+                  <span className="mt-0.5 block text-small text-muted">{item.description}</span>
+                ) : null}
                 <span className="mt-1 flex flex-wrap gap-x-3 text-xs text-muted">
                   {item.isExternal && item.host ? <span>{item.host}</span> : null}
                   {item.fileFormat ? <span className="uppercase">{item.fileFormat}</span> : null}
