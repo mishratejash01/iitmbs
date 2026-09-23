@@ -18,7 +18,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "lhci": "lhci autorun",
-    "check": "npm run lint && npm run typecheck && npm run test",
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm run test",
     "db:link": "dotenv -e .env.local -- sh -c 'supabase link --project-ref \"$SUPABASE_PROJECT_REF\"'",
     "db:push": "dotenv -e .env.local -- supabase db push",
     "db:seed": "dotenv -e .env.local -- node scripts/db-seed.mjs",
