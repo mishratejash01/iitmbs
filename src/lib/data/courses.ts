@@ -66,11 +66,14 @@ const CORE_TAGS = [
 /** Everything about a course that its hub, week, notes and assignment pages share. */
 export async function getCourseCore(programSlug: string, courseSlug: string): Promise<CourseCore | null> {
   'use cache'
-  cacheLife(await contentCacheProfile())
   cacheTag(...CORE_TAGS)
+  const profile = await contentCacheProfile()
 
   const program = await getProgramBySlug(programSlug)
-  if (!program) return null
+  if (!program) {
+    cacheLife(profile)
+    return null
+  }
   const db = getPublicClient()
 
   const { data: course, error } = await db
@@ -83,7 +86,10 @@ export async function getCourseCore(programSlug: string, courseSlug: string): Pr
     .maybeSingle()
 
   if (error) console.error('[data/courses] lookup failed:', error.message)
-  if (!course) return null
+  if (!course) {
+    cacheLife(profile)
+    return null
+  }
 
   const [weeksRes, notesRes, assignmentsRes, resourcesRes, siblingsRes, crossRes, programs] =
     await Promise.all([
@@ -152,6 +158,7 @@ export async function getCourseCore(programSlug: string, courseSlug: string): Pr
         summary: a.summary,
         dueAt: a.due_at,
         solutionsReleaseAt: a.solutions_release_at,
+        released: Date.parse(a.solutions_release_at) <= Date.now(),
         weekNumber: weekNumber ?? null,
         isLatest,
         path,
@@ -199,6 +206,19 @@ export async function getCourseCore(programSlug: string, courseSlug: string): Pr
   })
 
   const resources = (resourcesRes.data ?? []).map((r) => ({ ...toResource(r), weekId: r.week_id }))
+
+  // Keep "solutions released" flags honest: never cache past the next release.
+  const nextRelease = Math.min(
+    ...assignments
+      .map((a) => (Date.parse(a.solutionsReleaseAt) - Date.now()) / 1000)
+      .filter((seconds) => seconds > 0),
+  )
+  if (Number.isFinite(nextRelease) && nextRelease < profile.revalidate) {
+    const revalidate = Math.max(60, Math.ceil(nextRelease))
+    cacheLife({ stale: Math.min(profile.stale, revalidate), revalidate, expire: profile.expire })
+  } else {
+    cacheLife(profile)
+  }
 
   const weeks: WeekSummary[] = weekRows.map((w) => {
     const weekAssignments = assignments.filter((a) => a.weekNumber === w.week_number && a.isLatest)
