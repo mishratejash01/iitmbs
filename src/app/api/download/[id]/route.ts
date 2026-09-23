@@ -37,7 +37,11 @@ export async function GET(request: Request, { params }: RouteContext<'/api/downl
   if (target.cloudinaryPublicId && features.cloudinary) {
     const db = getServiceClient()
     const { data: media } = db
-      ? await db.from('media').select('delivery_type, format').eq('public_id', target.cloudinaryPublicId).maybeSingle()
+      ? await db
+          .from('media')
+          .select('delivery_type, format')
+          .eq('public_id', target.cloudinaryPublicId)
+          .maybeSingle()
       : { data: null }
     destination = privateDownloadUrl({
       publicId: target.cloudinaryPublicId,
@@ -64,6 +68,10 @@ export async function GET(request: Request, { params }: RouteContext<'/api/downl
 
   return new Response(null, {
     status: 302,
-    headers: { Location: destination, 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer' },
+    headers: {
+      Location: destination,
+      'Cache-Control': 'private, no-store',
+      'Referrer-Policy': 'no-referrer',
+    },
   })
 }
