@@ -92,7 +92,9 @@ export async function getAssignmentPage(
     db
       .from('faqs')
       .select('id, question, answer_mdx, scope')
-      .or(`and(scope.eq.assignment,scope_id.eq.${summary.id}),and(scope.eq.week,scope_id.eq.${week.id})`)
+      .or(
+        `and(scope.eq.assignment,scope_id.eq.${summary.id}),and(scope.eq.week,scope_id.eq.${week.id})`,
+      )
       .order('sort_order'),
   ])
   for (const result of [detailRes, questionsRes, faqRes]) {
@@ -108,7 +110,9 @@ export async function getAssignmentPage(
   // Never keep a pre-release render cached past the release moment: the
   // page's lifetime is capped at the seconds remaining until walkthroughs
   // unlock (pg_cron also pings /api/revalidate at that moment).
-  const secondsUntilRelease = Math.ceil((Date.parse(summary.solutionsReleaseAt) - Date.now()) / 1000)
+  const secondsUntilRelease = Math.ceil(
+    (Date.parse(summary.solutionsReleaseAt) - Date.now()) / 1000,
+  )
   const released = secondsUntilRelease <= 0
   if (released) {
     cacheLife(profile)
