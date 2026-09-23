@@ -3,7 +3,10 @@ import { z } from 'zod'
 import { getSessionUser } from '@/lib/auth/session'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-const itemSchema = z.object({ item_type: z.enum(['week', 'assignment', 'note']), item_id: z.uuid() })
+const itemSchema = z.object({
+  item_type: z.enum(['week', 'assignment', 'note']),
+  item_id: z.uuid(),
+})
 const noStore = { 'Cache-Control': 'private, no-store' }
 
 /** GET ?ids=a,b,c → the ids the signed-in student has completed. */
@@ -34,7 +37,10 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   const params = new URL(request.url).searchParams
-  const parsed = itemSchema.safeParse({ item_type: params.get('item_type'), item_id: params.get('item_id') })
+  const parsed = itemSchema.safeParse({
+    item_type: params.get('item_type'),
+    item_id: params.get('item_id'),
+  })
   if (!parsed.success) return Response.json({ error: 'Invalid item' }, { status: 400 })
   const user = await getSessionUser()
   if (!user) return Response.json({ error: 'Sign in first' }, { status: 401 })
