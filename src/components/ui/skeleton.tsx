@@ -2,7 +2,15 @@ import { cn } from '@/lib/utils/cn'
 
 /** Neutral placeholder block. Reduced-motion users get a static block. */
 export function Skeleton({ className }: { className?: string }) {
-  return <div aria-hidden="true" className={cn('animate-pulse rounded-control bg-surface motion-reduce:animate-none', className)} />
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        'animate-pulse rounded-control bg-surface motion-reduce:animate-none',
+        className,
+      )}
+    />
+  )
 }
 
 export function SkeletonText({ lines = 3 }: { lines?: number }) {
