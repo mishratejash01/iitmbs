@@ -24,7 +24,11 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
   const query = (Array.isArray(raw) ? raw[0] : raw)?.trim().slice(0, 200) ?? ''
 
   if (query.length < 2) {
-    return <p className="text-muted">Type at least two characters — for example “maths 1 week 2” or “eligibility”.</p>
+    return (
+      <p className="text-muted">
+        Type at least two characters — for example “maths 1 week 2” or “eligibility”.
+      </p>
+    )
   }
 
   const response = await searchSite(query, 30)
@@ -60,6 +64,26 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
           <ArrowRight aria-hidden="true" className="size-4" />
         </Link>
       ) : null}
+      {response.alternatives.length ? (
+        <p className="-mt-3 text-small text-muted">
+          Also:{' '}
+          {response.alternatives.map((hit, index) => (
+            <span key={hit.path}>
+              {index > 0 ? ', ' : null}
+              <Link
+                href={hit.path}
+                className="font-medium text-accent-ink underline"
+                data-track="search_result_click"
+                data-track-search-id={searchId}
+                data-track-position={String(index + 1)}
+                data-track-target={hit.path}
+              >
+                {hit.label}
+              </Link>
+            </span>
+          ))}
+        </p>
+      ) : null}
 
       <p className="text-small text-muted" role="status">
         {response.results.length === 0
@@ -86,7 +110,9 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
                 data-track-target={result.path}
               >
                 <span className="block font-medium text-text">{result.title}</span>
-                {result.subtitle ? <span className="block text-xs text-muted">{result.subtitle}</span> : null}
+                {result.subtitle ? (
+                  <span className="block text-xs text-muted">{result.subtitle}</span>
+                ) : null}
                 {result.snippet ? (
                   <span className="mt-1 line-clamp-2 block text-small text-muted">
                     <Highlight text={result.snippet} />
@@ -133,7 +159,9 @@ export default function SearchPage({ searchParams }: PageProps<'/search'>) {
         <div className="container-reading">
           <h1 className="text-h2 font-semibold sm:text-h1">Search</h1>
           <div className="mt-4">
-            <Suspense fallback={<div className="min-h-12 rounded-control border border-border bg-card" />}>
+            <Suspense
+              fallback={<div className="min-h-12 rounded-control border border-border bg-card" />}
+            >
               <SearchBox searchParams={searchParams} />
             </Suspense>
           </div>
