@@ -18,13 +18,29 @@ export type QualityInput = {
 
 const UNSCHEDULED_YEAR = 2090
 
-const words = (text: string) =>
+const plainWords = (text: string) =>
   text
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/[#*_>`~|$\\[\]()!-]/g, ' ')
     .split(/\s+/)
     .filter(Boolean).length
+
+/**
+ * Components that render substantial text from the database (the syllabus
+ * overview lists every week's topics) count as this many words, so a page
+ * built around one is not flagged as thin.
+ */
+const DATA_COMPONENT_WORDS: Record<string, number> = { SyllabusOverview: 250 }
+
+/** Words a reader sees: the MDX text plus the text data components render. */
+export function substantiveWords(text: string): number {
+  let count = plainWords(text)
+  for (const [name, credit] of Object.entries(DATA_COMPONENT_WORDS)) {
+    count += (text.match(new RegExp(`<${name}\\b`, 'g')) ?? []).length * credit
+  }
+  return count
+}
 
 const str = (value: unknown) => (typeof value === 'string' ? value : '')
 
@@ -41,12 +57,12 @@ export function checkQuality({
 
   if (
     (config.table === 'notes' || (config.table === 'pages' && record.template !== 'legal')) &&
-    words(bodyText) < minWords
+    substantiveWords(bodyText) < minWords
   ) {
     warnings.push({
       code: 'thin',
       field: config.bodyFields?.[0],
-      message: `Only ${words(bodyText)} words — pages under ${minWords} words rarely rank. Add worked examples or merge it into another page.`,
+      message: `Only ${substantiveWords(bodyText)} words — pages under ${minWords} words rarely rank. Add worked examples or merge it into another page.`,
     })
   }
 
