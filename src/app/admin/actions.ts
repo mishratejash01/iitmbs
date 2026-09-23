@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { after } from 'next/server'
 import { z } from 'zod'
@@ -311,11 +312,21 @@ function changedPaths(input: unknown, output: unknown, prefix = ''): string[] {
   return JSON.stringify(input) === JSON.stringify(output) ? [] : [prefix]
 }
 
-export async function setUserRole(userId: string, role: 'student' | 'editor' | 'admin') {
+export async function setUserRole(formData: FormData) {
   if (!(await staff(true))) return
+  const userId = String(formData.get('user_id') ?? '')
+  const role = String(formData.get('role') ?? '')
+  const back = String(formData.get('back') ?? '/admin/users')
+  const target = back.startsWith('/admin/users') ? back : '/admin/users'
+  const join = target.includes('?') ? '&' : '?'
+  if (!z.uuid().safeParse(userId).success || !['student', 'editor', 'admin'].includes(role)) {
+    redirect(`${target}${join}error=invalid`)
+  }
   const db = await adminDb()
-  await db.rpc('admin_set_user_role', { p_user_id: userId, p_role: role })
-  redirect('/admin/users?updated=1')
+  const { error } = await db.rpc('admin_set_user_role', { p_user_id: userId, p_role: role })
+  redirect(
+    `${target}${join}${error ? (error.message.includes('demote') ? 'error=self' : 'error=failed') : 'updated=1'}`,
+  )
 }
 
 export async function setFeedbackStatus(id: string, status: 'new' | 'reviewed' | 'archived') {
@@ -330,7 +341,7 @@ export async function setFeedbackStatus(id: string, status: 'new' | 'reviewed' |
       reviewed_by: status === 'new' ? null : profile.id,
     })
     .eq('id', id)
-  redirect('/admin/feedback')
+  revalidatePath('/admin/feedback')
 }
 
 export async function refreshRollups(formData: FormData) {
