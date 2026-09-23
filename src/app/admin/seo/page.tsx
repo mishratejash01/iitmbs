@@ -3,12 +3,12 @@ import Link from 'next/link'
 import { AdminHeader, Panel, StatCard } from '@/components/admin/ui'
 import { Badge } from '@/components/ui/badge'
 import { recordTitle } from '@/lib/admin/display'
+import { substantiveWords } from '@/lib/admin/quality'
 import { adminDb } from '@/lib/admin/records'
 import { getResource } from '@/lib/admin/resources'
 import { requireStaff } from '@/lib/auth/session'
 import { getSiteSettings } from '@/lib/data/settings'
 import { SITEMAP_SECTIONS, getSitemapEntries } from '@/lib/data/sitemap'
-import { mdxToPlainText } from '@/lib/mdx/plain'
 import { daysAgo } from '@/lib/utils/dates'
 
 // Staff-only and always fresh: renders on request, never from a prefetch.
@@ -91,10 +91,7 @@ export default async function SeoReportPage() {
           detail: `${str(row.seo_description).length} characters`,
         })
       }
-      const words =
-        resource === 'notes'
-          ? Number(row.word_count ?? 0)
-          : mdxToPlainText(bodyText).split(/\s+/).filter(Boolean).length
+      const words = resource === 'notes' ? Number(row.word_count ?? 0) : substantiveWords(bodyText)
       const needsWords = resource === 'notes' || (resource === 'pages' && row.template !== 'legal')
       if (needsWords && words < settings.content.min_words_warning) {
         issues.push({ ...base, key: 'thin', detail: `${words} words` })
