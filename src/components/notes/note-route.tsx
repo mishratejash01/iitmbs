@@ -8,7 +8,12 @@ import type { Crumb } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { courseVars, weekVars } from '@/lib/seo/vars'
 
-const TEMPLATE = { week: 'week_notes', topic: 'note', formula_sheet: 'formula_sheet', exam_prep: 'exam_prep' } as const
+const TEMPLATE = {
+  week: 'week_notes',
+  topic: 'note',
+  formula_sheet: 'formula_sheet',
+  exam_prep: 'exam_prep',
+} as const
 
 /** The visible title (H1) for each kind of note page. */
 export function noteTitle(data: NotePageData): string {
@@ -33,9 +38,18 @@ export function noteCrumbs(data: NotePageData): Crumb[] {
     { name: core.course.shortName, path: core.course.path },
   ]
   if (note.kind === 'week' && week) {
-    return [...base, { name: `Week ${week.number}`, path: week.path }, { name: 'Notes', path: note.path }]
+    return [
+      ...base,
+      { name: `Week ${week.number}`, path: week.path },
+      { name: 'Notes', path: note.path },
+    ]
   }
-  const label = note.kind === 'formula_sheet' ? 'Formula sheet' : note.kind === 'exam_prep' ? 'Exam prep' : note.title
+  const label =
+    note.kind === 'formula_sheet'
+      ? 'Formula sheet'
+      : note.kind === 'exam_prep'
+        ? 'Exam prep'
+        : note.title
   return [...base, { name: label, path: note.path }]
 }
 
@@ -43,7 +57,9 @@ export async function noteMetadata(data: NotePageData | null): Promise<Metadata>
   if (!data) return { robots: { index: false } }
   const [settings, overrides] = await Promise.all([getSiteSettings(), getSeoOverrides()])
   const { note, core, week } = data
-  const vars = week ? { ...weekVars(core, week), note: note.title } : { ...courseVars(core), note: note.title }
+  const vars = week
+    ? { ...weekVars(core, week), note: note.title }
+    : { ...courseVars(core), note: note.title }
   return buildMetadata({
     settings,
     path: note.path,
@@ -69,8 +85,15 @@ export function weekNoteNeighbours(data: NotePageData) {
     const w = core.weeks.find((x) => x.number === n)
     const exists = core.notes.some((note) => note.kind === 'week' && note.weekNumber === n)
     return w && exists
-      ? { href: weekNotesPath(core.course.program.slug, core.course.slug, n), label, title: `Week ${n}: ${w.title}` }
+      ? {
+          href: weekNotesPath(core.course.program.slug, core.course.slug, n),
+          label,
+          title: `Week ${n}: ${w.title}`,
+        }
       : null
   }
-  return { previous: target(week.number - 1, 'Previous week'), next: target(week.number + 1, 'Next week') }
+  return {
+    previous: target(week.number - 1, 'Previous week'),
+    next: target(week.number + 1, 'Next week'),
+  }
 }
