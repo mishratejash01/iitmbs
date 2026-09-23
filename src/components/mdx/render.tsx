@@ -10,6 +10,27 @@ import { cn } from '@/lib/utils/cn'
 
 import { createMdxComponents } from './components'
 
+/**
+ * hast-util-to-jsx-runtime treats capitalised JSX names (<Callout>) as
+ * JavaScript identifiers and asks an "evaluater" to resolve them. This one
+ * resolves ONLY identifiers that name an allowed component; anything else
+ * throws. Real expressions never reach it — the sanitiser removed them.
+ */
+function componentResolver(components: Record<string, unknown>) {
+  const resolve = (expression: { type: string; name?: string }) => {
+    if (expression.type === 'Identifier' && expression.name && Object.hasOwn(components, expression.name)) {
+      return components[expression.name]
+    }
+    throw new Error(`Unsupported MDX expression (${expression.type})`)
+  }
+  return {
+    evaluateExpression: resolve as never,
+    evaluateProgram: (() => {
+      throw new Error('MDX programs are not supported')
+    }) as never,
+  }
+}
+
 export type RenderedMdx = {
   content: ReactNode
   toc: TocItem[]
@@ -25,12 +46,14 @@ export async function renderMdx(source: string | null | undefined, options: Proc
     console.warn(`[mdx] rendered as markdown after an MDX error: ${processed.error}`)
   }
   const media = await getMediaMap(processed.imageIds)
+  const components = createMdxComponents({ media })
   const content = toJsxRuntime(processed.tree, {
     Fragment,
     jsx,
     jsxs,
     // Allowed components receive string props only (enforced by the sanitiser).
-    components: createMdxComponents({ media }) as never,
+    components: components as never,
+    createEvaluater: () => componentResolver(components),
   })
   return { content, toc: processed.toc, error: processed.error }
 }
