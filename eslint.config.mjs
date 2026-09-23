@@ -28,6 +28,7 @@ const eslintConfig = defineConfig([
     files: [
       'src/env.ts',
       'src/env.client.ts',
+      'src/proxy.ts',
       'next.config.ts',
       '*.config.{ts,mjs,js}',
       'scripts/**',
