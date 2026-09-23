@@ -4,7 +4,14 @@ import { useReportWebVitals } from 'next/web-vitals'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 
-import { currentPage, flush, getConsent, readCookie, startPageView, track } from '@/lib/analytics/client'
+import {
+  currentPage,
+  flush,
+  getConsent,
+  readCookie,
+  startPageView,
+  track,
+} from '@/lib/analytics/client'
 import { DISPLAY_COOKIE } from '@/lib/auth/display-cookie'
 
 // Page types that belong in a student's reading history, and their entity type.
@@ -26,7 +33,9 @@ const SEARCH_ENGINES = /(^|\.)(google\.|bing\.com$|duckduckgo\.com$|yahoo\.|yand
 function referrerInfo(referrer: string) {
   try {
     const host = new URL(referrer).hostname.replace(/^www\./, '')
-    const engine = SEARCH_ENGINES.test(host) ? host.split('.').find((part) => part !== 'search') : undefined
+    const engine = SEARCH_ENGINES.test(host)
+      ? host.split('.').find((part) => part !== 'search')
+      : undefined
     return { host, engine }
   } catch {
     return { host: undefined, engine: undefined }
@@ -57,7 +66,9 @@ export function Analytics({ heartbeatSeconds = 15 }: { heartbeatSeconds?: number
     if (!['LCP', 'CLS', 'INP', 'TTFB', 'FCP'].includes(metric.name)) return
     track('web_vital', {
       metric: metric.name,
-      value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value) / (metric.name === 'CLS' ? 1000 : 1),
+      value:
+        Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value) /
+        (metric.name === 'CLS' ? 1000 : 1),
       rating: metric.rating,
     })
   })
@@ -65,8 +76,15 @@ export function Analytics({ heartbeatSeconds = 15 }: { heartbeatSeconds?: number
   // Page views on every navigation.
   useEffect(() => {
     const isEntry = firstView.current
-    const referrer = isEntry ? document.referrer : previousPath.current ? `${location.origin}${previousPath.current}` : ''
-    const { host, engine } = isEntry && document.referrer ? referrerInfo(document.referrer) : { host: undefined, engine: undefined }
+    const referrer = isEntry
+      ? document.referrer
+      : previousPath.current
+        ? `${location.origin}${previousPath.current}`
+        : ''
+    const { host, engine } =
+      isEntry && document.referrer
+        ? referrerInfo(document.referrer)
+        : { host: undefined, engine: undefined }
     const context = readPageContext()
     startPageView({
       path: pathname,
@@ -78,8 +96,10 @@ export function Analytics({ heartbeatSeconds = 15 }: { heartbeatSeconds?: number
       referrerHost: host,
       searchEngine: engine,
     })
-    if (context.pageType === '404') track('404_hit', { path: pathname, referrer: document.referrer || undefined })
-    if (context.pageType === 'formula_sheet') track('formula_sheet_open', { course: pathname.split('/')[2] })
+    if (context.pageType === '404')
+      track('404_hit', { path: pathname, referrer: document.referrer || undefined })
+    if (context.pageType === 'formula_sheet')
+      track('formula_sheet_open', { course: pathname.split('/')[2] })
     // Reading history: signed-in students with detailed consent only.
     const entityType = context.pageType ? HISTORY_ENTITY[context.pageType] : undefined
     if (entityType && getConsent() === 'detailed' && readCookie(DISPLAY_COOKIE)) {
@@ -158,11 +178,20 @@ export function Analytics({ heartbeatSeconds = 15 }: { heartbeatSeconds?: number
       const url = new URL(link.href, location.href)
       if (url.origin === location.origin) {
         if (url.pathname !== location.pathname) {
-          const area = link.closest<HTMLElement>('[data-track-area]')?.dataset.trackArea ?? 'content'
-          track('internal_link_click', { href: url.pathname, label: link.textContent?.trim().slice(0, 80), area })
+          const area =
+            link.closest<HTMLElement>('[data-track-area]')?.dataset.trackArea ?? 'content'
+          track('internal_link_click', {
+            href: url.pathname,
+            label: link.textContent?.trim().slice(0, 80),
+            area,
+          })
         }
       } else if (/^https?:$/.test(url.protocol)) {
-        track('outbound_link_click', { href: url.href.slice(0, 300), host: url.hostname }, { immediate: true })
+        track(
+          'outbound_link_click',
+          { href: url.href.slice(0, 300), host: url.hostname },
+          { immediate: true },
+        )
       }
     }
 
@@ -171,7 +200,9 @@ export function Analytics({ heartbeatSeconds = 15 }: { heartbeatSeconds?: number
       if (details.open && details.dataset.track) {
         track(details.dataset.track as Parameters<typeof track>[0], {
           question_id: details.dataset.trackQuestionId,
-          position: details.dataset.trackPosition ? Number(details.dataset.trackPosition) : undefined,
+          position: details.dataset.trackPosition
+            ? Number(details.dataset.trackPosition)
+            : undefined,
         })
       }
     }
@@ -183,11 +214,18 @@ export function Analytics({ heartbeatSeconds = 15 }: { heartbeatSeconds?: number
 
     const onError = (event: ErrorEvent) => {
       if (errors.current++ >= 5) return
-      track('js_error', { message: event.message?.slice(0, 200), source: event.filename?.slice(0, 200), line: event.lineno })
+      track('js_error', {
+        message: event.message?.slice(0, 200),
+        source: event.filename?.slice(0, 200),
+        line: event.lineno,
+      })
     }
     const onRejection = (event: PromiseRejectionEvent) => {
       if (errors.current++ >= 5) return
-      track('js_error', { message: String(event.reason).slice(0, 200), source: 'unhandledrejection' })
+      track('js_error', {
+        message: String(event.reason).slice(0, 200),
+        source: 'unhandledrejection',
+      })
     }
 
     const onVisibility = () => {
