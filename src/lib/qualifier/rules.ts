@@ -27,14 +27,25 @@ const round = (value: number) => Math.round(value * 100) / 100
  * Average of the best `best_of` scores among the first `first_weeks` weeks.
  * Missing or blank scores count as 0 — exactly like an unattempted GA.
  */
-export function gaAverage(scores: Array<number | null | undefined>, rule: QualifierRules['ga_rule']): number {
-  const considered = Array.from({ length: rule.first_weeks }, (_, i) => clamp(Number(scores[i] ?? 0) || 0))
+export function gaAverage(
+  scores: Array<number | null | undefined>,
+  rule: QualifierRules['ga_rule'],
+): number {
+  const considered = Array.from({ length: rule.first_weeks }, (_, i) =>
+    clamp(Number(scores[i] ?? 0) || 0),
+  )
   const best = [...considered].sort((a, b) => b - a).slice(0, rule.best_of)
   return best.length === 0 ? 0 : round(best.reduce((sum, value) => sum + value, 0) / best.length)
 }
 
 export type EligibilityResult = {
-  courses: Array<{ name: string; average: number; required: number; passes: boolean; shortfall: number }>
+  courses: Array<{
+    name: string
+    average: number
+    required: number
+    passes: boolean
+    shortfall: number
+  }>
   eligible: boolean
 }
 
@@ -75,9 +86,15 @@ export function evaluateExam(
 ): ExamResult {
   const scored = courses.map((course) => {
     const score = clamp(Number(course.score ?? 0) || 0)
-    return { name: course.name, score, required: category.course_min, passes: score >= category.course_min }
+    return {
+      name: course.name,
+      score,
+      required: category.course_min,
+      passes: score >= category.course_min,
+    }
   })
-  const average = scored.length === 0 ? 0 : round(scored.reduce((sum, c) => sum + c.score, 0) / scored.length)
+  const average =
+    scored.length === 0 ? 0 : round(scored.reduce((sum, c) => sum + c.score, 0) / scored.length)
   const averagePasses = average >= category.average_min
   const qualified = scored.length > 0 && averagePasses && scored.every((c) => c.passes)
   return {
@@ -98,7 +115,8 @@ export function courseLoadFor(average: number, rules: QualifierRules): number | 
   const bands = [...rules.course_load].sort((a, b) => a.from - b.from)
   for (const [index, band] of bands.entries()) {
     const last = index === bands.length - 1
-    if (average >= band.from && (average < band.to || (last && average <= band.to))) return band.courses
+    if (average >= band.from && (average < band.to || (last && average <= band.to)))
+      return band.courses
   }
   return null
 }
