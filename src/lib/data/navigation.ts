@@ -62,7 +62,12 @@ export async function getFooterGroups(): Promise<FooterGroup[]> {
   const groups = new Map<string, FooterGroup>()
   for (const row of data) {
     const group = groups.get(row.group_label) ?? { label: row.group_label, links: [] }
-    group.links.push({ id: row.id, label: row.label, href: row.href, openInNewTab: row.open_in_new_tab })
+    group.links.push({
+      id: row.id,
+      label: row.label,
+      href: row.href,
+      openInNewTab: row.open_in_new_tab,
+    })
     groups.set(row.group_label, group)
   }
   return [...groups.values()]
