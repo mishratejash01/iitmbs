@@ -153,11 +153,19 @@ export async function saveRecord(
     : db.from(config.table).insert(payload).select('*').single()
   const { data, error } = await query
   if (error || !data) {
-    const message = error?.message.includes('duplicate key')
-      ? 'Another item already uses this slug/path for the same parent.'
-      : error?.message.includes('check constraint')
-        ? `A validation rule failed: ${error.message}`
-        : `Could not save: ${error?.message ?? 'unknown error'}`
+    if (error?.message.includes('duplicate key')) {
+      const unique = config.fields.find(
+        (f) => f.type === 'slug' || ['path', 'from_path', 'name', 'public_id'].includes(f.name),
+      )
+      return {
+        status: 'error',
+        message: 'Another item already uses this slug or path in the same place.',
+        errors: unique ? { [unique.name]: 'Already in use — choose another' } : undefined,
+      }
+    }
+    const message = error?.message.includes('check constraint')
+      ? `A validation rule failed: ${error.message}`
+      : `Could not save: ${error?.message ?? 'unknown error'}`
     return { status: 'error', message }
   }
 
