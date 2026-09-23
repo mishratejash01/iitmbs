@@ -36,11 +36,21 @@ export function ChoiceChecker({
 
   return (
     <fieldset className="mt-4">
-      <legend className="sr-only">{multiple ? 'Select all that apply' : 'Select one answer'}</legend>
+      <legend className="sr-only">
+        {multiple ? 'Select all that apply' : 'Select one answer'}
+      </legend>
       <ul className="space-y-2">
         {options.map((option) => {
           const chosen = selected.includes(option.id)
-          const state = checked ? (correct.includes(option.id) ? 'right' : chosen ? 'wrong' : 'idle') : chosen ? 'chosen' : 'idle'
+          const state = checked
+            ? correct.includes(option.id)
+              ? 'right'
+              : chosen
+                ? 'wrong'
+                : 'idle'
+            : chosen
+              ? 'chosen'
+              : 'idle'
           return (
             <li key={option.id}>
               <label
@@ -76,8 +86,18 @@ export function ChoiceChecker({
           Check my answer
         </button>
         {checked ? (
-          <p role="status" className={cn('inline-flex items-center gap-1.5 text-small font-medium', isRight ? 'text-success' : 'text-danger')}>
-            {isRight ? <CheckCircle2 aria-hidden="true" className="size-4" /> : <XCircle aria-hidden="true" className="size-4" />}
+          <p
+            role="status"
+            className={cn(
+              'inline-flex items-center gap-1.5 text-small font-medium',
+              isRight ? 'text-success' : 'text-danger',
+            )}
+          >
+            {isRight ? (
+              <CheckCircle2 aria-hidden="true" className="size-4" />
+            ) : (
+              <XCircle aria-hidden="true" className="size-4" />
+            )}
             {isRight ? 'Correct!' : 'Not quite — compare with the walkthrough below.'}
           </p>
         ) : null}
