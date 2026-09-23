@@ -33,7 +33,9 @@ export function MobileToc({ items }: { items: TocItem[] }) {
   if (items.length < 2) return null
   return (
     <details className="mb-6 rounded-card border border-border bg-card lg:hidden">
-      <summary className="flex min-h-12 cursor-pointer items-center px-4 font-medium text-text">On this page</summary>
+      <summary className="flex min-h-12 cursor-pointer items-center px-4 font-medium text-text">
+        On this page
+      </summary>
       <Toc items={items} className="px-4 pb-4" />
     </details>
   )
