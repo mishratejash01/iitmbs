@@ -13,7 +13,7 @@ export async function generateStaticParams() {
     await Promise.all(
       courses.map(async ({ program, course }) => {
         const core = await getCourseCore(program, course)
-        const exists = 
+        const exists =
           core?.notes.some((n) => n.kind === 'exam_prep') ||
           core?.assignments.some((a) => a.weekNumber === null && a.type === 'practice')
         return exists ? [{ program, course }] : []
@@ -28,11 +28,15 @@ async function load(params: PageProps<'/[program]/[course]/qualifier-exam-prep'>
   return getCourseNotePage(program, course, 'exam_prep')
 }
 
-export async function generateMetadata({ params }: PageProps<'/[program]/[course]/qualifier-exam-prep'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/[program]/[course]/qualifier-exam-prep'>): Promise<Metadata> {
   return noteMetadata(await load(params))
 }
 
-export default async function ExamPrepPage({ params }: PageProps<'/[program]/[course]/qualifier-exam-prep'>) {
+export default async function ExamPrepPage({
+  params,
+}: PageProps<'/[program]/[course]/qualifier-exam-prep'>) {
   const data = await load(params)
   if (!data) {
     const { program, course } = await params
