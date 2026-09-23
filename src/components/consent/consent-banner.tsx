@@ -79,11 +79,11 @@ export function ConsentBanner() {
       >
         <p className="text-small font-semibold text-text">Your analytics choice</p>
         <p className="mt-1 text-small text-muted">
-          We use essential, pseudonymous analytics to see which pages help students — never your
-          name, email or IP address.{' '}
+          We use pseudonymous analytics to see which pages help — never your name, email or IP
+          address.{' '}
           {gpc
             ? 'Your browser sends Global Privacy Control, so that is all we use.'
-            : 'You can also allow detailed analytics to power your reading history and progress.'}{' '}
+            : 'Detailed analytics, linked to your account, are optional.'}{' '}
           <Link href="/privacy" className="font-medium text-accent-ink underline">
             Privacy policy
           </Link>
@@ -104,7 +104,7 @@ export function ConsentBanner() {
           </div>
         ) : null}
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={() => save('essential')}>
             {gpc ? 'OK' : 'Essential only'}
           </Button>
