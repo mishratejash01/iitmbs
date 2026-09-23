@@ -112,9 +112,7 @@ export type WeekSummary = {
 export type QuestionOption = { id: string; labelMdx: string }
 
 export type AnswerKey =
-  | { correct: string[] }
-  | { value: number; tolerance?: number }
-  | { accepted: string[] }
+  { correct: string[] } | { value: number; tolerance?: number } | { accepted: string[] }
 
 export type Question = {
   id: string
