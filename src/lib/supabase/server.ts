@@ -2,6 +2,7 @@ import 'server-only'
 
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { connection } from 'next/server'
 
 import { env } from '@/env'
 
@@ -14,6 +15,9 @@ import type { Database } from './database.types'
  * pages.
  */
 export async function createSupabaseServerClient() {
+  // The auth client reads the clock (token expiry), so this must never run
+  // while Next.js prerenders or runtime-prefetches a route.
+  await connection()
   const cookieStore = await cookies()
 
   return createServerClient<Database>(env.supabaseUrl, env.supabaseAnonKey, {
