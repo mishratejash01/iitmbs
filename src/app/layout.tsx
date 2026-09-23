@@ -15,7 +15,8 @@ import { buildThemeCss, resolveTokens } from '@/lib/theme/tokens'
 
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  // Only the weights the design uses (400 body, 500 medium, 600 headings).
+  weight: ['400', '500', '600'],
   display: 'swap',
   variable: '--font-poppins',
 })
