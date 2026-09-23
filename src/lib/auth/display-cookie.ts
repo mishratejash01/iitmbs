@@ -9,7 +9,11 @@ export const DISPLAY_COOKIE = 'qh_user'
 export type DisplayUser = { name: string; avatar: string | null; staff: boolean }
 
 export function encodeDisplayUser(user: DisplayUser): string {
-  return JSON.stringify({ n: user.name.slice(0, 60), a: user.avatar?.slice(0, 500) ?? null, s: user.staff ? 1 : 0 })
+  return JSON.stringify({
+    n: user.name.slice(0, 60),
+    a: user.avatar?.slice(0, 500) ?? null,
+    s: user.staff ? 1 : 0,
+  })
 }
 
 export function decodeDisplayUser(value: string | null | undefined): DisplayUser | null {
