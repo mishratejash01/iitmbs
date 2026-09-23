@@ -4,8 +4,9 @@ import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-import { readCookie, track } from '@/lib/analytics/client'
+import { track } from '@/lib/analytics/client'
 import { DISPLAY_COOKIE } from '@/lib/auth/display-cookie'
+import { useCookie } from '@/lib/hooks/browser-state'
 import { cn } from '@/lib/utils/cn'
 
 /**
@@ -22,18 +23,25 @@ export function BookmarkButton({
   entityId?: string | null
 }) {
   const pathname = usePathname()
-  const [signedIn, setSignedIn] = useState(false)
-  const [bookmarked, setBookmarked] = useState(false)
+  const signedIn = useCookie(DISPLAY_COOKIE) !== null
+  // Keyed by path, so a stale answer never shows on the next page.
+  const [saved, setSaved] = useState<{ path: string; bookmarked: boolean } | null>(null)
+  const bookmarked = saved?.path === pathname && saved.bookmarked
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
-    if (!readCookie(DISPLAY_COOKIE)) return
-    setSignedIn(true)
+    if (!signedIn) return
+    let current = true
     fetch(`/api/me/bookmarks?path=${encodeURIComponent(pathname)}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((data: { bookmarked?: boolean } | null) => setBookmarked(Boolean(data?.bookmarked)))
+      .then((data: { bookmarked?: boolean } | null) => {
+        if (current) setSaved({ path: pathname, bookmarked: Boolean(data?.bookmarked) })
+      })
       .catch(() => undefined)
-  }, [pathname])
+    return () => {
+      current = false
+    }
+  }, [pathname, signedIn])
 
   if (!signedIn) return null
 
@@ -45,11 +53,18 @@ export function BookmarkButton({
         ? await fetch('/api/me/bookmarks', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ path: pathname, title, entity_type: entityType ?? null, entity_id: entityId ?? null }),
+            body: JSON.stringify({
+              path: pathname,
+              title,
+              entity_type: entityType ?? null,
+              entity_id: entityId ?? null,
+            }),
           })
-        : await fetch(`/api/me/bookmarks?path=${encodeURIComponent(pathname)}`, { method: 'DELETE' })
+        : await fetch(`/api/me/bookmarks?path=${encodeURIComponent(pathname)}`, {
+            method: 'DELETE',
+          })
       if (res.ok) {
-        setBookmarked(next)
+        setSaved({ path: pathname, bookmarked: next })
         track(next ? 'bookmark_add' : 'bookmark_remove', { path: pathname })
       }
     } finally {
@@ -66,7 +81,9 @@ export function BookmarkButton({
       aria-pressed={bookmarked}
       className={cn(
         'inline-flex min-h-11 items-center gap-2 rounded-control border px-3 text-small font-medium',
-        bookmarked ? 'border-accent bg-accent-soft text-accent-ink' : 'border-border text-text hover:border-accent',
+        bookmarked
+          ? 'border-accent bg-accent-soft text-accent-ink'
+          : 'border-border text-text hover:border-accent',
       )}
     >
       <Icon aria-hidden="true" className="size-4" />
