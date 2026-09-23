@@ -26,7 +26,11 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
   const user = await getSessionUser()
   if (!user) return null
   const supabase = await createSupabaseServerClient()
-  const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle()
   if (error) console.error('[auth] profile lookup failed:', error.message)
   return data
 })
