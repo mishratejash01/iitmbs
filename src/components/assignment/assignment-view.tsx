@@ -22,7 +22,11 @@ import { formatDateTime } from '@/lib/utils/dates'
 import { QuestionCard } from './question-card'
 import { SolutionGate } from './solution-gate'
 
-const KIND_LABEL = { graded: 'Graded Assignment', practice: 'Practice Assignment', activity: 'Activity' } as const
+const KIND_LABEL = {
+  graded: 'Graded Assignment',
+  practice: 'Practice Assignment',
+  activity: 'Activity',
+} as const
 
 export async function AssignmentView({ data }: { data: AssignmentPageData }) {
   const { core, week, assignment, questions, released } = data
@@ -41,24 +45,47 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
   const kind = assignment.type === 'practice' ? 'practice' : 'graded'
   const neighbour = (w: typeof week | undefined, label: string) =>
     w && (kind === 'graded' ? w.hasGraded : w.hasPractice)
-      ? { href: assignmentPath(course.program.slug, course.slug, w.number, kind), label, title: `Week ${w.number}: ${w.title}` }
+      ? {
+          href: assignmentPath(course.program.slug, course.slug, w.number, kind),
+          label,
+          title: `Week ${w.number}: ${w.title}`,
+        }
       : null
 
   const related = [
-    ...(data.weekNote ? [{ path: data.weekNote.path, title: data.weekNote.title, summary: data.weekNote.summary }] : []),
+    ...(data.weekNote
+      ? [{ path: data.weekNote.path, title: data.weekNote.title, summary: data.weekNote.summary }]
+      : []),
     ...data.topicNotes.map((n) => ({ path: n.path, title: n.title, summary: n.summary })),
     ...(data.companion?.path
-      ? [{ path: data.companion.path, title: `Week ${week.number} ${KIND_LABEL[data.companion.type]}`, summary: data.companion.summary }]
+      ? [
+          {
+            path: data.companion.path,
+            title: `Week ${week.number} ${KIND_LABEL[data.companion.type]}`,
+            summary: data.companion.summary,
+          },
+        ]
       : []),
     ...core.notes
       .filter((n) => n.kind === 'formula_sheet')
-      .map((n) => ({ path: n.path, title: `${course.shortName} formula sheet`, summary: n.summary })),
-    { path: week.path, title: `Everything for ${course.shortName} week ${week.number}`, summary: week.summary },
+      .map((n) => ({
+        path: n.path,
+        title: `${course.shortName} formula sheet`,
+        summary: n.summary,
+      })),
+    {
+      path: week.path,
+      title: `Everything for ${course.shortName} week ${week.number}`,
+      summary: week.summary,
+    },
   ]
 
   return (
     <>
-      <PageContext type={assignment.type === 'graded' ? 'graded_assignment' : 'practice_assignment'} entityId={assignment.id} />
+      <PageContext
+        type={assignment.type === 'graded' ? 'graded_assignment' : 'practice_assignment'}
+        entityId={assignment.id}
+      />
       <PageHeader
         crumbs={[
           { name: course.program.shortName, path: course.program.path },
@@ -78,7 +105,9 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
                 Due {formatDateTime(assignment.dueAt)}
               </Badge>
             ) : null}
-            <Badge tone={released ? 'success' : 'warning'}>{released ? 'Walkthroughs released' : 'Hints only until the deadline'}</Badge>
+            <Badge tone={released ? 'success' : 'warning'}>
+              {released ? 'Walkthroughs released' : 'Hints only until the deadline'}
+            </Badge>
             {questions.length > 0 ? (
               <Badge>
                 <ListChecks aria-hidden="true" className="size-3.5" />
@@ -97,7 +126,9 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
 
       <div className="container-page py-8 sm:py-10">
         <div className="container-reading space-y-8">
-          {!released ? <SolutionGate assignmentId={assignment.id} releaseAt={assignment.solutionsReleaseAt} /> : null}
+          {!released ? (
+            <SolutionGate assignmentId={assignment.id} releaseAt={assignment.solutionsReleaseAt} />
+          ) : null}
 
           {intro.content ? (
             <section aria-labelledby="overview">
@@ -125,7 +156,10 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
               {data.weekNote ? (
                 <p className="mt-3 text-small text-muted">
                   Revise them in the{' '}
-                  <Link href={weekNotesPath(course.program.slug, course.slug, week.number)} className="font-medium text-accent-ink underline">
+                  <Link
+                    href={weekNotesPath(course.program.slug, course.slug, week.number)}
+                    className="font-medium text-accent-ink underline"
+                  >
                     week {week.number} notes
                   </Link>
                   .
@@ -179,7 +213,15 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
               </h2>
               <LinkList
                 items={data.otherTerms.flatMap((a) =>
-                  a.path ? [{ path: a.path, title: `${kindLabel} — ${formatTerm(a.term)}`, summary: a.summary }] : [],
+                  a.path
+                    ? [
+                        {
+                          path: a.path,
+                          title: `${kindLabel} — ${formatTerm(a.term)}`,
+                          summary: a.summary,
+                        },
+                      ]
+                    : [],
                 )}
                 label="Other terms"
               />
@@ -189,12 +231,22 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
           <FaqAccordion faqs={data.faqs} />
 
           <div className="space-y-6 border-t border-border pt-6">
-            <Byline author={data.author} reviewer={data.reviewer} updatedAt={assignment.updatedAt} />
-            <FeedbackWidget pageType={assignment.type === 'graded' ? 'graded_assignment' : 'practice_assignment'} entityId={assignment.id} />
+            <Byline
+              author={data.author}
+              reviewer={data.reviewer}
+              updatedAt={assignment.updatedAt}
+            />
+            <FeedbackWidget
+              pageType={assignment.type === 'graded' ? 'graded_assignment' : 'practice_assignment'}
+              entityId={assignment.id}
+            />
             <ShareButtons path={path} title={title} />
           </div>
 
-          <PrevNext previous={neighbour(previousWeek, 'Previous week')} next={neighbour(nextWeek, 'Next week')} />
+          <PrevNext
+            previous={neighbour(previousWeek, 'Previous week')}
+            next={neighbour(nextWeek, 'Next week')}
+          />
         </div>
       </div>
 
@@ -202,7 +254,9 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
         data={[
           learningResourceJsonLd({
             name: title,
-            description: assignment.summary ?? `${kindLabel} for ${course.name}, week ${week.number}: ${week.title}.`,
+            description:
+              assignment.summary ??
+              `${kindLabel} for ${course.name}, week ${week.number}: ${week.title}.`,
             path,
             resourceType: assignment.type === 'graded' ? 'Assignment' : 'Practice problems',
             teaches: assignment.concepts.length > 0 ? assignment.concepts : week.topics,
@@ -213,7 +267,9 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
             dateModified: assignment.updatedAt,
             partOf: { name: course.name, path: course.path },
           }),
-          released ? quizJsonLd({ name: title, path, topics: assignment.concepts, questions }) : null,
+          released
+            ? quizJsonLd({ name: title, path, topics: assignment.concepts, questions })
+            : null,
         ]}
       />
     </>
