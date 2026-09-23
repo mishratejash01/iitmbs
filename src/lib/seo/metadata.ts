@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { env } from '@/env'
+import { cloudinaryImageUrl } from '@/lib/cloudinary/url'
 import type { SeoOverride } from '@/lib/data/seo-overrides'
 import type { SeoFields } from '@/lib/data/types'
 import { truncate } from '@/lib/mdx/plain'
@@ -70,6 +71,16 @@ export function buildMetadata(input: PageSeoInput): Metadata {
   const url = canonicalFor(input)
   const noindex = Boolean(input.override?.noindex ?? (input.noindex || input.seo?.noindex))
   const keywords = input.seo?.keywords?.length ? input.seo.keywords : undefined
+  // An admin-chosen Cloudinary image wins; otherwise the generated card.
+  const customImage = input.override?.ogImagePublicId ?? input.seo?.ogImagePublicId
+  const image = {
+    url: customImage
+      ? cloudinaryImageUrl(customImage, { width: 1200, height: 630, crop: 'fill' })
+      : absoluteUrl(env.siteUrl, `/og${input.path === '/' ? '' : input.path}`),
+    width: 1200,
+    height: 630,
+    alt: title,
+  }
 
   return {
     title: { absolute: title },
@@ -90,6 +101,7 @@ export function buildMetadata(input: PageSeoInput): Metadata {
       title,
       description,
       locale: 'en_IN',
+      images: [image],
       ...(input.type === 'article'
         ? {
             publishedTime: input.publishedTime ?? undefined,
@@ -97,7 +109,7 @@ export function buildMetadata(input: PageSeoInput): Metadata {
           }
         : {}),
     },
-    twitter: { card: 'summary_large_image', title, description },
+    twitter: { card: 'summary_large_image', title, description, images: [image.url] },
   }
 }
 
