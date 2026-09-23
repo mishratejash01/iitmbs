@@ -15,7 +15,10 @@ const flag = (fallback: boolean) => z.boolean().catch(fallback).default(fallback
 const int = (fallback: number, min: number, max: number) =>
   z.number().int().min(min).max(max).catch(fallback).default(fallback)
 const httpsUrl = () =>
-  z.union([z.literal(''), z.url({ protocol: /^https$/ })]).catch('').default('')
+  z
+    .union([z.literal(''), z.url({ protocol: /^https$/ })])
+    .catch('')
+    .default('')
 const internalOrHttps = () =>
   z
     .string()
@@ -45,7 +48,10 @@ export const siteSettingsSchema = section({
     .default(null),
   revalidate_seconds: int(3600, 60, 604800),
   // Missing or malformed themes become {} (defaults); only valid hex tokens survive.
-  theme: z.preprocess((value) => sanitizeThemeOverrides(value), z.custom<ThemeOverrides>(() => true)),
+  theme: z.preprocess(
+    (value) => sanitizeThemeOverrides(value),
+    z.custom<ThemeOverrides>(() => true),
+  ),
   social: section({
     telegram: httpsUrl(),
     whatsapp: httpsUrl(),
@@ -56,7 +62,10 @@ export const siteSettingsSchema = section({
   }),
   verification: section({ google: text(), bing: text(), yandex: text() }),
   contact: section({
-    email: z.union([z.literal(''), z.email()]).catch('').default(''),
+    email: z
+      .union([z.literal(''), z.email()])
+      .catch('')
+      .default(''),
     grievance_officer: text(),
   }),
   organization: section({
