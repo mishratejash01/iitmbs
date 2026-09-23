@@ -45,7 +45,6 @@ const schema = z.object({
     z.string().regex(/^[a-z0-9/_-]+$/i, 'letters, digits, "/", "_" and "-" only'),
   ),
   REVALIDATE_SECRET: optional(z.string().min(32, 'use at least 32 characters')),
-  CRON_SECRET: optional(z.string().min(16, 'use at least 16 characters')),
   INDEXNOW_KEY: optional(z.string().regex(/^[a-zA-Z0-9-]{8,128}$/, '8–128 chars of [a-zA-Z0-9-]')),
   ANALYTICS_HASH_SECRET: optional(z.string().min(16, 'use at least 16 characters')),
 })
@@ -72,7 +71,6 @@ export const env = {
     uploadFolder: v.CLOUDINARY_UPLOAD_FOLDER ?? 'qualifier-hub',
   },
   revalidateSecret: v.REVALIDATE_SECRET ?? null,
-  cronSecret: v.CRON_SECRET ?? null,
   indexNowKey: v.INDEXNOW_KEY ?? null,
   analyticsHashSecret: v.ANALYTICS_HASH_SECRET ?? null,
   isProduction: process.env.NODE_ENV === 'production',
