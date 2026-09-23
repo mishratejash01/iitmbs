@@ -44,9 +44,12 @@ export type Field = {
   readOnly?: boolean
   /** Store a select's value as a number or boolean instead of text. */
   coerce?: 'number' | 'boolean'
+  /** Initial value for new records; also used when a number is left empty. */
+  default?: string | number | boolean
 }
 
-export type ReferenceKey = 'programs' | 'courses' | 'weeks' | 'assignments' | 'authors' | 'faqScopes'
+export type ReferenceKey =
+  'programs' | 'courses' | 'weeks' | 'assignments' | 'authors' | 'faqScopes'
 
 const IST_OFFSET_MINUTES = 330
 
@@ -85,12 +88,16 @@ export function parseFieldValue(field: Field, raw: FormDataEntryValue | null): P
     case 'boolean':
       return { ok: true, value: raw === 'on' || raw === 'true' }
     case 'number': {
-      if (empty) return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
+      if (empty)
+        return field.required
+          ? { ok: false, error: 'Required' }
+          : { ok: true, value: field.default ?? null }
       const n = Number(text)
       return Number.isFinite(n) ? { ok: true, value: n } : { ok: false, error: 'Must be a number' }
     }
     case 'datetime': {
-      if (empty) return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
+      if (empty)
+        return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
       const iso = fromIstInput(text)
       return iso ? { ok: true, value: iso } : { ok: false, error: 'Invalid date and time' }
     }
@@ -110,12 +117,14 @@ export function parseFieldValue(field: Field, raw: FormDataEntryValue | null): P
       }
     }
     case 'slug':
-      if (empty) return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
+      if (empty)
+        return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
       return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(text)
         ? { ok: true, value: text }
         : { ok: false, error: 'Lowercase letters, digits and single hyphens only' }
     case 'url':
-      if (empty) return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
+      if (empty)
+        return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
       return /^(https:\/\/|\/|mailto:)/.test(text)
         ? { ok: true, value: text }
         : { ok: false, error: 'Use an https:// URL or a path starting with /' }
@@ -123,14 +132,23 @@ export function parseFieldValue(field: Field, raw: FormDataEntryValue | null): P
     case 'textarea':
       // Keep inner whitespace for long-form text.
       if (typeof raw !== 'string' || raw.trim() === '') {
-        return field.required ? { ok: false, error: 'Required' } : { ok: true, value: field.type === 'mdx' ? '' : null }
+        return field.required
+          ? { ok: false, error: 'Required' }
+          : { ok: true, value: field.type === 'mdx' ? '' : null }
       }
-      if (field.max && raw.length > field.max) return { ok: false, error: `At most ${field.max} characters` }
+      if (field.max && raw.length > field.max)
+        return { ok: false, error: `At most ${field.max} characters` }
       return { ok: true, value: raw.replace(/\r\n/g, '\n') }
     default:
-      if (empty) return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
-      if (field.max && text.length > field.max) return { ok: false, error: `At most ${field.max} characters` }
-      if (field.type === 'select' && field.options && !field.options.some((o) => o.value === text)) {
+      if (empty)
+        return field.required ? { ok: false, error: 'Required' } : { ok: true, value: null }
+      if (field.max && text.length > field.max)
+        return { ok: false, error: `At most ${field.max} characters` }
+      if (
+        field.type === 'select' &&
+        field.options &&
+        !field.options.some((o) => o.value === text)
+      ) {
         return { ok: false, error: 'Choose one of the options' }
       }
       if (field.coerce === 'number') return { ok: true, value: Number(text) }
