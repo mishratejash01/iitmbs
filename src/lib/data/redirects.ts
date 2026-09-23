@@ -14,7 +14,12 @@ const asRecord = <T>(value: unknown): Record<string, T> =>
 export async function getRedirectMap(): Promise<RedirectMap> {
   'use cache'
   cacheLife('settings')
-  cacheTag(tableTag('redirects'), tableTag('programs'), tableTag('courses'), tableTag('course_programs'))
+  cacheTag(
+    tableTag('redirects'),
+    tableTag('programs'),
+    tableTag('courses'),
+    tableTag('course_programs'),
+  )
 
   const { data, error } = await getPublicClient().rpc('get_route_manifest')
   if (error || !data || typeof data !== 'object') {
