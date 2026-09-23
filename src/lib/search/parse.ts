@@ -7,7 +7,8 @@
  * (tests/unit/search-parse.test.ts).
  */
 
-export type SearchKind = 'graded' | 'practice' | 'note' | 'formula_sheet' | 'exam_prep' | 'week' | 'page'
+export type SearchKind =
+  'graded' | 'practice' | 'note' | 'formula_sheet' | 'exam_prep' | 'week' | 'page'
 
 export type CourseAliasEntry = {
   id: string
@@ -18,6 +19,8 @@ export type CourseAliasEntry = {
   terms: string[]
 }
 
+export type ParsedCourse = { id: string; programSlug: string; slug: string; shortName: string }
+
 export type ParsedQuery = {
   /** Lowercased, whitespace-collapsed original query (used for analytics). */
   normalized: string
@@ -25,20 +28,57 @@ export type ParsedQuery = {
   text: string
   week: number | null
   kind: SearchKind | null
-  course: { id: string; programSlug: string; slug: string; shortName: string } | null
+  course: ParsedCourse | null
+  /** Other courses the same words name (e.g. "maths 1" in another programme). */
+  alternatives: ParsedCourse[]
 }
 
 /** Words that describe intent rather than content and would break FTS. */
 const FILLER = new Set([
-  'iitm', 'iit', 'madras', 'bs', 'bsc', 'degree', 'online', 'qualifier', 'answers', 'answer',
-  'solutions', 'solution', 'solved', 'key', 'pdf', 'free', 'download', 'the', 'for', 'of', 'in',
-  'and', 'with', 'how', 'to', 'what', 'is', 'a', 'an', 'program', 'programme', 'course',
-  '2024', '2025', '2026', '2027',
+  'iitm',
+  'iit',
+  'madras',
+  'bs',
+  'bsc',
+  'degree',
+  'online',
+  'qualifier',
+  'answers',
+  'answer',
+  'solutions',
+  'solution',
+  'solved',
+  'key',
+  'pdf',
+  'free',
+  'download',
+  'the',
+  'for',
+  'of',
+  'in',
+  'and',
+  'with',
+  'how',
+  'to',
+  'what',
+  'is',
+  'a',
+  'an',
+  'program',
+  'programme',
+  'course',
+  '2024',
+  '2025',
+  '2026',
+  '2027',
 ])
 
 const KIND_PATTERNS: Array<[SearchKind, RegExp]> = [
   ['formula_sheet', /\b(formula(?:e|s)?(?:\s+sheets?)?|cheat\s*sheets?)\b/],
-  ['exam_prep', /\b(exam\s*prep(?:aration)?|revision|one\s*shot|mock(?:\s+tests?)?|pyqs?|previous\s+year(?:\s+papers?)?)\b/],
+  [
+    'exam_prep',
+    /\b(exam\s*prep(?:aration)?|revision|one\s*shot|mock(?:\s+tests?)?|pyqs?|previous\s+year(?:\s+papers?)?)\b/,
+  ],
   ['practice', /\b(pa|practice(?:\s+assignments?)?)\b/],
   ['graded', /\b(ga|gas|graded(?:\s+assignments?)?|assignments?)\b/],
   ['note', /\b(notes?|summary|summaries)\b/],
@@ -59,10 +99,7 @@ export function normalizeQuery(query: string): string {
 
 /** "Maths 1" → "maths 1"; "BSMA1001" → "bsma1001"; "EST&C" → "est c". */
 function normalizeTerm(term: string): string {
-  return normalizeQuery(term.replace(/&/g, ' '))
-    .replace(/[-&]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+  return normalizeQuery(term.replace(/&/g, ' ')).replace(/[-&]/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -99,41 +136,39 @@ export function parseSearchQuery(query: string, courses: CourseAliasEntry[] = []
     }
   }
 
-  // Course alias: longest matching term wins; ties across courses are left
-  // unresolved (e.g. "english 1" exists in two programmes).
-  let best: { entry: CourseAliasEntry; length: number; matched: string } | null = null
-  let tie = false
+  // Course alias: the longest matching term wins. When the same words name
+  // courses in several programmes ("english 1", "maths 1"), the first in
+  // `courses` order (programme order) is chosen and the rest are offered as
+  // alternatives.
+  let best: { length: number; matched: string; entries: CourseAliasEntry[] } | null = null
   for (const entry of courses) {
     for (const raw of entry.terms) {
       const term = normalizeTerm(raw)
       if (term.length < 2) continue
       const match = termPattern(term).exec(rest)
       if (!match) continue
-      const length = term.length
-      if (!best || length > best.length) {
-        best = { entry, length, matched: match[1]! }
-        tie = false
-      } else if (length === best.length && best.entry.id !== entry.id) {
-        tie = true
+      if (!best || term.length > best.length) {
+        best = { length: term.length, matched: match[1]!, entries: [entry] }
+      } else if (term.length === best.length && !best.entries.includes(entry)) {
+        best.entries.push(entry)
       }
     }
   }
 
-  let course: ParsedQuery['course'] = null
-  if (best && !tie) {
-    course = {
-      id: best.entry.id,
-      programSlug: best.entry.programSlug,
-      slug: best.entry.slug,
-      shortName: best.entry.shortName,
-    }
-    rest = rest.replace(best.matched, ' ')
-  }
+  const toCourse = (entry: CourseAliasEntry): ParsedCourse => ({
+    id: entry.id,
+    programSlug: entry.programSlug,
+    slug: entry.slug,
+    shortName: entry.shortName,
+  })
+  const course = best ? toCourse(best.entries[0]!) : null
+  const alternatives = best ? best.entries.slice(1).map(toCourse) : []
+  if (best) rest = rest.replace(best.matched, ' ')
 
   const text = rest
     .split(/\s+/)
     .filter((word) => word.length > 0 && !FILLER.has(word))
     .join(' ')
 
-  return { normalized, text, week, kind, course }
+  return { normalized, text, week, kind, course, alternatives }
 }
