@@ -17,7 +17,9 @@ export function OnboardingForm({
   defaultTerm: string | null
   next: string
 }) {
-  const [state, action, pending] = useActionState<OnboardingState, FormData>(completeOnboarding, { error: null })
+  const [state, action, pending] = useActionState<OnboardingState, FormData>(completeOnboarding, {
+    error: null,
+  })
 
   return (
     <form action={action} className="mt-8 space-y-6">
@@ -26,8 +28,18 @@ export function OnboardingForm({
         <legend className="font-medium text-text">Your programme</legend>
         <div className="mt-3 space-y-2">
           {programs.map((program, index) => (
-            <label key={program.id} className="flex cursor-pointer items-center gap-3 rounded-control border border-border px-4 py-3 has-[:checked]:border-accent has-[:checked]:bg-accent-soft">
-              <input type="radio" name="program_id" value={program.id} defaultChecked={index === 0} required className="size-4 accent-[var(--accent-strong)]" />
+            <label
+              key={program.id}
+              className="flex cursor-pointer items-center gap-3 rounded-control border border-border px-4 py-3 has-[:checked]:border-accent has-[:checked]:bg-accent-soft"
+            >
+              <input
+                type="radio"
+                name="program_id"
+                value={program.id}
+                defaultChecked={index === 0}
+                required
+                className="size-4 accent-[var(--accent-strong)]"
+              />
               <span>
                 <span className="block font-medium text-text">{program.shortName}</span>
                 <span className="block text-small text-muted">{program.name}</span>
@@ -56,7 +68,11 @@ export function OnboardingForm({
       </div>
 
       <label className="flex items-start gap-3 text-small text-text">
-        <input type="checkbox" name="marketing_consent" className="mt-1 size-4 accent-[var(--accent-strong)]" />
+        <input
+          type="checkbox"
+          name="marketing_consent"
+          className="mt-1 size-4 accent-[var(--accent-strong)]"
+        />
         Email me when new notes and walkthroughs for my courses are published (optional).
       </label>
 
