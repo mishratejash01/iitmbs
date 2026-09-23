@@ -8,7 +8,11 @@ export function ShareButtons({ path, title }: { path: string; title: string }) {
   const url = absoluteUrl(env.siteUrl, path)
   const text = `${title} — ${url}`
   const links = [
-    { channel: 'whatsapp', label: 'WhatsApp', href: `https://wa.me/?text=${encodeURIComponent(text)}` },
+    {
+      channel: 'whatsapp',
+      label: 'WhatsApp',
+      href: `https://wa.me/?text=${encodeURIComponent(text)}`,
+    },
     {
       channel: 'telegram',
       label: 'Telegram',
