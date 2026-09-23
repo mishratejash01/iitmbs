@@ -79,7 +79,9 @@ export type DownloadTarget = {
 export async function getDownloadTarget(id: string): Promise<DownloadTarget | null> {
   const { data, error } = await getPublicClient()
     .from('resources')
-    .select('id, kind, title, url, cloudinary_public_id, cloudinary_resource_type, file_format, requires_login')
+    .select(
+      'id, kind, title, url, cloudinary_public_id, cloudinary_resource_type, file_format, requires_login',
+    )
     .eq('id', id)
     .maybeSingle()
 
@@ -94,7 +96,8 @@ export async function getDownloadTarget(id: string): Promise<DownloadTarget | nu
     title: data.title,
     url: data.url,
     cloudinaryPublicId: data.cloudinary_public_id,
-    cloudinaryResourceType: data.cloudinary_resource_type as DownloadTarget['cloudinaryResourceType'],
+    cloudinaryResourceType:
+      data.cloudinary_resource_type as DownloadTarget['cloudinaryResourceType'],
     fileFormat: data.file_format,
     requiresLogin: data.requires_login,
   }
