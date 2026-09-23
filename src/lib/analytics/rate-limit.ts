@@ -23,7 +23,11 @@ function allowInMemory(key: string, windowMs: number, max: number): boolean {
   return entry.hits <= max
 }
 
-export async function allowRequest(key: string, windowSeconds: number, max: number): Promise<boolean> {
+export async function allowRequest(
+  key: string,
+  windowSeconds: number,
+  max: number,
+): Promise<boolean> {
   if (!allowInMemory(key, windowSeconds * 1000, max)) return false
   const db = getServiceClient()
   if (!db) return true
