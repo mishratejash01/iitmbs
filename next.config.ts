@@ -22,7 +22,7 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://i.ytimg.com",
   "font-src 'self' data:",
   [
     "connect-src 'self'",
@@ -56,6 +56,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   cacheComponents: true,
   reactStrictMode: true,
+  // The repository lives inside a larger folder with its own lockfile.
+  turbopack: { root: process.cwd() },
   poweredByHeader: false,
   trailingSlash: false,
 
