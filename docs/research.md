@@ -1,10 +1,10 @@
 # Research: the IIT Madras BS qualifier and what students search for
 
-*Compiled 2026-09-23. Official facts were read on study.iitm.ac.in and the
+_Compiled 2026-09-23. Official facts were read on study.iitm.ac.in and the
 official IIT Madras BS documents linked from it. Keyword data comes from Google
 and YouTube autocomplete (gl=IN), 935 archived Reddit posts from the two main
 student subreddits, Quora question titles and competitor page structure (titles
-and structure only — no content was copied).*
+and structure only — no content was copied)._
 
 Status labels used below: **VERIFIED** (read on an official page or document on
 2026-09-23), **UNOFFICIAL** (third-party source), **UNVERIFIED** (could not be
@@ -14,12 +14,12 @@ confirmed — flagged for the admin).
 
 ## 1. Programmes that use the qualifier
 
-| Programme (official name) | Slug | Qualifier courses | Source |
-|---|---|---|---|
-| BS Degree in Data Science and Applications | `data-science` | BSMA1001, BSMA1002, BSCS1001, BSHS1001 | https://study.iitm.ac.in/ds/admissions.html (VERIFIED) |
-| BS in Electronic Systems | `electronic-systems` | HS1101, MA1101, EE1101, CS1101 | https://study.iitm.ac.in/es/admissions.html (VERIFIED) |
-| BS in Management and Data Science | `management-data-science` | the four DS courses | https://study.iitm.ac.in/mg/admissions.html (VERIFIED) |
-| BS in Aeronautics and Space Technology | `aeronautics-space-technology` | the four ES courses (as BSHS1101, BSMA1101, BSEE1101, BSCS1101) | https://study.iitm.ac.in/ae/admissions.html (VERIFIED) |
+| Programme (official name)                  | Slug                           | Qualifier courses                                               | Source                                                 |
+| ------------------------------------------ | ------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------ |
+| BS Degree in Data Science and Applications | `data-science`                 | BSMA1001, BSMA1002, BSCS1001, BSHS1001                          | https://study.iitm.ac.in/ds/admissions.html (VERIFIED) |
+| BS in Electronic Systems                   | `electronic-systems`           | HS1101, MA1101, EE1101, CS1101                                  | https://study.iitm.ac.in/es/admissions.html (VERIFIED) |
+| BS in Management and Data Science          | `management-data-science`      | the four DS courses                                             | https://study.iitm.ac.in/mg/admissions.html (VERIFIED) |
+| BS in Aeronautics and Space Technology     | `aeronautics-space-technology` | the four ES courses (as BSHS1101, BSMA1101, BSEE1101, BSCS1101) | https://study.iitm.ac.in/ae/admissions.html (VERIFIED) |
 
 MG and AE reuse the DS and ES courses, so they are modelled as **cross-listings**
 (`course_programs`): each course keeps one canonical URL and the MG/AE paths
@@ -28,16 +28,16 @@ DS and ES.
 
 ## 2. Verified course list
 
-| Programme | Course | Code | Credits | Slug | Aliases (searched) | Weeks | Official page |
-|---|---|---|---|---|---|---|---|
-| DS | Mathematics for Data Science I | BSMA1001 | 4 | `maths-1` | maths 1, math 1, mathematics 1, maths1, mathematics for data science 1 | 1–4 | https://study.iitm.ac.in/ds/course_pages/BSMA1001.html |
-| DS | Statistics for Data Science I | BSMA1002 | 4 | `stats-1` | stats 1, statistics 1, stats1, stat 1 | 1–4 | https://study.iitm.ac.in/ds/course_pages/BSMA1002.html |
-| DS | Computational Thinking | BSCS1001 | 4 | `computational-thinking` | ct, computational thinking, ct 1 | 1–4 | https://study.iitm.ac.in/ds/course_pages/BSCS1001.html |
-| DS | English I | BSHS1001 | 4 | `english-1` | english 1, english i, eng 1 | 1–4 | https://study.iitm.ac.in/ds/course_pages/BSHS1001.html |
-| ES | English I | HS1101 | 4 | `english-1` | english 1, es english | 1–4 | https://study.iitm.ac.in/es/course_pages/HS1101.html |
-| ES | Math for Electronics I | MA1101 | 4 | `math-for-electronics-1` | math for electronics 1, mfe 1 | 1–4 | https://study.iitm.ac.in/es/course_pages/MA1101.html |
-| ES | Electronic Systems Thinking and Circuits | EE1101 | 4 | `estc` | estc, electronic systems thinking and circuits | 1–4 | https://study.iitm.ac.in/es/course_pages/EE1101.html |
-| ES | Introduction to C Programming | CS1101 | 4 | `c-programming` | c programming, introduction to c programming | 1–4 | https://study.iitm.ac.in/es/course_pages/CS1101.html |
+| Programme | Course                                   | Code     | Credits | Slug                     | Aliases (searched)                                                     | Weeks | Official page                                          |
+| --------- | ---------------------------------------- | -------- | ------- | ------------------------ | ---------------------------------------------------------------------- | ----- | ------------------------------------------------------ |
+| DS        | Mathematics for Data Science I           | BSMA1001 | 4       | `maths-1`                | maths 1, math 1, mathematics 1, maths1, mathematics for data science 1 | 1–4   | https://study.iitm.ac.in/ds/course_pages/BSMA1001.html |
+| DS        | Statistics for Data Science I            | BSMA1002 | 4       | `stats-1`                | stats 1, statistics 1, stats1, stat 1                                  | 1–4   | https://study.iitm.ac.in/ds/course_pages/BSMA1002.html |
+| DS        | Computational Thinking                   | BSCS1001 | 4       | `computational-thinking` | ct, computational thinking, ct 1                                       | 1–4   | https://study.iitm.ac.in/ds/course_pages/BSCS1001.html |
+| DS        | English I                                | BSHS1001 | 4       | `english-1`              | english 1, english i, eng 1                                            | 1–4   | https://study.iitm.ac.in/ds/course_pages/BSHS1001.html |
+| ES        | English I                                | HS1101   | 4       | `english-1`              | english 1, es english                                                  | 1–4   | https://study.iitm.ac.in/es/course_pages/HS1101.html   |
+| ES        | Math for Electronics I                   | MA1101   | 4       | `math-for-electronics-1` | math for electronics 1, mfe 1                                          | 1–4   | https://study.iitm.ac.in/es/course_pages/MA1101.html   |
+| ES        | Electronic Systems Thinking and Circuits | EE1101   | 4       | `estc`                   | estc, electronic systems thinking and circuits                         | 1–4   | https://study.iitm.ac.in/es/course_pages/EE1101.html   |
+| ES        | Introduction to C Programming            | CS1101   | 4       | `c-programming`          | c programming, introduction to c programming                           | 1–4   | https://study.iitm.ac.in/es/course_pages/CS1101.html   |
 
 DS English I (BSHS1001) and ES English I (HS1101) are **different courses** with
 different codes and week wording, so each has its own page.
@@ -50,16 +50,16 @@ pages and DS FAQ: "classes start (with week 5) immediately after … week 4").
 The seed (`supabase/seed.sql`) stores every week's title and topic list exactly
 as summarised below.
 
-| Course | Week 1 | Week 2 | Week 3 | Week 4 |
-|---|---|---|---|---|
-| Maths 1 | Set theory: number systems, sets, relations, functions | Straight lines: coordinates, slope, parallel/perpendicular, forms, straight-line fit | Quadratic functions: vertex, extrema, equations | Algebra of polynomials: operations, division, intercepts, multiplicity, end behaviour |
-| Stats 1 | Types of data, descriptive vs inferential, scales | Describing categorical data | Describing numerical data: centre, spread, five-number summary | Association: contingency tables, scatterplots, covariance, correlation |
-| CT | Variables, iterators, filtering, flowcharts, data sanity | Iteration, selection, pseudocode, max/min, AND | Multiple iterations, three-prizes problem, procedures, side effects, OR | Nested iterations, birthday paradox, binning |
-| English I (DS) | Sounds and words | Parts of speech | Sentences: phrases and idioms | Speaking skills |
-| English I (ES) | Sounds and words | Parts of speech and articles | Words and phrases: phrasal/modal verbs, idioms | Speaking skills and telephone English |
-| Math for Electronics I | Functions, equations, straight lines | Systems of linear equations, matrices | Sequences and limits | Limits of functions and continuity |
-| ESTC | Mobile teardown and the resistor | Voltage, current, Ohm's law, KCL/KVL, nodal/mesh | Dial, talk and hear: microphone, motor, sinusoid, harmonics | Problem solving with resistive circuits |
-| C Programming | How a computer works | Data representation, compilation | Introduction to C: structure, variables, operators | Control statements |
+| Course                 | Week 1                                                   | Week 2                                                                               | Week 3                                                                  | Week 4                                                                                |
+| ---------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Maths 1                | Set theory: number systems, sets, relations, functions   | Straight lines: coordinates, slope, parallel/perpendicular, forms, straight-line fit | Quadratic functions: vertex, extrema, equations                         | Algebra of polynomials: operations, division, intercepts, multiplicity, end behaviour |
+| Stats 1                | Types of data, descriptive vs inferential, scales        | Describing categorical data                                                          | Describing numerical data: centre, spread, five-number summary          | Association: contingency tables, scatterplots, covariance, correlation                |
+| CT                     | Variables, iterators, filtering, flowcharts, data sanity | Iteration, selection, pseudocode, max/min, AND                                       | Multiple iterations, three-prizes problem, procedures, side effects, OR | Nested iterations, birthday paradox, binning                                          |
+| English I (DS)         | Sounds and words                                         | Parts of speech                                                                      | Sentences: phrases and idioms                                           | Speaking skills                                                                       |
+| English I (ES)         | Sounds and words                                         | Parts of speech and articles                                                         | Words and phrases: phrasal/modal verbs, idioms                          | Speaking skills and telephone English                                                 |
+| Math for Electronics I | Functions, equations, straight lines                     | Systems of linear equations, matrices                                                | Sequences and limits                                                    | Limits of functions and continuity                                                    |
+| ESTC                   | Mobile teardown and the resistor                         | Voltage, current, Ohm's law, KCL/KVL, nodal/mesh                                     | Dial, talk and hear: microphone, motor, sinusoid, harmonics             | Problem solving with resistive circuits                                               |
+| C Programming          | How a computer works                                     | Data representation, compilation                                                     | Introduction to C: structure, variables, operators                      | Control statements                                                                    |
 
 **Conflict (UNVERIFIED which the portal uses):** the DS syllabus PDF (Sep 2025)
 words DS English I weeks 2–4 like the ES course page, and the ES syllabus
@@ -68,38 +68,38 @@ The seed follows the course pages, which appear newer.
 
 ## 3. Qualifier rules (VERIFIED unless marked)
 
-| Topic | Rule | Source |
-|---|---|---|
-| Who can apply — DS | Class 12 passed (any stream, any age), Maths and English studied in Class 10; Class 11 finishers may apply and join after Class 12 | DS admissions, DS Student Handbook §5.1.1 |
-| Who can apply — ES | Class 12 with Physics and Mathematics; Class 11 finishers may apply | ES admissions |
-| Application fee | ₹4,000 General/OBC · ₹2,000 SC/ST/PwD · ₹1,000 SC/ST + PwD; non-refundable; extra fee for centres abroad | DS/ES admissions |
-| Fee history | DS was ₹3,000 until the Jan 2026 term; ES was ₹6,000 until late 2025 (Wayback) | Handbook, Wayback |
-| Hall-ticket rule | In each course: average of best 2 of the first 3 weekly GA scores ≥ 40% General / 35% OBC-NCL/EWS / 30% SC/ST/PwD | DS/ES admissions |
-| Two-stage variant | Handbook: if avg(W1, W2) clears the cut-off in all four → first exam; else best 2 of 3 → second exam in the same term | DS Handbook §5.1.3 (not on admissions page) |
-| Historical rule | Best 3 of 4 weekly scores until mid-2022 | Wayback 2022 |
-| Exam | One in-person, invigilated, 4-hour exam covering all four courses; centres in India plus UAE, Sri Lanka, Bahrain, Kuwait, Oman; remote-proctored elsewhere | DS/ES admissions |
-| Pass marks | General 40% each / 50% average · OBC-NCL/EWS 35 / 45 · SC/ST/PwD 30 / 40 (identical for DS and ES since 2022) | DS/ES admissions, Handbook §5.1.4 |
-| Re-attempt | Same term, no redoing assignments; ₹2,000 / ₹1,000 / ₹500 | DS/ES admissions |
-| Course load after qualifying | Average M: cut-off–50% → up to 2 courses; 50–70% → 3; ≥70% → 4 (Handbook calls it a suggestion, default 4 same-term) | DS admissions; Handbook §6 |
-| Quiz 1 credit | Same-term registrants' qualifier score counts as Quiz 1 | Handbook §5.1.9, academics page |
-| Validity | DS page: 3 terms (6 for school students); Handbook: 3 terms; ES page: 2 semesters — **conflicting (UNVERIFIED)** | DS/ES admissions, Handbooks |
-| JEE route | Eligible for the latest JEE Advanced → direct Foundation entry, ₹4,000 admission fee, valid 3 terms | DS admissions, Handbook §5.2 |
-| Question types | **Not published (UNVERIFIED)**. GAs use MCQ/MSQ/numeric. | — |
-| Negative marking / calculator | **Not published (UNVERIFIED)** — frequent student questions | Reddit |
+| Topic                         | Rule                                                                                                                                                       | Source                                      |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Who can apply — DS            | Class 12 passed (any stream, any age), Maths and English studied in Class 10; Class 11 finishers may apply and join after Class 12                         | DS admissions, DS Student Handbook §5.1.1   |
+| Who can apply — ES            | Class 12 with Physics and Mathematics; Class 11 finishers may apply                                                                                        | ES admissions                               |
+| Application fee               | ₹4,000 General/OBC · ₹2,000 SC/ST/PwD · ₹1,000 SC/ST + PwD; non-refundable; extra fee for centres abroad                                                   | DS/ES admissions                            |
+| Fee history                   | DS was ₹3,000 until the Jan 2026 term; ES was ₹6,000 until late 2025 (Wayback)                                                                             | Handbook, Wayback                           |
+| Hall-ticket rule              | In each course: average of best 2 of the first 3 weekly GA scores ≥ 40% General / 35% OBC-NCL/EWS / 30% SC/ST/PwD                                          | DS/ES admissions                            |
+| Two-stage variant             | Handbook: if avg(W1, W2) clears the cut-off in all four → first exam; else best 2 of 3 → second exam in the same term                                      | DS Handbook §5.1.3 (not on admissions page) |
+| Historical rule               | Best 3 of 4 weekly scores until mid-2022                                                                                                                   | Wayback 2022                                |
+| Exam                          | One in-person, invigilated, 4-hour exam covering all four courses; centres in India plus UAE, Sri Lanka, Bahrain, Kuwait, Oman; remote-proctored elsewhere | DS/ES admissions                            |
+| Pass marks                    | General 40% each / 50% average · OBC-NCL/EWS 35 / 45 · SC/ST/PwD 30 / 40 (identical for DS and ES since 2022)                                              | DS/ES admissions, Handbook §5.1.4           |
+| Re-attempt                    | Same term, no redoing assignments; ₹2,000 / ₹1,000 / ₹500                                                                                                  | DS/ES admissions                            |
+| Course load after qualifying  | Average M: cut-off–50% → up to 2 courses; 50–70% → 3; ≥70% → 4 (Handbook calls it a suggestion, default 4 same-term)                                       | DS admissions; Handbook §6                  |
+| Quiz 1 credit                 | Same-term registrants' qualifier score counts as Quiz 1                                                                                                    | Handbook §5.1.9, academics page             |
+| Validity                      | DS page: 3 terms (6 for school students); Handbook: 3 terms; ES page: 2 semesters — **conflicting (UNVERIFIED)**                                           | DS/ES admissions, Handbooks                 |
+| JEE route                     | Eligible for the latest JEE Advanced → direct Foundation entry, ₹4,000 admission fee, valid 3 terms                                                        | DS admissions, Handbook §5.2                |
+| Question types                | **Not published (UNVERIFIED)**. GAs use MCQ/MSQ/numeric.                                                                                                   | —                                           |
+| Negative marking / calculator | **Not published (UNVERIFIED)** — frequent student questions                                                                                                | Reddit                                      |
 
 ### September 2026 dates (official Important Dates sheet, VERIFIED)
 
-| Event | Date |
-|---|---|
-| Applications open | 13 Jul 2026 (calendar image says 29 Jun — conflict) |
-| Applications close | Sun 27 Sep 2026 |
-| Week 1 starts | Fri 2 Oct 2026 |
-| Qualifier exam 1-1 | Sun 15 Nov 2026 |
-| Results, registration opens | Thu 19 Nov 2026 |
-| Exam 2-1 and re-attempt 1-2 | Sat 5 Dec 2026 |
-| Results | Wed 9 Dec 2026 (calendar image says 15 Dec — conflict) |
-| Re-attempt 2-2 | Sun 10 Jan 2027 |
-| Final results | Thu 14 Jan 2027 |
+| Event                       | Date                                                   |
+| --------------------------- | ------------------------------------------------------ |
+| Applications open           | 13 Jul 2026 (calendar image says 29 Jun — conflict)    |
+| Applications close          | Sun 27 Sep 2026                                        |
+| Week 1 starts               | Fri 2 Oct 2026                                         |
+| Qualifier exam 1-1          | Sun 15 Nov 2026                                        |
+| Results, registration opens | Thu 19 Nov 2026                                        |
+| Exam 2-1 and re-attempt 1-2 | Sat 5 Dec 2026                                         |
+| Results                     | Wed 9 Dec 2026 (calendar image says 15 Dec — conflict) |
+| Re-attempt 2-2              | Sun 10 Jan 2027                                        |
+| Final results               | Thu 14 Jan 2027                                        |
 
 Weekly GA deadlines for Sep 2026 are **not public** before the term — the
 seeded draft assignments deliberately have no due date and a far-future release
@@ -133,22 +133,22 @@ seeded draft assignments deliberately have no due date and a far-future release
 
 ### Keyword clusters → target pages
 
-| Cluster | Head term | Main variants | Intent | Target |
-|---|---|---|---|---|
-| Programme hub | iitm bs data science | iit madras bs data science, iitm bs ds, + notes/pyq/syllabus | Informational | `/data-science` |
-| Programme hub | iitm bs electronic systems | iitm bs es, iitm bs electronics, + syllabus/notes | Informational | `/electronic-systems` |
-| Qualifier hub | iitm bs qualifier | iit madras qualifier, what is iitm qualifier exam | Informational | `/qualifier` |
-| Eligibility | iitm bs qualifier eligibility | eligibility criteria, class 11/12, NIOS, no maths | Informational | `/qualifier/eligibility` |
-| Exam pattern | iitm bs qualifier exam pattern | total marks, timing, negative marking, online or offline, difficulty | Informational | `/qualifier/exam-pattern` |
-| Cut-offs | iitm bs qualifier passing criteria | passing marks, cutoff | Informational | `/qualifier/exam-pattern` |
-| Dates | iitm bs qualifier exam date | exam date 2026, last date to apply 2026, september term, calendar 2026 | Informational / navigational | `/qualifier/timeline` |
-| GA rules | iitm graded assignment | best 2 of 3, minimum GA score, missed week 1 | Informational | `/qualifier/eligibility` |
-| GA per week | iitm {course} week {n} graded assignment | …answers week {n} {subject}, …solutions, …2026 | Answer-seeking | `/{programme}/{course}/week-{n}/graded-assignment` |
-| Cross-course week | iitm week {n} graded assignment answers | iit madras week {n} graded assignment | Answer-seeking | `/{programme}/week-{n}` |
-| Course notes | iitm {course} notes | {course} iitm bs notes, …pdf | Informational | `/{programme}/{course}` + week notes |
-| Exam prep | how to prepare for iit madras qualifier exam | qualifier one shot, revision, pyq, mock test | Informational | `/{programme}/{course}/qualifier-exam-prep` |
-| Formula sheets | iitm stats 1 formula sheet | maths 1 formula sheet | Informational / download | `/{programme}/{course}/formula-sheet` |
-| Tools | iitm score checker | score calculator, answer key | Tool | GA-eligibility and score calculators (CMS pages with embedded calculators) |
+| Cluster           | Head term                                    | Main variants                                                          | Intent                       | Target                                                                     |
+| ----------------- | -------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------------------------- |
+| Programme hub     | iitm bs data science                         | iit madras bs data science, iitm bs ds, + notes/pyq/syllabus           | Informational                | `/data-science`                                                            |
+| Programme hub     | iitm bs electronic systems                   | iitm bs es, iitm bs electronics, + syllabus/notes                      | Informational                | `/electronic-systems`                                                      |
+| Qualifier hub     | iitm bs qualifier                            | iit madras qualifier, what is iitm qualifier exam                      | Informational                | `/qualifier`                                                               |
+| Eligibility       | iitm bs qualifier eligibility                | eligibility criteria, class 11/12, NIOS, no maths                      | Informational                | `/qualifier/eligibility`                                                   |
+| Exam pattern      | iitm bs qualifier exam pattern               | total marks, timing, negative marking, online or offline, difficulty   | Informational                | `/qualifier/exam-pattern`                                                  |
+| Cut-offs          | iitm bs qualifier passing criteria           | passing marks, cutoff                                                  | Informational                | `/qualifier/exam-pattern`                                                  |
+| Dates             | iitm bs qualifier exam date                  | exam date 2026, last date to apply 2026, september term, calendar 2026 | Informational / navigational | `/qualifier/timeline`                                                      |
+| GA rules          | iitm graded assignment                       | best 2 of 3, minimum GA score, missed week 1                           | Informational                | `/qualifier/eligibility`                                                   |
+| GA per week       | iitm {course} week {n} graded assignment     | …answers week {n} {subject}, …solutions, …2026                         | Answer-seeking               | `/{programme}/{course}/week-{n}/graded-assignment`                         |
+| Cross-course week | iitm week {n} graded assignment answers      | iit madras week {n} graded assignment                                  | Answer-seeking               | `/{programme}/week-{n}`                                                    |
+| Course notes      | iitm {course} notes                          | {course} iitm bs notes, …pdf                                           | Informational                | `/{programme}/{course}` + week notes                                       |
+| Exam prep         | how to prepare for iit madras qualifier exam | qualifier one shot, revision, pyq, mock test                           | Informational                | `/{programme}/{course}/qualifier-exam-prep`                                |
+| Formula sheets    | iitm stats 1 formula sheet                   | maths 1 formula sheet                                                  | Informational / download     | `/{programme}/{course}/formula-sheet`                                      |
+| Tools             | iitm score checker                           | score calculator, answer key                                           | Tool                         | GA-eligibility and score calculators (CMS pages with embedded calculators) |
 
 **Title pattern for GA pages** (stored in `site_settings.seo.templates`, editable):
 `IITM {short} Week {n} Graded Assignment {year} – Hints & Solutions`.
@@ -220,16 +220,16 @@ exam day and centres as DS? · How do ES labs and campus visits work?
 
 ## 6. Competitor gap analysis
 
-| What competitors do badly | Evidence (structural observation only) | Our answer |
-|---|---|---|
-| Stale, unlabelled content | Top GA site serves 2023 material with conflicting dates and no term label; aggregators keep one URL per term so stale pages rank | Evergreen URLs; visible term label; latest term at the base URL, older terms at `/…/{term}`; "last reviewed" dates; sitemap `lastmod` from real edits |
-| Answers without understanding | Option letters, 2–4 minute answer-flash videos, screenshots; GA "sets" differ between students so bare keys mislead | Concepts tested + a hint per question before the deadline; explained walkthroughs by question type after |
-| Ethics | Full GA question text reproduced; uploaded past papers; no deadline policy; paid funnels with unverifiable claims | Deadline-gated solutions enforced in Postgres; `source_permission` on every item; no copied content; no pass-rate claims without a source |
-| Maths as images | No GA/solution page renders maths as text | KaTeX rendered server-side; accessible tables; printable formula sheets |
-| Slow, heavy, ad-laden | 130 KB–1.8 MB HTML, 31–114 scripts, AdSense; best-structured sites are client-rendered shells with <100 words of HTML | Static generation, minimal client JS, no ad networks, Lighthouse budget in CI |
-| Weak structure | No programme → course → week → (notes, GA, practice) taxonomy; ambiguous slugs; placeholder links | Database-driven taxonomy with breadcrumbs, prev/next week, cross-course week hubs, internal-link checks |
-| Low trust | Few citations to study.iitm.ac.in; anonymous or sales-driven authors | Every guide cites official pages; author/reviewer bylines; corrections via feedback |
-| Coverage gaps | ES week-level content "coming soon" everywhere; no real GA-eligibility or score calculator | ES pages from day one; calculators driven by the cut-offs in site settings |
+| What competitors do badly     | Evidence (structural observation only)                                                                                           | Our answer                                                                                                                                            |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Stale, unlabelled content     | Top GA site serves 2023 material with conflicting dates and no term label; aggregators keep one URL per term so stale pages rank | Evergreen URLs; visible term label; latest term at the base URL, older terms at `/…/{term}`; "last reviewed" dates; sitemap `lastmod` from real edits |
+| Answers without understanding | Option letters, 2–4 minute answer-flash videos, screenshots; GA "sets" differ between students so bare keys mislead              | Concepts tested + a hint per question before the deadline; explained walkthroughs by question type after                                              |
+| Ethics                        | Full GA question text reproduced; uploaded past papers; no deadline policy; paid funnels with unverifiable claims                | Deadline-gated solutions enforced in Postgres; `source_permission` on every item; no copied content; no pass-rate claims without a source             |
+| Maths as images               | No GA/solution page renders maths as text                                                                                        | KaTeX rendered server-side; accessible tables; printable formula sheets                                                                               |
+| Slow, heavy, ad-laden         | 130 KB–1.8 MB HTML, 31–114 scripts, AdSense; best-structured sites are client-rendered shells with <100 words of HTML            | Static generation, minimal client JS, no ad networks, Lighthouse budget in CI                                                                         |
+| Weak structure                | No programme → course → week → (notes, GA, practice) taxonomy; ambiguous slugs; placeholder links                                | Database-driven taxonomy with breadcrumbs, prev/next week, cross-course week hubs, internal-link checks                                               |
+| Low trust                     | Few citations to study.iitm.ac.in; anonymous or sales-driven authors                                                             | Every guide cites official pages; author/reviewer bylines; corrections via feedback                                                                   |
+| Coverage gaps                 | ES week-level content "coming soon" everywhere; no real GA-eligibility or score calculator                                       | ES pages from day one; calculators driven by the cut-offs in site settings                                                                            |
 
 **Cannibalisation note:** the team's existing site (unknowniitians.com) and its
 YouTube channel already compete on PYQ and one-shot queries. Decide which
