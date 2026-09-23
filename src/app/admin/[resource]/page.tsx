@@ -16,7 +16,13 @@ import { cloudinaryImageUrl } from '@/lib/cloudinary/url'
 // Staff-only and always fresh: renders on request, never from a prefetch.
 export const instant = false
 
-const FILTER_REFERENCES: ReferenceKey[] = ['programs', 'courses', 'weeks', 'assignments']
+const FILTER_REFERENCES: ReferenceKey[] = [
+  'programs',
+  'courses',
+  'weeks',
+  'assignments',
+  'blogCategories',
+]
 const FILTER_SELECTS = new Set([
   'type',
   'kind',
