@@ -17,6 +17,8 @@ export const CONTENT_TABLES = [
   'resources',
   'faqs',
   'pages',
+  'blog_categories',
+  'blog_posts',
   'authors',
   'media',
   'site_settings',
