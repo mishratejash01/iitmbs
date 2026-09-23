@@ -34,25 +34,29 @@ export type AnalyticsContext = {
  * attached with detailed consent (DPDP): essential analytics stay
  * pseudonymous. Global Privacy Control forces essential.
  */
-export async function getAnalyticsContext(input: {
-  anonymousId?: string | null
-  sessionId?: string | null
-  consent?: string | null
-  referrer?: string | null
-  landingPath?: string | null
-  screen?: string | null
-  utm?: Partial<Record<'source' | 'medium' | 'campaign' | 'term' | 'content', string>>
-} = {}): Promise<AnalyticsContext | null> {
+export async function getAnalyticsContext(
+  input: {
+    anonymousId?: string | null
+    sessionId?: string | null
+    consent?: string | null
+    referrer?: string | null
+    landingPath?: string | null
+    screen?: string | null
+    utm?: Partial<Record<'source' | 'medium' | 'campaign' | 'term' | 'content', string>>
+  } = {},
+): Promise<AnalyticsContext | null> {
   const [headerList, cookieStore] = await Promise.all([headers(), cookies()])
   const ua = headerList.get('user-agent') ?? ''
 
-  const anonymousId = input.anonymousId ?? cookieStore.get(ANALYTICS_COOKIES.anonymousId)?.value ?? null
+  const anonymousId =
+    input.anonymousId ?? cookieStore.get(ANALYTICS_COOKIES.anonymousId)?.value ?? null
   const sessionId = input.sessionId ?? cookieStore.get(ANALYTICS_COOKIES.sessionId)?.value ?? null
   if (!anonymousId || !sessionId || !UUID.test(anonymousId) || !UUID.test(sessionId)) return null
 
   const gpc = headerList.get('sec-gpc') === '1'
   const requested = input.consent ?? cookieStore.get(ANALYTICS_COOKIES.consent)?.value
-  const consent: 'essential' | 'detailed' = !gpc && requested === 'detailed' ? 'detailed' : 'essential'
+  const consent: 'essential' | 'detailed' =
+    !gpc && requested === 'detailed' ? 'detailed' : 'essential'
   const user = consent === 'detailed' ? await getSessionUser() : null
 
   const { device, browser, os } = parseUserAgent(ua)
@@ -146,7 +150,11 @@ export async function recordServerEvents(
   if (overrides.userId !== undefined) ingest.user_id = overrides.userId
   const { error } = await db.rpc('ingest_events', {
     p_context: ingest,
-    p_events: events.map((event) => ({ name: event.name, path: event.path ?? null, props: event.props ?? {} })),
+    p_events: events.map((event) => ({
+      name: event.name,
+      path: event.path ?? null,
+      props: event.props ?? {},
+    })),
   })
   if (error) console.error('[analytics] server events failed:', error.message)
 }
