@@ -39,7 +39,9 @@ describe('processMdx', () => {
   })
 
   it('unwraps unknown components and drops expression or unknown props', async () => {
-    const result = await processMdx('<Evil onClick={x}>kept</Evil>\n\n<Callout type="tip" onClick="x">hi</Callout>')
+    const result = await processMdx(
+      '<Evil onClick={x}>kept</Evil>\n\n<Callout type="tip" onClick="x">hi</Callout>',
+    )
     // Allowed MDX components stay as JSX nodes (rendered by React), so check text.
     expect(hastToString(result.tree)).toContain('kept')
     expect(result.report?.unwrappedElements).toContain('Evil')
