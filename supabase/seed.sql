@@ -20,11 +20,33 @@ values (true, $json${
   "locale": "en-IN",
   "current_term": "2026-sep",
   "revalidate_seconds": 3600,
-  "theme": { "light": {}, "dark": {} },
-  "social": { "telegram": "", "whatsapp": "", "youtube": "", "instagram": "", "x": "", "github": "" },
-  "verification": { "google": "", "bing": "", "yandex": "" },
-  "contact": { "email": "", "grievance_officer": "" },
-  "organization": { "name": "Qualifier Hub", "legal_name": "", "logo_public_id": "", "founding_date": "2026" },
+  "theme": {
+    "light": {},
+    "dark": {}
+  },
+  "social": {
+    "telegram": "",
+    "whatsapp": "",
+    "youtube": "",
+    "instagram": "",
+    "x": "",
+    "github": ""
+  },
+  "verification": {
+    "google": "",
+    "bing": "",
+    "yandex": ""
+  },
+  "contact": {
+    "email": "",
+    "grievance_officer": ""
+  },
+  "organization": {
+    "name": "Qualifier Hub",
+    "legal_name": "",
+    "logo_public_id": "",
+    "founding_date": "2026"
+  },
   "features": {
     "login": true,
     "dark_mode": true,
@@ -55,36 +77,94 @@ values (true, $json${
   },
   "seo": {
     "title_template": "%s | {site_name}",
-    "default_title": "IITM BS Qualifier Hub — Weekly GA help, notes and exam prep",
-    "default_description": "Week-by-week help for the IIT Madras BS qualifier: graded assignment concepts and hints, notes, formula sheets and exam prep for Data Science and Electronic Systems.",
+    "default_title": "IITM BS Qualifier Hub – Weekly Graded Assignment Help, Notes & Exam Prep",
+    "default_description": "Week-by-week help for the IIT Madras BS qualifier: graded assignment hints and solutions, notes, formula sheets and exam prep for Data Science and Electronic Systems.",
     "templates": {
-      "program": "{program} Qualifier — Courses, Weeks and Exam Guide | IITM BS",
-      "course": "{course} ({short}) — Weekly Notes and Graded Assignments | IITM BS Qualifier",
-      "week": "{short} Week {n}: {week_title} — Notes, GA and Practice | IITM BS Qualifier",
-      "graded_assignment": "Week {n} Graded Assignment – {course} | IITM BS Qualifier",
-      "graded_assignment_term": "Week {n} Graded Assignment ({term}) – {course} | IITM BS Qualifier",
-      "practice_assignment": "Week {n} Practice Assignment – {course} | IITM BS Qualifier",
-      "practice_assignment_term": "Week {n} Practice Assignment ({term}) – {course} | IITM BS Qualifier",
-      "week_notes": "{short} Week {n} Notes: {week_title} | IITM BS Qualifier",
-      "note": "{note} – {short} Notes | IITM BS Qualifier",
-      "formula_sheet": "{course} Formula Sheet | IITM BS Qualifier",
-      "exam_prep": "{course} Qualifier Exam Preparation | IITM BS",
+      "program": "IITM BS {program} Qualifier – Courses, Week-wise Help & Exam Guide",
+      "program_week": "IITM BS Week {n} Graded Assignments {year} – {program}",
+      "course": "IITM {short} Notes, Graded Assignments & Exam Prep ({code})",
+      "week": "IITM {short} Week {n}: {week_title} – Notes, GA Hints & Practice",
+      "graded_assignment": "IITM {short} Week {n} Graded Assignment {year} – Hints & Solutions",
+      "graded_assignment_term": "IITM {short} Week {n} Graded Assignment ({term_label}) – Solutions",
+      "practice_assignment": "IITM {short} Week {n} Practice Assignment {year} – Explained",
+      "practice_assignment_term": "IITM {short} Week {n} Practice Assignment ({term_label})",
+      "week_notes": "IITM {short} Week {n} Notes – {week_title}",
+      "note": "{note} – IITM {short} Notes",
+      "formula_sheet": "IITM {short} Formula Sheet – {course}",
+      "exam_prep": "IITM {short} Qualifier Exam Prep – Revision & Practice",
       "page": "{page} | {site_name}"
     },
     "description_templates": {
-      "program": "Everything for the IITM BS {program} qualifier: the four courses, week-by-week topics, graded assignment help and exam preparation.",
-      "course": "{course} ({short}) for the IITM BS qualifier: week 1–{weeks} topics, graded assignment concepts and hints, notes and practice questions.",
-      "week": "IITM BS qualifier {short} week {n} — {week_title}: notes, graded assignment help, practice questions and resources.",
-      "graded_assignment": "IITM BS qualifier {course} week {n} graded assignment: concepts tested, hints for every question, and worked solutions after the deadline.",
-      "practice_assignment": "IITM BS qualifier {course} week {n} practice assignment with hints and worked explanations.",
-      "week_notes": "Clear {short} week {n} notes for the IITM BS qualifier — {week_title}, explained with examples.",
-      "note": "{note}: {short} notes for the IITM BS qualifier, explained step by step.",
-      "formula_sheet": "Every {course} formula for the IITM BS qualifier in one printable sheet.",
-      "exam_prep": "Prepare for the {course} part of the IITM BS qualifier exam: topic summary, practice sets and common mistakes."
+      "program": "Everything for the IIT Madras BS {program} qualifier: the four courses, week-by-week topics, graded assignment hints and solutions, notes and exam prep.",
+      "program_week": "IIT Madras BS {program} week {n}: graded assignment hints and solutions, notes and practice for every qualifier course in one place.",
+      "course": "IITM {short} ({course}, {code}) for the BS qualifier: week 1–{weeks} notes, graded assignment hints and solutions, formula sheet and exam prep.",
+      "week": "IITM {short} week {n} – {week_title}: clear notes, graded assignment hints, practice questions and resources for the BS qualifier.",
+      "graded_assignment": "IITM {short} week {n} graded assignment {year}: the concepts tested, a hint for every question, and step-by-step solutions after the deadline.",
+      "practice_assignment": "IITM {short} week {n} practice assignment with hints and fully explained solutions.",
+      "week_notes": "IITM {short} week {n} notes – {week_title}, explained step by step with examples for the BS qualifier.",
+      "note": "{note}: IITM {short} notes for the BS qualifier, explained step by step.",
+      "formula_sheet": "Every IITM {short} ({course}) formula from the qualifier weeks on one printable page.",
+      "exam_prep": "Prepare for the IITM {short} part of the BS qualifier exam: what to revise, practice sets and common mistakes."
     }
   },
-  "analytics": { "retention_months": 13, "timezone": "Asia/Kolkata", "heartbeat_seconds": 15 },
-  "content": { "min_words_warning": 300, "stale_days": 90, "indexnow_enabled": true }
+  "qualifier": {
+    "ga_rule": {
+      "best_of": 2,
+      "first_weeks": 3
+    },
+    "categories": [
+      {
+        "id": "general",
+        "label": "General",
+        "ga_min": 40,
+        "course_min": 40,
+        "average_min": 50
+      },
+      {
+        "id": "obc_ews",
+        "label": "OBC-NCL / EWS",
+        "ga_min": 35,
+        "course_min": 35,
+        "average_min": 45
+      },
+      {
+        "id": "sc_st_pwd",
+        "label": "SC / ST / PwD",
+        "ga_min": 30,
+        "course_min": 30,
+        "average_min": 40
+      }
+    ],
+    "course_load": [
+      {
+        "from": 0,
+        "to": 50,
+        "courses": 2
+      },
+      {
+        "from": 50,
+        "to": 70,
+        "courses": 3
+      },
+      {
+        "from": 70,
+        "to": 100,
+        "courses": 4
+      }
+    ],
+    "source_url": "https://study.iitm.ac.in/ds/admissions.html",
+    "verified_on": "2026-09-23"
+  },
+  "analytics": {
+    "retention_months": 13,
+    "timezone": "Asia/Kolkata",
+    "heartbeat_seconds": 15
+  },
+  "content": {
+    "min_words_warning": 300,
+    "stale_days": 90,
+    "indexnow_enabled": true
+  }
 }$json$::jsonb)
 on conflict (id) do nothing;
 
@@ -93,8 +173,8 @@ insert into public.authors (slug, name, headline, bio)
 values (
   'editorial-team',
   'Editorial Team',
-  'IIT Madras BS students and alumni',
-  'Our notes and walkthroughs are written and reviewed by students who have cleared the IIT Madras BS qualifier. Every page is checked against the official course syllabus.'
+  'Qualifier Hub editors',
+  'The team behind this site. We check every guide against the official IIT Madras BS pages and show the date each page was last reviewed. Edit this bio in the admin to introduce the people who write and review the content.'
 )
 on conflict (slug) do nothing;
 
@@ -366,7 +446,10 @@ The BS in Management and Data Science uses the Data Science qualifier courses, a
 
 - <RelatedLink href="/qualifier/eligibility" />
 - <RelatedLink href="/qualifier/exam-pattern" />
+- <RelatedLink href="/qualifier/syllabus" />
 - <RelatedLink href="/qualifier/timeline" />
+- <RelatedLink href="/qualifier/ga-calculator" />
+- <RelatedLink href="/qualifier/score-calculator" />
 
 ## How to use this site during the qualifier
 
@@ -679,6 +762,82 @@ $md$,
 $md$,
  '[]', 'default', null, '2026-09-23', 22, true, null,
  'Contact the team — report a mistake, request a topic, or raise a copyright or privacy question.')
+on conflict (path) where deleted_at is null do nothing;
+
+-- ── Interactive and data-driven guide pages ─────────────────────────────────
+insert into public.pages (path, title, summary, body_mdx, sources, template, author_id, last_reviewed_at, sort_order, is_published, seo_title, seo_description)
+values
+('qualifier/syllabus', 'Qualifier Syllabus: Week-by-Week Topics',
+ 'Every topic in weeks 1–4 of each qualifier course, from the official course pages, with links to notes and graded assignment help.',
+ $md$The qualifier exam covers **weeks 1–4** of each course in your programme. The topics below come from the official IIT Madras course pages; each week links to its notes, graded assignment help and practice on this site.
+
+## Data Science and Applications
+
+<SyllabusOverview program="data-science" />
+
+## Electronic Systems
+
+<SyllabusOverview program="electronic-systems" />
+
+<Callout type="info">
+Management and Data Science uses the Data Science courses, and Aeronautics and Space Technology uses the Electronic Systems courses.
+</Callout>
+
+## Related
+
+- <RelatedLink href="/qualifier/exam-pattern" />
+- <RelatedLink href="/qualifier/eligibility" />
+$md$,
+ '[{"title":"Data Science course pages — IIT Madras","url":"https://study.iitm.ac.in/ds/academics.html"},{"title":"Electronic Systems course pages — IIT Madras","url":"https://study.iitm.ac.in/es/academics.html"}]',
+ 'guide', (select id from public.authors where slug = 'editorial-team'), '2026-09-23', 5, true,
+ 'IITM BS Qualifier Syllabus 2026 – Week-wise Topics for Every Course',
+ 'The IIT Madras BS qualifier syllabus week by week: Maths 1, Stats 1, CT, English 1 and all four Electronic Systems courses, with notes for each week.'),
+
+('qualifier/ga-calculator', 'Graded Assignment Eligibility Calculator',
+ 'Enter your weekly graded assignment scores to see whether you clear the hall-ticket cut-off in every course.',
+ $md$Type your **week 1, 2 and 3 graded assignment scores** for each course. The calculator averages your best two of the first three weeks — the rule on the official admissions page — and checks it against the cut-off for your category.
+
+<EligibilityCalculator />
+
+## How the rule works
+
+Only your best two of the first three weekly scores count in each course. If you scored 70, 0 and 55, your best two are 70 and 55, so your average is 62.5%. A week you skip counts as zero, so one missed week leaves no room for a bad week.
+
+You must clear the cut-off in **every** course — a strong average in three courses does not make up for one below the line.
+
+<Callout type="info">
+Your official status is whatever the IIT Madras portal shows. This calculator is a planning aid built from the published rule.
+</Callout>
+
+## Related
+
+- <RelatedLink href="/qualifier/eligibility" />
+- <RelatedLink href="/qualifier/score-calculator" />
+$md$,
+ '[{"title":"Data Science admissions — IIT Madras","url":"https://study.iitm.ac.in/ds/admissions.html"},{"title":"Electronic Systems admissions — IIT Madras","url":"https://study.iitm.ac.in/es/admissions.html"}]',
+ 'guide', (select id from public.authors where slug = 'editorial-team'), '2026-09-23', 6, true,
+ 'IITM Qualifier GA Eligibility Calculator – Best 2 of 3 Score Checker',
+ 'Check if your IIT Madras BS graded assignment scores earn a qualifier hall ticket: best 2 of the first 3 weeks, by category, for every course.'),
+
+('qualifier/score-calculator', 'Qualifier Exam Score Calculator',
+ 'Check whether your qualifier exam marks clear the per-course and average cut-offs, and how many courses you can take in your first term.',
+ $md$Enter your **qualifier exam percentage in each course**. The calculator checks the two conditions you must meet — a minimum in every course and a minimum average — and shows how many courses your average lets you register for in your first term.
+
+<ScoreCalculator />
+
+## Two conditions, both required
+
+Clearing the average is not enough on its own, and neither is clearing every course. A General-category candidate with 90, 85, 80 and 38 averages 73.25% but still does not qualify, because one course is below 40%.
+
+## Related
+
+- <RelatedLink href="/qualifier/exam-pattern" />
+- <RelatedLink href="/qualifier/ga-calculator" />
+$md$,
+ '[{"title":"Data Science admissions — IIT Madras","url":"https://study.iitm.ac.in/ds/admissions.html"}]',
+ 'guide', (select id from public.authors where slug = 'editorial-team'), '2026-09-23', 7, true,
+ 'IITM BS Qualifier Score Calculator – Pass Check & First-Term Course Limit',
+ 'Enter your IIT Madras BS qualifier marks to check the per-course and average cut-offs for your category and how many courses you can take in term one.')
 on conflict (path) where deleted_at is null do nothing;
 
 -- ── FAQs ─────────────────────────────────────────────────────────────────────
