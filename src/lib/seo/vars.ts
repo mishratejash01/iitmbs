@@ -20,7 +20,11 @@ export function weekVars(core: CourseCore, week: WeekSummary): TemplateVars {
   return { ...courseVars(core), n: week.number, week_title: week.title }
 }
 
-export function assignmentVars(core: CourseCore, week: WeekSummary, assignment: AssignmentSummary): TemplateVars {
+export function assignmentVars(
+  core: CourseCore,
+  week: WeekSummary,
+  assignment: AssignmentSummary,
+): TemplateVars {
   return {
     ...weekVars(core, week),
     term: assignment.term,
