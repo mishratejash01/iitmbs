@@ -69,19 +69,28 @@ export async function updateProfile(_state: ActionState, formData: FormData): Pr
   return { ok: true, message: 'Profile saved.' }
 }
 
-const consentSchema = z.object({ level: z.enum(['essential', 'detailed']), adult: z.literal('on').optional() })
+const consentSchema = z.object({
+  level: z.enum(['essential', 'detailed']),
+  adult: z.literal('on').optional(),
+})
 
 export async function updateConsent(_state: ActionState, formData: FormData): Promise<ActionState> {
   const user = await requireUser('/dashboard/settings')
   const parsed = consentSchema.safeParse(Object.fromEntries(formData))
   if (!parsed.success) return { ok: false, message: 'Choose an option.' }
   if (parsed.data.level === 'detailed' && parsed.data.adult !== 'on') {
-    return { ok: false, message: 'Detailed analytics are only available if you confirm you are 18 or older.' }
+    return {
+      ok: false,
+      message: 'Detailed analytics are only available if you confirm you are 18 or older.',
+    }
   }
   const supabase = await createSupabaseServerClient()
   const { error } = await supabase
     .from('profiles')
-    .update({ analytics_consent: parsed.data.level === 'detailed', consent_updated_at: new Date().toISOString() })
+    .update({
+      analytics_consent: parsed.data.level === 'detailed',
+      consent_updated_at: new Date().toISOString(),
+    })
     .eq('id', user.id)
   if (error) return { ok: false, message: 'Could not save your choice.' }
   const cookieStore = await cookies()
@@ -92,7 +101,13 @@ export async function updateConsent(_state: ActionState, formData: FormData): Pr
     maxAge: 60 * 60 * 24 * 365,
   })
   revalidatePath('/dashboard/settings')
-  return { ok: true, message: parsed.data.level === 'detailed' ? 'Detailed analytics turned on.' : 'Only essential analytics are used now.' }
+  return {
+    ok: true,
+    message:
+      parsed.data.level === 'detailed'
+        ? 'Detailed analytics turned on.'
+        : 'Only essential analytics are used now.',
+  }
 }
 
 /**
@@ -104,9 +119,13 @@ export async function deleteAccount(_state: ActionState, formData: FormData): Pr
   if (formData.get('confirm') !== 'DELETE') return { ok: false, message: 'Type DELETE to confirm.' }
 
   const admin = getServiceClient()
-  if (!admin) return { ok: false, message: 'Account deletion is temporarily unavailable. Please contact us.' }
+  if (!admin)
+    return { ok: false, message: 'Account deletion is temporarily unavailable. Please contact us.' }
 
-  const { data: sessions } = await admin.from('sessions').select('anonymous_id').eq('user_id', user.id)
+  const { data: sessions } = await admin
+    .from('sessions')
+    .select('anonymous_id')
+    .eq('user_id', user.id)
   const anonymousIds = [...new Set((sessions ?? []).map((s) => s.anonymous_id))]
   if (anonymousIds.length > 0) {
     await Promise.all([
@@ -127,7 +146,12 @@ export async function deleteAccount(_state: ActionState, formData: FormData): Pr
   const supabase = await createSupabaseServerClient()
   await supabase.auth.signOut()
   const cookieStore = await cookies()
-  for (const name of [DISPLAY_COOKIE, ANALYTICS_COOKIES.anonymousId, ANALYTICS_COOKIES.sessionId, ANALYTICS_COOKIES.consent]) {
+  for (const name of [
+    DISPLAY_COOKIE,
+    ANALYTICS_COOKIES.anonymousId,
+    ANALYTICS_COOKIES.sessionId,
+    ANALYTICS_COOKIES.consent,
+  ]) {
     cookieStore.delete(name)
   }
   redirect('/?account=deleted')
