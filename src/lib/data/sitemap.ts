@@ -14,6 +14,7 @@ export const SITEMAP_SECTIONS = [
   'assignments',
   'notes',
   'pages',
+  'blog',
 ] as const
 export type SitemapSection = (typeof SITEMAP_SECTIONS)[number]
 
@@ -35,6 +36,8 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
     tableTag('notes'),
     tableTag('resources'),
     tableTag('pages'),
+    tableTag('blog_posts'),
+    tableTag('blog_categories'),
   )
 
   const { data, error } = await getPublicClient().rpc('get_sitemap_entries')
