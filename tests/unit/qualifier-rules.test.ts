@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { courseLoadFor, evaluateEligibility, evaluateExam, gaAverage, type QualifierRules } from '@/lib/qualifier/rules'
+import {
+  courseLoadFor,
+  evaluateEligibility,
+  evaluateExam,
+  gaAverage,
+  type QualifierRules,
+} from '@/lib/qualifier/rules'
 
 const rules: QualifierRules = {
   ga_rule: { best_of: 2, first_weeks: 3 },
@@ -51,7 +57,14 @@ describe('qualifier rules', () => {
     expect(failsOneCourse.average).toBe(73.25)
     expect(failsOneCourse.qualified).toBe(false)
 
-    const qualifies = evaluateExam([{ name: 'A', score: 55 }, { name: 'B', score: 60 }], general, rules)
+    const qualifies = evaluateExam(
+      [
+        { name: 'A', score: 55 },
+        { name: 'B', score: 60 },
+      ],
+      general,
+      rules,
+    )
     expect(qualifies.qualified).toBe(true)
     expect(qualifies.courseLoad).toBe(3)
   })
