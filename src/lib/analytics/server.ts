@@ -109,10 +109,15 @@ export async function recordSearch(input: {
   resultsCount: number
   source: 'page' | 'dialog' | 'api'
   parsed: { [key: string]: Json | undefined }
+  /**
+   * The request's analytics context. Server Components must read it before
+   * `after()` (request headers are unavailable inside it while rendering).
+   */
+  context?: AnalyticsContext | null
 }): Promise<string | null> {
   const db = getServiceClient()
   if (!db) return null
-  const context = await getAnalyticsContext()
+  const context = input.context !== undefined ? input.context : await getAnalyticsContext()
   if (context?.isBot) return null
 
   const { data, error } = await db
