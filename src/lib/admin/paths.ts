@@ -2,6 +2,8 @@ import 'server-only'
 
 import {
   assignmentPath,
+  blogCategoryPath,
+  blogPostPath,
   examPrepPath,
   formulaSheetPath,
   notePath,
@@ -38,6 +40,10 @@ export async function publicPathFor(
       return `/${row.slug}`
     case 'pages':
       return `/${row.path}`
+    case 'blog_posts':
+      return blogPostPath(String(row.slug))
+    case 'blog_categories':
+      return blogCategoryPath(String(row.slug))
     case 'courses': {
       const { data } = await db
         .from('programs')
