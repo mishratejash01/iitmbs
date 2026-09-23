@@ -56,12 +56,16 @@ export default async function AdminLayout({ children }: LayoutProps<'/admin'>) {
     <div className="flex min-h-dvh flex-col bg-bg">
       <header className="border-b border-border bg-card">
         <div className="flex min-h-14 items-center gap-3 px-4 sm:px-6">
-          <Link href="/admin" className="flex min-h-11 items-center gap-2 font-semibold text-text">
+          <Link
+            href="/admin"
+            aria-label={`${settings.site_name} admin home`}
+            className="flex min-h-11 items-center gap-2 font-semibold text-text"
+          >
             <LogoMark className="size-7" />
-            <span>{settings.site_name}</span>
+            <span className="hidden sm:inline">{settings.site_name}</span>
           </Link>
           <Badge tone="accent">{isAdmin ? 'Admin' : 'Editor'}</Badge>
-          <div className="ml-auto flex items-center gap-2 text-small">
+          <div className="ml-auto flex items-center gap-1 text-small whitespace-nowrap sm:gap-2">
             <span className="hidden text-muted sm:inline">{profile.email}</span>
             <Link
               href="/"
