@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const source = request.nextUrl.searchParams.get('source') === 'dialog' ? 'dialog' : 'api'
 
   if (query.length < 2) {
-    return Response.json({ searchId: null, directHit: null, results: [] })
+    return Response.json({ searchId: null, directHit: null, alternatives: [], results: [] })
   }
 
   const response = await searchSite(query, 12)
@@ -35,7 +35,12 @@ export async function GET(request: NextRequest) {
   })
 
   return Response.json(
-    { searchId, directHit: response.directHit, results: response.results },
+    {
+      searchId,
+      directHit: response.directHit,
+      alternatives: response.alternatives,
+      results: response.results,
+    },
     { headers: { 'Cache-Control': 'private, no-store' } },
   )
 }
