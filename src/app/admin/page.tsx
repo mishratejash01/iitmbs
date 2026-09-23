@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { AdminHeader, Panel, StatCard } from '@/components/admin/ui'
 import { ButtonLink } from '@/components/ui/button'
 import { adminDb } from '@/lib/admin/records'
+import { RESOURCES } from '@/lib/admin/resources'
 import { requireStaff } from '@/lib/auth/session'
 import { getSiteSettings } from '@/lib/data/settings'
 import { formatDateTime, formatDuration } from '@/lib/utils/dates'
@@ -15,6 +16,9 @@ const PLACEHOLDER_RELEASE = '2090-01-01T00:00:00Z'
 
 type Row = Record<string, unknown>
 
+/** Admin URL key for a table ("blog_posts" is edited at /admin/blog). */
+const adminKey = (table: string) => RESOURCES.find((r) => r.table === table)?.key ?? table
+
 export default async function AdminDashboardPage() {
   const [profile, settings, db] = await Promise.all([requireStaff(), getSiteSettings(), adminDb()])
   const now = new Date()
@@ -25,7 +29,10 @@ export default async function AdminDashboardPage() {
   const today = nowIso.slice(0, 10)
   const weekAgo = new Date(now.getTime() - 6 * 86_400_000).toISOString().slice(0, 10)
 
-  const count = async (table: 'notes' | 'assignments' | 'pages', state: 'live' | 'draft') => {
+  const count = async (
+    table: 'notes' | 'assignments' | 'pages' | 'blog_posts',
+    state: 'live' | 'draft',
+  ) => {
     const query = db.from(table).select('id', { count: 'exact', head: true }).is('deleted_at', null)
     const { count: n } = await (state === 'live'
       ? query.eq('is_published', true).lte('published_at', nowIso)
@@ -39,6 +46,8 @@ export default async function AdminDashboardPage() {
     liveAssignments,
     draftAssignments,
     livePages,
+    livePosts,
+    draftPosts,
     newFeedback,
     releases,
     scheduled,
@@ -52,6 +61,8 @@ export default async function AdminDashboardPage() {
     count('assignments', 'live'),
     count('assignments', 'draft'),
     count('pages', 'live'),
+    count('blog_posts', 'live'),
+    count('blog_posts', 'draft'),
     db
       .from('content_feedback')
       .select('id', { count: 'exact', head: true })
@@ -67,7 +78,7 @@ export default async function AdminDashboardPage() {
       .order('solutions_release_at')
       .limit(8),
     Promise.all(
-      (['notes', 'assignments', 'pages'] as const).map((table) =>
+      (['notes', 'assignments', 'pages', 'blog_posts'] as const).map((table) =>
         db
           .from(table)
           .select('id, title, published_at')
@@ -147,6 +158,12 @@ export default async function AdminDashboardPage() {
           href="/admin/assignments?status=live"
         />
         <StatCard label="Live pages" value={livePages} href="/admin/pages?status=live" />
+        <StatCard
+          label="Live blog posts"
+          value={livePosts}
+          hint={`${draftPosts} drafts`}
+          href="/admin/blog?status=live"
+        />
         <StatCard label="New feedback" value={newFeedback} href="/admin/feedback" />
         {t ? (
           <>
@@ -204,7 +221,7 @@ export default async function AdminDashboardPage() {
                   className="flex flex-wrap items-baseline justify-between gap-2 py-2.5"
                 >
                   <Link
-                    href={`/admin/${item.table}/${item.id}`}
+                    href={`/admin/${adminKey(item.table)}/${item.id}`}
                     className="font-medium text-text hover:text-accent-ink hover:underline"
                   >
                     {item.title}
