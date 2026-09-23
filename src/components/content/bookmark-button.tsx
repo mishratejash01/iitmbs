@@ -79,6 +79,7 @@ export function BookmarkButton({
       onClick={toggle}
       disabled={busy}
       aria-pressed={bookmarked}
+      data-print="hide"
       className={cn(
         'inline-flex min-h-11 items-center gap-2 rounded-control border px-3 text-small font-medium',
         bookmarked
