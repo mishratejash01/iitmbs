@@ -586,9 +586,25 @@ Weekly graded assignment deadlines are published on the course portal once the t
 The official academic calendar image and the admissions table differ on a few dates (for example, the calendar lists the December re-attempt results on 15 Dec). When in doubt, trust the date shown in your own dashboard on the IIT Madras portal.
 </Callout>
 
+## Before week 1
+
+- **Finish your application** before it closes and keep the payment receipt.
+- **Know your four courses.** Open your programme page — Data Science or Electronic Systems — and skim the week 1 topics of each course.
+- **Understand the hall-ticket rule** now, not after week 3: your best two of the first three graded assignments in every course decide whether you can sit the exam.
+
+## During the four weeks
+
+Each week follows the same rhythm: watch the lectures, try the practice and activity questions, then submit the graded assignment before its deadline. Treat weeks 1 and 2 as the attempts that count and keep week 3 as your safety net. The GA calculator shows where you stand after each week.
+
+## Before the exam
+
+The exam covers weeks 1–4 of every course. From week 4, revise with each course's formula sheet and exam-prep page, and check the pass marks so you know the score you need in your weakest course.
+
 ## Related
 
 - <RelatedLink href="/qualifier/eligibility" />
+- <RelatedLink href="/qualifier/ga-calculator" />
+- <RelatedLink href="/qualifier/syllabus" />
 - <RelatedLink href="/qualifier/exam-pattern" />
 $md$,
  '[{"title":"Data Science admissions — Important Dates","url":"https://study.iitm.ac.in/ds/admissions.html"},{"title":"Academic calendar — IIT Madras BS","url":"https://study.iitm.ac.in/ds/academic_calendar.html"}]',
@@ -611,6 +627,14 @@ The qualifier moves fast: four courses, four weeks and a graded assignment every
 ## How our content is made
 
 Everything here is either written by our team, shared with the author's permission, or a link to an official source summarised in our own words. We never copy other websites. If you believe something here is yours and was used without permission, please <ContactLink>contact us</ContactLink> and we will review it promptly.
+
+## Where to start
+
+New to the qualifier? Read <RelatedLink href="/qualifier" />, then open your programme's course pages. How we handle your data is explained in the [privacy policy](/privacy), and the rules for using the site are in the [terms of use](/terms).
+
+## Accessibility
+
+Every page is built to meet WCAG 2.2 AA: readable contrast in light and dark mode, full keyboard support, maths rendered as text rather than images, and layouts that work on a 360-pixel phone screen. If something is hard to use, please tell us.
 
 ## Accuracy
 
@@ -701,6 +725,12 @@ You can:
 
 Many qualifier applicants are still in school. If you are under 18, please use the site without signing in, or only with the consent of a parent or guardian. We do not enable detailed analytics for anyone who has not confirmed they are 18 or older.
 
+## Related
+
+- [Terms of use](/terms)
+- [About this site](/about)
+- [Contact us](/contact)
+
 ## Changes
 
 If we change this policy we will update the date at the top of this page.
@@ -742,6 +772,10 @@ To the fullest extent the law allows, we are not liable for any loss arising fro
 
 These terms are governed by the laws of India.
 
+## Privacy
+
+How we collect and use data is described in our [privacy policy](/privacy).
+
 ## Contact
 
 Questions about these terms: <ContactEmail />.
@@ -758,9 +792,9 @@ $md$,
 - **Found a mistake?** Send the page link and what should change. You can also use the "Was this helpful?" box at the bottom of any page.
 - **Want a topic covered?** Tell us the course and week.
 - **Copyright or permission concerns:** include a link to the page and to your original work. We review these quickly and remove material that was used without permission.
-- **Privacy requests:** you can download or delete your data yourself from your dashboard. For anything else, email us with the subject "Privacy".
+- **Privacy requests:** you can download or delete your data yourself from your [dashboard settings](/dashboard/settings); see the [privacy policy](/privacy) for what we store. For anything else, email us with the subject "Privacy".
 $md$,
- '[]', 'default', null, '2026-09-23', 22, true, null,
+ '[]', 'legal', null, '2026-09-23', 22, true, null,
  'Contact the team — report a mistake, request a topic, or raise a copyright or privacy question.')
 on conflict (path) where deleted_at is null do nothing;
 
@@ -770,6 +804,8 @@ values
 ('qualifier/syllabus', 'Qualifier Syllabus: Week-by-Week Topics',
  'Every topic in weeks 1–4 of each qualifier course, from the official course pages, with links to notes and graded assignment help.',
  $md$The qualifier exam covers **weeks 1–4** of each course in your programme. The topics below come from the official IIT Madras course pages; each week links to its notes, graded assignment help and practice on this site.
+
+Every programme has four qualifier courses, and each course teaches one block of topics per week. The weekly graded assignment tests that week's topics, and the exam draws on all four weeks of all four courses — so a week you rush is a week you will need to revisit before the exam.
 
 ## Data Science and Applications
 
@@ -787,10 +823,11 @@ Management and Data Science uses the Data Science courses, and Aeronautics and S
 
 - <RelatedLink href="/qualifier/exam-pattern" />
 - <RelatedLink href="/qualifier/eligibility" />
+- <RelatedLink href="/qualifier/timeline" />
 $md$,
  '[{"title":"Data Science course pages — IIT Madras","url":"https://study.iitm.ac.in/ds/academics.html"},{"title":"Electronic Systems course pages — IIT Madras","url":"https://study.iitm.ac.in/es/academics.html"}]',
  'guide', (select id from public.authors where slug = 'editorial-team'), '2026-09-23', 5, true,
- 'IITM BS Qualifier Syllabus 2026 – Week-wise Topics for Every Course',
+ 'IITM BS Qualifier Syllabus 2026 – Week-wise Topics',
  'The IIT Madras BS qualifier syllabus week by week: Maths 1, Stats 1, CT, English 1 and all four Electronic Systems courses, with notes for each week.'),
 
 ('qualifier/ga-calculator', 'Graded Assignment Eligibility Calculator',
@@ -805,18 +842,36 @@ Only your best two of the first three weekly scores count in each course. If you
 
 You must clear the cut-off in **every** course — a strong average in three courses does not make up for one below the line.
 
+## A worked example
+
+A General-category Data Science student (cut-off 40% in each course) scores:
+
+| Course | Week 1 | Week 2 | Week 3 | Best two | Average | Clears 40%? |
+|---|---|---|---|---|---|---|
+| Maths 1 | 80 | 45 | 60 | 80 and 60 | 70% | Yes |
+| Stats 1 | 30 | 50 | 0 | 50 and 30 | 40% | Yes, just |
+| CT | 100 | 0 | 0 | 100 and 0 | 50% | Yes |
+| English 1 | 35 | 40 | 30 | 40 and 35 | 37.5% | No |
+
+Three strong courses are not enough: English 1 misses the line by 2.5 percentage points, so this student would not get a hall ticket. Planning backwards from the rule helps:
+
+- **Weeks 1 and 2 are your real attempts.** Week 3 is the safety net that replaces one bad week — not a second chance at two.
+- **A zero in week 1 makes weeks 2 and 3 count in full.** Both then need to average at least the cut-off.
+- **Check the weakest course first.** The rule is decided by your lowest course, not your best one.
+
 <Callout type="info">
-Your official status is whatever the IIT Madras portal shows. This calculator is a planning aid built from the published rule.
+Your official status is whatever the IIT Madras portal shows. This calculator is a planning aid built from the published rule; the Student Handbook also describes a two-stage version for the first exam of the term, explained on the eligibility page.
 </Callout>
 
 ## Related
 
 - <RelatedLink href="/qualifier/eligibility" />
 - <RelatedLink href="/qualifier/score-calculator" />
+- <RelatedLink href="/qualifier/timeline" />
 $md$,
  '[{"title":"Data Science admissions — IIT Madras","url":"https://study.iitm.ac.in/ds/admissions.html"},{"title":"Electronic Systems admissions — IIT Madras","url":"https://study.iitm.ac.in/es/admissions.html"}]',
  'guide', (select id from public.authors where slug = 'editorial-team'), '2026-09-23', 6, true,
- 'IITM Qualifier GA Eligibility Calculator – Best 2 of 3 Score Checker',
+ 'IITM Qualifier GA Calculator – Best 2 of 3 Eligibility Check',
  'Check if your IIT Madras BS graded assignment scores earn a qualifier hall ticket: best 2 of the first 3 weeks, by category, for every course.'),
 
 ('qualifier/score-calculator', 'Qualifier Exam Score Calculator',
@@ -829,14 +884,37 @@ $md$,
 
 Clearing the average is not enough on its own, and neither is clearing every course. A General-category candidate with 90, 85, 80 and 38 averages 73.25% but still does not qualify, because one course is below 40%.
 
+## How the average is worked out
+
+Your qualifier average is the simple mean of your four course percentages — every course carries the same weight. With 72, 58, 64 and 81:
+
+$$
+\frac{72 + 58 + 64 + 81}{4} = \frac{275}{4} = 68.75\%
+$$
+
+For a General-category candidate that clears both conditions: every course is above 40% and the average is above 50%.
+
+## What your average unlocks
+
+Clearing the qualifier admits you to the Foundation level, and your average sets how many courses you may take in your first term — the calculator shows the number for your score, and the full table is on the exam pattern page. A higher average gives you more room to plan your first term, so it is worth aiming beyond the bare cut-off.
+
+## If you fall short
+
+If you had a hall ticket but did not clear the exam, you can **re-attempt in the same term** without redoing the graded assignments. Use your course-by-course result to decide where to spend your revision time — the course below its minimum matters more than raising a strong one.
+
+## Does the qualifier score count later?
+
+It can. If you register for courses in the same term as your qualifier, your qualifier exam score in a course counts as that course's first quiz (Quiz 1).
+
 ## Related
 
 - <RelatedLink href="/qualifier/exam-pattern" />
 - <RelatedLink href="/qualifier/ga-calculator" />
+- <RelatedLink href="/qualifier/syllabus" />
 $md$,
  '[{"title":"Data Science admissions — IIT Madras","url":"https://study.iitm.ac.in/ds/admissions.html"}]',
  'guide', (select id from public.authors where slug = 'editorial-team'), '2026-09-23', 7, true,
- 'IITM BS Qualifier Score Calculator – Pass Check & First-Term Course Limit',
+ 'IITM Qualifier Score Calculator – Pass Check & Course Limit',
  'Enter your IIT Madras BS qualifier marks to check the per-course and average cut-offs for your category and how many courses you can take in term one.')
 on conflict (path) where deleted_at is null do nothing;
 
