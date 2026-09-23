@@ -10,7 +10,12 @@ import { cn } from '@/lib/utils/cn'
 import { Highlight } from './highlight'
 
 type Result = { path: string; title: string; subtitle: string | null; snippet: string }
-type Response = { searchId: string | null; directHit: { path: string; label: string } | null; results: Result[] }
+type Response = {
+  searchId: string | null
+  directHit: { path: string; label: string } | null
+  alternatives?: Array<{ path: string; label: string }>
+  results: Result[]
+}
 
 const RECENT_KEY = 'qh_recent_searches'
 
@@ -38,7 +43,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
   const router = useRouter()
   const listId = useId()
   const [query, setQuery] = useState('')
-  const [data, setData] = useState<Response | null>(null)
+  const [fetched, setData] = useState<Response | null>(null)
   const [loading, setLoading] = useState(false)
   const [active, setActive] = useState(0)
   const [recent, setRecent] = useState<string[]>([])
@@ -57,15 +62,14 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
 
   useEffect(() => {
     const q = query.trim()
-    if (q.length < 2) {
-      setData(null)
-      return
-    }
+    if (q.length < 2) return
     const controller = new AbortController()
     const timer = setTimeout(async () => {
       setLoading(true)
       try {
-        const res = await fetch(`/api/search?source=dialog&q=${encodeURIComponent(q)}`, { signal: controller.signal })
+        const res = await fetch(`/api/search?source=dialog&q=${encodeURIComponent(q)}`, {
+          signal: controller.signal,
+        })
         if (!res.ok) {
           track('api_error', { endpoint: '/api/search', status: res.status })
           return
@@ -84,18 +88,48 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
     }
   }, [query])
 
-  const items: Array<{ path: string; label: string; subtitle?: string | null; snippet?: string; kind: 'direct' | 'result' }> = [
-    ...(data?.directHit ? [{ path: data.directHit.path, label: data.directHit.label, kind: 'direct' as const }] : []),
+  // Results for the last query; hidden (not cleared) when the query gets too short.
+  const data = query.trim().length >= 2 ? fetched : null
+
+  const items: Array<{
+    path: string
+    label: string
+    subtitle?: string | null
+    snippet?: string
+    kind: 'direct' | 'result'
+  }> = [
+    ...(data?.directHit
+      ? [{ path: data.directHit.path, label: data.directHit.label, kind: 'direct' as const }]
+      : []),
+    ...(data?.alternatives ?? []).map((hit) => ({
+      path: hit.path,
+      label: hit.label,
+      kind: 'direct' as const,
+    })),
     ...(data?.results ?? [])
-      .filter((r) => r.path !== data?.directHit?.path)
-      .map((r) => ({ path: r.path, label: r.title, subtitle: r.subtitle, snippet: r.snippet, kind: 'result' as const })),
+      .filter(
+        (r) =>
+          r.path !== data?.directHit?.path && !data?.alternatives?.some((a) => a.path === r.path),
+      )
+      .map((r) => ({
+        path: r.path,
+        label: r.title,
+        subtitle: r.subtitle,
+        snippet: r.snippet,
+        kind: 'result' as const,
+      })),
   ]
 
   const go = useCallback(
     (path: string, position: number) => {
       const q = query.trim()
       if (q) saveRecent(q)
-      if (data?.searchId) track('search_result_click', { search_id: data.searchId, position, target: path }, { immediate: true })
+      if (data?.searchId)
+        track(
+          'search_result_click',
+          { search_id: data.searchId, position, target: path },
+          { immediate: true },
+        )
       onClose()
       router.push(path)
     },
@@ -161,7 +195,9 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
           <div className="px-2 py-3">
             {recent.length > 0 ? (
               <>
-                <p className="px-1 pb-2 text-xs font-semibold tracking-wide text-muted uppercase">Recent</p>
+                <p className="px-1 pb-2 text-xs font-semibold tracking-wide text-muted uppercase">
+                  Recent
+                </p>
                 <ul>
                   {recent.map((q) => (
                     <li key={q}>
@@ -179,7 +215,8 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
               </>
             ) : (
               <p className="px-1 text-small text-muted">
-                Search by course, week or topic — for example “stats 1 week 3”, “ct notes” or “eligibility”.
+                Search by course, week or topic — for example “stats 1 week 3”, “ct notes” or
+                “eligibility”.
               </p>
             )}
           </div>
@@ -199,7 +236,10 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                 )}
               >
                 {item.kind === 'direct' ? (
-                  <ArrowRight aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-ink" />
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-accent-ink"
+                  />
                 ) : (
                   <FileText aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted" />
                 )}
@@ -207,14 +247,21 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                   <p className="truncate text-small font-medium text-text">
                     {item.kind === 'direct' ? `Go to ${item.label}` : item.label}
                   </p>
-                  {item.subtitle ? <p className="truncate text-xs text-muted">{item.subtitle}</p> : null}
+                  {item.subtitle ? (
+                    <p className="truncate text-xs text-muted">{item.subtitle}</p>
+                  ) : null}
                   {item.snippet ? (
                     <p className="mt-0.5 line-clamp-2 text-xs text-muted">
                       <Highlight text={item.snippet} />
                     </p>
                   ) : null}
                 </div>
-                {index === active ? <CornerDownLeft aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted" /> : null}
+                {index === active ? (
+                  <CornerDownLeft
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0 text-muted"
+                  />
+                ) : null}
               </li>
             ))}
             {!loading && data && items.length === 0 ? (
