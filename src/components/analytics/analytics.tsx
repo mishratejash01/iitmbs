@@ -26,6 +26,7 @@ const HISTORY_ENTITY: Record<string, string> = {
   formula_sheet: 'note',
   exam_prep: 'note',
   guide: 'page',
+  blog_post: 'page',
 }
 
 const SEARCH_ENGINES = /(^|\.)(google\.|bing\.com$|duckduckgo\.com$|yahoo\.|yandex\.|ecosia\.org$)/
