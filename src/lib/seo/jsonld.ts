@@ -1,4 +1,5 @@
 import type {
+  BlogPosting,
   BreadcrumbList,
   Course,
   FAQPage,
@@ -150,6 +151,41 @@ export function learningResourceJsonLd(input: {
     ...(input.partOf
       ? { isPartOf: { '@type': 'Course', name: input.partOf.name, url: url(input.partOf.path) } }
       : {}),
+  }
+}
+
+/** A blog post. The social card doubles as the article image. */
+export function blogPostingJsonLd(input: {
+  headline: string
+  description: string
+  path: string
+  section: string
+  keywords: string[]
+  wordCount: number
+  author?: AuthorRef | null
+  reviewer?: AuthorRef | null
+  datePublished?: string | null
+  dateModified?: string | null
+}): WithContext<BlogPosting> {
+  const author = person(input.author ?? null)
+  const reviewer = person(input.reviewer ?? null)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: truncate(input.headline, 110),
+    description: truncate(input.description, 300),
+    url: url(input.path),
+    mainEntityOfPage: url(input.path),
+    image: url(`/og${input.path}`),
+    inLanguage: 'en-IN',
+    articleSection: input.section,
+    ...(input.keywords.length > 0 ? { keywords: input.keywords.slice(0, 20).join(', ') } : {}),
+    ...(input.wordCount > 0 ? { wordCount: input.wordCount } : {}),
+    ...(author ? { author } : { author: { '@id': orgId() } as Organization }),
+    ...(reviewer ? { reviewedBy: reviewer } : {}),
+    publisher: { '@id': orgId() } as Organization,
+    ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+    ...(input.dateModified ? { dateModified: input.dateModified } : {}),
   }
 }
 
