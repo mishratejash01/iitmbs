@@ -4,7 +4,11 @@ import Link from 'next/link'
 import { Disclosure } from '@/components/ui/disclosure'
 import type { ProgramRef } from '@/lib/data/types'
 
-export function ProgrammeSwitcher({ programs }: { programs: Array<ProgramRef & { description: string | null }> }) {
+export function ProgrammeSwitcher({
+  programs,
+}: {
+  programs: Array<ProgramRef & { description: string | null }>
+}) {
   if (programs.length === 0) return null
   return (
     <Disclosure
@@ -13,7 +17,10 @@ export function ProgrammeSwitcher({ programs }: { programs: Array<ProgramRef & {
       summary={
         <>
           Programmes
-          <ChevronDown aria-hidden="true" className="size-4 transition-transform group-open:rotate-180" />
+          <ChevronDown
+            aria-hidden="true"
+            className="size-4 transition-transform group-open:rotate-180"
+          />
         </>
       }
       panelClassName="absolute left-0 top-full z-50 mt-2 w-80 rounded-card border border-border bg-card p-2 shadow-card"
