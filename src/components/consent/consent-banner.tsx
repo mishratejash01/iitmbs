@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useId, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useId, useState, useSyncExternalStore } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { getConsent, readCookie, track, writeCookie } from '@/lib/analytics/client'
@@ -14,39 +15,49 @@ import { OPEN_CONSENT_EVENT } from './consent-settings-button'
  * pseudonymous and always on; detailed analytics link activity to an account
  * and need an explicit opt-in from someone who confirms they are 18+.
  */
+// Browser-only values read without an effect; the server render assumes a
+// choice was already made so the banner never flashes during hydration.
+const subscribeNever = () => () => {}
+const readGpc = () =>
+  Boolean((navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl)
+const readHasChoice = () => Boolean(readCookie(ANALYTICS_COOKIES.consent))
+
 export function ConsentBanner() {
-  const [open, setOpen] = useState(false)
+  const [override, setOverride] = useState<'open' | 'closed' | null>(null)
   const [choosingDetailed, setChoosingDetailed] = useState(false)
   const [adult, setAdult] = useState(false)
-  const [gpc, setGpc] = useState(false)
+  const gpc = useSyncExternalStore(subscribeNever, readGpc, () => false)
+  const hasChoice = useSyncExternalStore(subscribeNever, readHasChoice, () => true)
+  const open = override ? override === 'open' : !hasChoice
   const checkboxId = useId()
+  const pathname = usePathname()
 
   useEffect(() => {
-    setGpc(Boolean((navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl))
-    if (!readCookie(ANALYTICS_COOKIES.consent)) setOpen(true)
     const reopen = () => {
       setChoosingDetailed(false)
       setAdult(false)
-      setOpen(true)
+      setOverride('open')
     }
     window.addEventListener(OPEN_CONSENT_EVENT, reopen)
     return () => window.removeEventListener(OPEN_CONSENT_EVENT, reopen)
   }, [])
 
   const save = (level: 'essential' | 'detailed') => {
+    const firstChoice = !readHasChoice()
     const previous = getConsent()
     writeCookie(ANALYTICS_COOKIES.consent, level, 60 * 60 * 24 * 365)
-    if (previous !== level || !readCookie(ANALYTICS_COOKIES.consent)) track('consent_update', { level })
+    if (firstChoice || previous !== level) track('consent_update', { level })
     // Persist on the profile when signed in (ignored otherwise).
     void fetch('/api/me/consent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ level, adult: level === 'detailed' ? adult : false }),
     }).catch(() => undefined)
-    setOpen(false)
+    setOverride('closed')
   }
 
-  if (!open) return null
+  // The admin is not tracked, so there is nothing to choose there.
+  if (!open || pathname.startsWith('/admin')) return null
 
   return (
     <section
@@ -56,8 +67,11 @@ export function ConsentBanner() {
     >
       <p className="text-small font-semibold text-text">Your analytics choice</p>
       <p className="mt-1 text-small text-muted">
-        We use essential, pseudonymous analytics to see which pages help students — never your name, email or IP
-        address. {gpc ? 'Your browser sends Global Privacy Control, so that is all we use.' : 'You can also allow detailed analytics to power your reading history and progress.'}{' '}
+        We use essential, pseudonymous analytics to see which pages help students — never your name,
+        email or IP address.{' '}
+        {gpc
+          ? 'Your browser sends Global Privacy Control, so that is all we use.'
+          : 'You can also allow detailed analytics to power your reading history and progress.'}{' '}
         <Link href="/privacy" className="font-medium text-accent-ink underline">
           Privacy policy
         </Link>
