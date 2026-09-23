@@ -1,11 +1,20 @@
 import { Menu, Search, X } from 'lucide-react'
 import Link from 'next/link'
 
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Disclosure } from '@/components/ui/disclosure'
 import type { NavItem } from '@/lib/data/navigation'
 import type { ProgramRef } from '@/lib/data/types'
 
-export function MobileMenu({ items, programs }: { items: NavItem[]; programs: ProgramRef[] }) {
+export function MobileMenu({
+  items,
+  programs,
+  themeToggle = false,
+}: {
+  items: NavItem[]
+  programs: ProgramRef[]
+  themeToggle?: boolean
+}) {
   const linkClass =
     'flex min-h-12 items-center rounded-control px-3 text-body font-medium text-text hover:bg-surface'
   return (
@@ -69,6 +78,12 @@ export function MobileMenu({ items, programs }: { items: NavItem[]; programs: Pr
             </Link>
           </li>
         </ul>
+        {themeToggle ? (
+          <div className="mt-4 flex items-center justify-between rounded-control border border-border px-3 py-1 sm:hidden">
+            <span className="text-body font-medium text-text">Appearance</span>
+            <ThemeToggle />
+          </div>
+        ) : null}
       </nav>
     </Disclosure>
   )
