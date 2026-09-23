@@ -4,5 +4,7 @@
  * each navigation.
  */
 export function PageContext({ type, entityId }: { type: string; entityId?: string | null }) {
-  return <div hidden data-page-context="" data-page-type={type} data-entity-id={entityId ?? undefined} />
+  return (
+    <div hidden data-page-context="" data-page-type={type} data-entity-id={entityId ?? undefined} />
+  )
 }
