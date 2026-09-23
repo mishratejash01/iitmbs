@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { PageContext } from '@/components/analytics/page-context'
+import { PostGrid } from '@/components/blog/post-card'
 import { DeadlineWidget } from '@/components/content/deadline-widget'
 import { FaqAccordion } from '@/components/content/faq-accordion'
 import { LinkList } from '@/components/content/link-list'
@@ -10,6 +11,7 @@ import { ProgramCard } from '@/components/content/program-card'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Button } from '@/components/ui/button'
 import { SectionHeading } from '@/components/ui/section-heading'
+import { getBlogPostIndex } from '@/lib/data/blog'
 import { getGlobalFaqs } from '@/lib/data/faqs'
 import { getLinkIndex } from '@/lib/data/links'
 import { getNavItems } from '@/lib/data/navigation'
@@ -17,6 +19,7 @@ import { getChildPages } from '@/lib/data/pages'
 import { getProgramPage, getPrograms } from '@/lib/data/programs'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { BLOG_PATH } from '@/lib/routes'
 import { getUpcomingDeadlines } from '@/lib/data/upcoming'
 import { organizationJsonLd, websiteJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
@@ -33,15 +36,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [settings, programs, quickLinks, deadlines, guides, faqs, linkIndex] = await Promise.all([
-    getSiteSettings(),
-    getPrograms(),
-    getNavItems('quick'),
-    getUpcomingDeadlines(),
-    getChildPages('qualifier'),
-    getGlobalFaqs(),
-    getLinkIndex(),
-  ])
+  const [settings, programs, quickLinks, deadlines, guides, faqs, linkIndex, posts] =
+    await Promise.all([
+      getSiteSettings(),
+      getPrograms(),
+      getNavItems('quick'),
+      getUpcomingDeadlines(),
+      getChildPages('qualifier'),
+      getGlobalFaqs(),
+      getLinkIndex(),
+      getBlogPostIndex(),
+    ])
   const programPages = (await Promise.all(programs.map((p) => getProgramPage(p.slug)))).filter(
     (page): page is NonNullable<typeof page> => page !== null,
   )
@@ -49,6 +54,8 @@ export default async function HomePage() {
     const entry = linkIndex[path]
     return entry ? [{ path, title: entry.title, summary: entry.summary }] : []
   })
+
+  const featuredPosts = posts.filter((post) => post.isFeatured).slice(0, 6)
 
   const heroTitle = settings.home.hero_title || settings.tagline || settings.site_name
   const heroSubtitle = settings.home.hero_subtitle || settings.description
@@ -124,6 +131,18 @@ export default async function HomePage() {
                 <ProgramCard key={page.program.id} data={page} />
               ))}
             </div>
+          </section>
+        ) : null}
+
+        {featuredPosts.length > 0 ? (
+          <section aria-labelledby="from-the-blog">
+            <SectionHeading
+              id="from-the-blog"
+              title="From the blog"
+              description="Plain answers about admissions, fees, exams, rules and careers."
+              action={{ href: BLOG_PATH, label: `All ${posts.length} posts` }}
+            />
+            <PostGrid posts={featuredPosts} label="Featured blog posts" />
           </section>
         ) : null}
 
