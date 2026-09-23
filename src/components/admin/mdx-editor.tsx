@@ -1,7 +1,6 @@
 'use client'
 
 import 'katex/dist/katex.min.css'
-import './admin.css'
 
 import { useEffect, useId, useRef, useState, useTransition, type KeyboardEvent } from 'react'
 
