@@ -18,20 +18,48 @@ type Row = Record<string, unknown>
 type Issue = { key: string; resource: string; id: string; title: string; detail?: string }
 
 const TABLES = [
-  { resource: 'programs', body: 'intro_mdx', columns: 'id, name, slug, description' },
-  { resource: 'courses', body: 'intro_mdx', columns: 'id, name, slug, description, program_id' },
-  { resource: 'weeks', body: 'intro_mdx', columns: 'id, title, summary, course_id' },
+  {
+    resource: 'programs',
+    table: 'programs',
+    body: 'intro_mdx',
+    columns: 'id, name, slug, description',
+  },
+  {
+    resource: 'courses',
+    table: 'courses',
+    body: 'intro_mdx',
+    columns: 'id, name, slug, description, program_id',
+  },
+  {
+    resource: 'weeks',
+    table: 'weeks',
+    body: 'intro_mdx',
+    columns: 'id, title, summary, course_id',
+  },
   {
     resource: 'assignments',
+    table: 'assignments',
     body: 'intro_mdx',
     columns: 'id, title, summary, type, author_id, course_id',
   },
   {
     resource: 'notes',
+    table: 'notes',
     body: 'body_mdx',
     columns: 'id, title, slug, summary, word_count, author_id, kind, course_id',
   },
-  { resource: 'pages', body: 'body_mdx', columns: 'id, title, path, summary, template' },
+  {
+    resource: 'pages',
+    table: 'pages',
+    body: 'body_mdx',
+    columns: 'id, title, path, summary, template',
+  },
+  {
+    resource: 'blog',
+    table: 'blog_posts',
+    body: 'body_mdx',
+    columns: 'id, title, slug, summary, word_count, author_id, program_id',
+  },
 ] as const
 
 const PLACEHOLDER_YEAR = 2090
@@ -51,7 +79,7 @@ export default async function SeoReportPage() {
     TABLES.map(async (table) => {
       const columns: string = `${table.columns}, ${table.body}, seo_title, seo_description, noindex, updated_at`
       const { data } = await db
-        .from(table.resource)
+        .from(table.table)
         .select(columns)
         .is('deleted_at', null)
         .eq('is_published', true)
@@ -91,13 +119,14 @@ export default async function SeoReportPage() {
           detail: `${str(row.seo_description).length} characters`,
         })
       }
-      const words = resource === 'notes' ? Number(row.word_count ?? 0) : substantiveWords(bodyText)
-      const needsWords = resource === 'notes' || (resource === 'pages' && row.template !== 'legal')
+      const counted = resource === 'notes' || resource === 'blog'
+      const words = counted ? Number(row.word_count ?? 0) : substantiveWords(bodyText)
+      const needsWords = counted || (resource === 'pages' && row.template !== 'legal')
       if (needsWords && words < settings.content.min_words_warning) {
         issues.push({ ...base, key: 'thin', detail: `${words} words` })
       }
       if (
-        (resource === 'notes' || resource === 'pages') &&
+        (resource === 'notes' || resource === 'pages' || resource === 'blog') &&
         bodyText.trim() &&
         !hasInternalLink(bodyText)
       ) {
