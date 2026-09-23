@@ -28,12 +28,19 @@ export async function SiteFooter({ settings }: { settings: SiteSettings }) {
             <LogoMark className="size-7" />
             {settings.site_name}
           </div>
-          {settings.tagline ? <p className="mt-3 text-small text-muted">{settings.tagline}</p> : null}
+          {settings.tagline ? (
+            <p className="mt-3 text-small text-muted">{settings.tagline}</p>
+          ) : null}
           {social.length > 0 ? (
             <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-small">
               {social.map(([key, url]) => (
                 <li key={key}>
-                  <a href={url} target="_blank" rel="noopener noreferrer" className="text-muted hover:text-accent-ink">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted hover:text-accent-ink"
+                  >
                     {SOCIAL_LABELS[key] ?? key}
                   </a>
                 </li>
@@ -65,8 +72,8 @@ export async function SiteFooter({ settings }: { settings: SiteSettings }) {
       <div className="border-t border-border">
         <div className="container-page flex flex-col gap-2 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {year} {settings.organization.legal_name || settings.site_name}. An independent study resource — not
-            affiliated with or endorsed by IIT Madras.
+            © {year} {settings.organization.legal_name || settings.site_name}. An independent study
+            resource — not affiliated with or endorsed by IIT Madras.
           </p>
           <ConsentSettingsButton className="self-start text-xs text-muted underline-offset-2 hover:text-text hover:underline sm:self-auto" />
         </div>
