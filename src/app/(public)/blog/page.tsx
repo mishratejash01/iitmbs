@@ -15,6 +15,9 @@ import { redirectOrNotFound } from '@/lib/data/redirects'
 import { BLOG_PATH } from '@/lib/routes'
 
 const FEATURED_LIMIT = 6
+// Per topic on this page; the category page lists the rest. Keeps the page (and
+// its prefetch from the site header) small however many posts there are.
+const TOPIC_LIMIT = 6
 
 export async function generateMetadata(): Promise<Metadata> {
   const metadata = await cmsMetadata('blog')
@@ -29,8 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * The blog index. Its title, intro and SEO come from the CMS page "blog";
- * below it, featured posts and every category with all of its posts, so each
- * post is one click from here.
+ * below it, featured posts and the first posts of every category, each
+ * linking to its category page with the full list.
  */
 export default async function BlogIndexPage() {
   const [page, categories, posts] = await Promise.all([
@@ -94,10 +97,10 @@ export default async function BlogIndexPage() {
                 id={`${category.slug}-heading`}
                 title={category.name}
                 description={category.description}
-                action={{ href: category.path, label: 'View all' }}
+                action={{ href: category.path, label: `View all ${inCategory.length}` }}
               />
               <LinkList
-                items={inCategory.map(({ path, title }) => ({ path, title }))}
+                items={inCategory.slice(0, TOPIC_LIMIT).map(({ path, title }) => ({ path, title }))}
                 label={category.name}
               />
             </section>
