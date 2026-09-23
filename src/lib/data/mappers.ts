@@ -16,7 +16,9 @@ type SeoRow = {
   schema_overrides: Json
 }
 
-export function isJsonObject(value: Json | undefined): value is { [key: string]: Json | undefined } {
+export function isJsonObject(
+  value: Json | undefined,
+): value is { [key: string]: Json | undefined } {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
@@ -32,8 +34,19 @@ export function toSeo(row: SeoRow): SeoFields {
   }
 }
 
-export function toProgramRef(row: { id: string; slug: string; name: string; short_name: string }): ProgramRef {
-  return { id: row.id, slug: row.slug, name: row.name, shortName: row.short_name, path: `/${row.slug}` }
+export function toProgramRef(row: {
+  id: string
+  slug: string
+  name: string
+  short_name: string
+}): ProgramRef {
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    shortName: row.short_name,
+    path: `/${row.slug}`,
+  }
 }
 
 export function toFaq(row: { id: string; question: string; answer_mdx: string }): Faq {
