@@ -7,7 +7,14 @@ import { getPublicClient } from '@/lib/supabase/public'
 
 import { contentCacheProfile } from './settings'
 
-export const SITEMAP_SECTIONS = ['programs', 'courses', 'weeks', 'assignments', 'notes', 'pages'] as const
+export const SITEMAP_SECTIONS = [
+  'programs',
+  'courses',
+  'weeks',
+  'assignments',
+  'notes',
+  'pages',
+] as const
 export type SitemapSection = (typeof SITEMAP_SECTIONS)[number]
 
 export type SitemapEntry = { section: SitemapSection; path: string; lastModified: string }
