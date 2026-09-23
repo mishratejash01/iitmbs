@@ -23,7 +23,9 @@ export async function SyllabusOverview({ program }: { program?: string }) {
             <h3 id={`syllabus-${course.slug}`} className="!mt-0 text-h3 font-semibold">
               <Link href={course.path}>
                 {course.name}
-                {course.code ? <span className="ml-2 text-small font-normal text-muted">{course.code}</span> : null}
+                {course.code ? (
+                  <span className="ml-2 text-small font-normal text-muted">{course.code}</span>
+                ) : null}
               </Link>
             </h3>
             <ol className="mt-3 !list-none space-y-3 !pl-0">
