@@ -3,11 +3,17 @@ import { z } from 'zod'
 import { getSessionUser } from '@/lib/auth/session'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-const pathSchema = z.string().max(500).regex(/^\/[^\s]*$/)
+const pathSchema = z
+  .string()
+  .max(500)
+  .regex(/^\/[^\s]*$/)
 const bodySchema = z.object({
   path: pathSchema,
   title: z.string().trim().min(1).max(200),
-  entity_type: z.enum(['program', 'course', 'week', 'assignment', 'note', 'page', 'resource']).nullable().optional(),
+  entity_type: z
+    .enum(['program', 'course', 'week', 'assignment', 'note', 'page', 'resource'])
+    .nullable()
+    .optional(),
   entity_id: z.uuid().nullable().optional(),
 })
 
@@ -17,7 +23,8 @@ const noStore = { 'Cache-Control': 'private, no-store' }
 export async function GET(request: Request) {
   const path = pathSchema.safeParse(new URL(request.url).searchParams.get('path'))
   const user = await getSessionUser()
-  if (!user || !path.success) return Response.json({ bookmarked: false, signedIn: Boolean(user) }, { headers: noStore })
+  if (!user || !path.success)
+    return Response.json({ bookmarked: false, signedIn: Boolean(user) }, { headers: noStore })
   const supabase = await createSupabaseServerClient()
   const { data } = await supabase.from('bookmarks').select('id').eq('path', path.data).maybeSingle()
   return Response.json({ bookmarked: Boolean(data), signedIn: true }, { headers: noStore })
