@@ -32,7 +32,9 @@ export type UploadSignature = {
  * downloads use the "authenticated" delivery type, so they can only be
  * fetched through short-lived signed URLs from /api/download.
  */
-export function createUploadSignature(options: { folder?: string; type?: 'upload' | 'authenticated' } = {}): UploadSignature {
+export function createUploadSignature(
+  options: { folder?: string; type?: 'upload' | 'authenticated' } = {},
+): UploadSignature {
   if (!features.cloudinary) throw new Error('Cloudinary is not configured')
   const timestamp = Math.floor(Date.now() / 1000)
   const folder = [env.cloudinary.uploadFolder, options.folder].filter(Boolean).join('/')
@@ -68,7 +70,8 @@ export function privateDownloadUrl(input: {
   }
   const signature = signParams(params)
   const query = new URLSearchParams()
-  for (const [key, value] of Object.entries(params)) if (value !== undefined) query.set(key, String(value))
+  for (const [key, value] of Object.entries(params))
+    if (value !== undefined) query.set(key, String(value))
   query.set('api_key', env.cloudinary.apiKey!)
   query.set('signature', signature)
   return `https://api.cloudinary.com/v1_1/${env.cloudinary.cloudName}/${input.resourceType}/download?${query}`
