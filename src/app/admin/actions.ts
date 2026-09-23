@@ -346,15 +346,21 @@ export async function setFeedbackStatus(id: string, status: 'new' | 'reviewed' |
 
 export async function refreshRollups(formData: FormData) {
   if (!(await staff(true))) return
-  const days = Math.min(400, Math.max(1, Number(formData.get('days') ?? 30)))
-  const db = await adminDb()
-  const to = new Date()
-  const from = new Date(Date.now() - (days - 1) * 86_400_000)
-  await db.rpc('admin_refresh_rollups', {
-    p_from: from.toISOString().slice(0, 10),
-    p_to: to.toISOString().slice(0, 10),
-  })
-  redirect('/admin/analytics?refreshed=1')
+  const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+  const from = day.safeParse(formData.get('from'))
+  const to = day.safeParse(formData.get('to'))
+  const back = String(formData.get('back') ?? '')
+  const target = back.startsWith('/admin/analytics') ? back : '/admin/analytics'
+  let status = 'refreshed=1'
+  if (from.success && to.success && from.data <= to.data) {
+    // Recomputes the daily rollups for the range shown (the RPC caps it at 400 days).
+    const db = await adminDb()
+    const { error } = await db.rpc('admin_refresh_rollups', { p_from: from.data, p_to: to.data })
+    if (error) status = 'refresh_error=1'
+  } else {
+    status = 'refresh_error=1'
+  }
+  redirect(`${target}${target.includes('?') ? '&' : '?'}${status}`)
 }
 
 // ── Bulk import ──────────────────────────────────────────────────────────────
