@@ -7,7 +7,13 @@ import { cn } from '@/lib/utils/cn'
 
 import { categoryOptions, ScoreInput, Select, Verdict, type CalculatorProgram } from './shared'
 
-export function ScoreCalculator({ programs, rules }: { programs: CalculatorProgram[]; rules: QualifierRules }) {
+export function ScoreCalculator({
+  programs,
+  rules,
+}: {
+  programs: CalculatorProgram[]
+  rules: QualifierRules
+}) {
   const [programSlug, setProgramSlug] = useState(programs[0]?.slug ?? '')
   const [categoryId, setCategoryId] = useState(rules.categories[0]?.id ?? '')
   const [scores, setScores] = useState<Record<string, string>>({})
@@ -40,7 +46,12 @@ export function ScoreCalculator({ programs, rules }: { programs: CalculatorProgr
             options={programs.map((p) => ({ value: p.slug, label: p.name }))}
           />
         ) : null}
-        <Select label="Category" value={category.id} onChange={setCategoryId} options={categoryOptions(rules.categories)} />
+        <Select
+          label="Category"
+          value={category.id}
+          onChange={setCategoryId}
+          options={categoryOptions(rules.categories)}
+        />
       </div>
 
       <ul className="mt-5 divide-y divide-border">
@@ -53,11 +64,16 @@ export function ScoreCalculator({ programs, rules }: { programs: CalculatorProgr
                 <ScoreInput
                   label={`${course} qualifier exam score out of 100`}
                   value={scores[`${program.slug}:${course}`] ?? ''}
-                  onChange={(value) => setScores((s) => ({ ...s, [`${program.slug}:${course}`]: value }))}
+                  onChange={(value) =>
+                    setScores((s) => ({ ...s, [`${program.slug}:${course}`]: value }))
+                  }
                 />
               </div>
               <span
-                className={cn('w-20 text-right text-xs font-medium', row?.passes ? 'text-success' : 'text-danger')}
+                className={cn(
+                  'w-20 text-right text-xs font-medium',
+                  row?.passes ? 'text-success' : 'text-danger',
+                )}
               >
                 {row?.passes ? 'Clears' : `Needs ${category.course_min}%`}
               </span>
@@ -67,14 +83,17 @@ export function ScoreCalculator({ programs, rules }: { programs: CalculatorProgr
       </ul>
 
       <p className="mt-3 text-small text-muted">
-        Average: <span className="font-semibold text-text tabular-nums">{result.average.toFixed(2)}%</span> (needs{' '}
-        {result.averageRequired}%)
+        Average:{' '}
+        <span className="font-semibold text-text tabular-nums">{result.average.toFixed(2)}%</span>{' '}
+        (needs {result.averageRequired}%)
       </p>
 
       <Verdict ok={result.qualified}>
         {result.qualified
           ? `You would qualify${
-              result.courseLoad ? ` and could register for up to ${result.courseLoad} courses in your first term` : ''
+              result.courseLoad
+                ? ` and could register for up to ${result.courseLoad} courses in your first term`
+                : ''
             }.`
           : !result.averagePasses
             ? `Your average is below ${result.averageRequired}%.`
