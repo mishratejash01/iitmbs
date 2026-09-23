@@ -23,20 +23,30 @@ export async function QuestionCard({ question }: { question: Question }) {
     renderMdx(question.explanationMdx, { headingOffset: 2 }),
     ...question.options.map((option) => renderMdx(option.labelMdx)),
   ])
-  const released = question.answerMdx !== null || question.explanationMdx !== null || question.answerKey !== null
+  const released =
+    question.answerMdx !== null || question.explanationMdx !== null || question.answerKey !== null
   const choice = question.type === 'mcq' || question.type === 'msq'
-  const correct = question.answerKey && 'correct' in question.answerKey ? question.answerKey.correct : null
+  const correct =
+    question.answerKey && 'correct' in question.answerKey ? question.answerKey.correct : null
   const headingId = `question-${question.position}`
 
   return (
-    <article id={`q-${question.position}`} aria-labelledby={headingId} className="rounded-card border border-border bg-card p-4 sm:p-5">
+    <article
+      id={`q-${question.position}`}
+      aria-labelledby={headingId}
+      className="rounded-card border border-border bg-card p-4 sm:p-5"
+    >
       <header className="flex flex-wrap items-center gap-2">
         <h3 id={headingId} className="font-semibold text-text">
           Question {question.position}
         </h3>
         <Badge>{TYPE_LABEL[question.type]}</Badge>
         {question.marks ? <Badge>{question.marks} marks</Badge> : null}
-        {question.difficulty ? <Badge tone={question.difficulty === 'hard' ? 'warning' : 'neutral'}>{question.difficulty}</Badge> : null}
+        {question.difficulty ? (
+          <Badge tone={question.difficulty === 'hard' ? 'warning' : 'neutral'}>
+            {question.difficulty}
+          </Badge>
+        ) : null}
       </header>
 
       <div className="prose-content mt-3">{body.content}</div>
@@ -56,9 +66,14 @@ export async function QuestionCard({ question }: { question: Question }) {
         ) : (
           <ol className="mt-4 space-y-2" aria-label="Options">
             {question.options.map((option, index) => (
-              <li key={option.id} className="flex items-start gap-3 rounded-control border border-border px-3 py-2.5">
+              <li
+                key={option.id}
+                className="flex items-start gap-3 rounded-control border border-border px-3 py-2.5"
+              >
                 <span className="font-semibold text-muted">{letter(index)}.</span>
-                <div className="prose-content min-w-0 flex-1 [&_p]:m-0">{options[index]?.content}</div>
+                <div className="prose-content min-w-0 flex-1 [&_p]:m-0">
+                  {options[index]?.content}
+                </div>
               </li>
             ))}
           </ol>
@@ -85,7 +100,10 @@ export async function QuestionCard({ question }: { question: Question }) {
           <summary className="flex min-h-12 cursor-pointer list-none items-center gap-2 px-3 font-medium text-text [&::-webkit-details-marker]:hidden">
             <Lightbulb aria-hidden="true" className="size-4 text-accent-ink" />
             Show hint
-            <ChevronDown aria-hidden="true" className="ml-auto size-4 text-muted transition-transform group-open:rotate-180" />
+            <ChevronDown
+              aria-hidden="true"
+              className="ml-auto size-4 text-muted transition-transform group-open:rotate-180"
+            />
           </summary>
           <div className="prose-content px-3 pb-3">{hint.content}</div>
         </details>
@@ -101,7 +119,10 @@ export async function QuestionCard({ question }: { question: Question }) {
           <summary className="flex min-h-12 cursor-pointer list-none items-center gap-2 px-3 font-medium text-text [&::-webkit-details-marker]:hidden">
             <BookOpenCheck aria-hidden="true" className="size-4 text-success" />
             Show worked solution
-            <ChevronDown aria-hidden="true" className="ml-auto size-4 text-muted transition-transform group-open:rotate-180" />
+            <ChevronDown
+              aria-hidden="true"
+              className="ml-auto size-4 text-muted transition-transform group-open:rotate-180"
+            />
           </summary>
           <div className="space-y-3 px-3 pb-3">
             {answer.content ? (
