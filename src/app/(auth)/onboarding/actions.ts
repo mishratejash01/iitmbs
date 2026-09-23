@@ -17,7 +17,10 @@ const schema = z.object({
 
 export type OnboardingState = { error: string | null }
 
-export async function completeOnboarding(_state: OnboardingState, formData: FormData): Promise<OnboardingState> {
+export async function completeOnboarding(
+  _state: OnboardingState,
+  formData: FormData,
+): Promise<OnboardingState> {
   const user = await getSessionUser()
   if (!user) redirect('/login?next=/onboarding')
 
@@ -25,7 +28,11 @@ export async function completeOnboarding(_state: OnboardingState, formData: Form
   if (!parsed.success) return { error: 'Please choose your programme and term.' }
 
   const supabase = await createSupabaseServerClient()
-  const { data: program } = await supabase.from('programs').select('slug').eq('id', parsed.data.program_id).maybeSingle()
+  const { data: program } = await supabase
+    .from('programs')
+    .select('slug')
+    .eq('id', parsed.data.program_id)
+    .maybeSingle()
   if (!program) return { error: 'Please choose a valid programme.' }
 
   const { error } = await supabase
@@ -40,7 +47,13 @@ export async function completeOnboarding(_state: OnboardingState, formData: Form
   if (error) return { error: 'Could not save — please try again.' }
 
   await recordServerEvents(
-    [{ name: 'onboarding_complete', path: '/onboarding', props: { program: program.slug, term: parsed.data.current_term } }],
+    [
+      {
+        name: 'onboarding_complete',
+        path: '/onboarding',
+        props: { program: program.slug, term: parsed.data.current_term },
+      },
+    ],
     { userId: user.id },
   )
   redirect(safeNextPath(parsed.data.next, `/${program.slug}`))
