@@ -43,7 +43,11 @@ export function resolveTitle(input: PageSeoInput): string {
   return (
     input.override?.title ||
     input.seo?.seoTitle ||
-    fillTemplate(input.template ? input.settings.seo.templates[input.template] : null, vars, input.fallbackTitle)
+    fillTemplate(
+      input.template ? input.settings.seo.templates[input.template] : null,
+      vars,
+      input.fallbackTitle,
+    )
   )
 }
 
