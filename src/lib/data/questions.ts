@@ -22,7 +22,10 @@ function toAnswerKey(value: unknown): AnswerKey | null {
   const key = value as Record<string, unknown>
   if (Array.isArray(key.correct)) return { correct: key.correct.map(String) }
   if (typeof key.value === 'number') {
-    return { value: key.value, tolerance: typeof key.tolerance === 'number' ? key.tolerance : undefined }
+    return {
+      value: key.value,
+      tolerance: typeof key.tolerance === 'number' ? key.tolerance : undefined,
+    }
   }
   if (Array.isArray(key.accepted)) return { accepted: key.accepted.map(String) }
   return null
