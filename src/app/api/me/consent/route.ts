@@ -3,7 +3,10 @@ import { z } from 'zod'
 import { getSessionUser } from '@/lib/auth/session'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-const bodySchema = z.object({ level: z.enum(['essential', 'detailed']), adult: z.boolean().optional() })
+const bodySchema = z.object({
+  level: z.enum(['essential', 'detailed']),
+  adult: z.boolean().optional(),
+})
 
 /**
  * Stores the analytics choice on the profile of a signed-in user. Detailed
