@@ -9,17 +9,27 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
   const crumbs: Crumb[] = [{ name: 'Home', path: '/' }, ...items]
   return (
     <>
-      <nav aria-label="Breadcrumb" className="no-scrollbar mb-4 overflow-x-auto" data-print="hide">
-        <ol className="flex items-center gap-1 text-small whitespace-nowrap text-muted">
+      <nav aria-label="Breadcrumb" className="mb-4" data-print="hide">
+        {/* Earlier crumbs keep their width; the current page shortens with an ellipsis. */}
+        <ol className="flex min-w-0 items-center gap-1 text-small whitespace-nowrap text-muted">
           {crumbs.map((crumb, index) => {
             const last = index === crumbs.length - 1
             return (
-              <li key={crumb.path} className="flex items-center gap-1">
+              <li
+                key={crumb.path}
+                className={
+                  last ? 'flex min-w-0 items-center gap-1' : 'flex shrink-0 items-center gap-1'
+                }
+              >
                 {index > 0 ? (
                   <ChevronRight aria-hidden="true" className="size-3.5 shrink-0" />
                 ) : null}
                 {last ? (
-                  <span aria-current="page" className="font-medium text-text">
+                  <span
+                    aria-current="page"
+                    title={crumb.name}
+                    className="truncate font-medium text-text"
+                  >
                     {crumb.name}
                   </span>
                 ) : (
