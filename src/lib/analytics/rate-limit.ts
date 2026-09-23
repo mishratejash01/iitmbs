@@ -23,11 +23,17 @@ function allowInMemory(key: string, windowMs: number, max: number): boolean {
   return entry.hits <= max
 }
 
+/**
+ * Allows the request unless `key` is over its limit. A null key (no hashed IP,
+ * e.g. when ANALYTICS_HASH_SECRET is unset) is never limited, so visitors are
+ * not all thrown into one shared bucket.
+ */
 export async function allowRequest(
-  key: string,
+  key: string | null,
   windowSeconds: number,
   max: number,
 ): Promise<boolean> {
+  if (key === null) return true
   if (!allowInMemory(key, windowSeconds * 1000, max)) return false
   const db = getServiceClient()
   if (!db) return true
