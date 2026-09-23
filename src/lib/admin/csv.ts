@@ -47,5 +47,7 @@ export function parseCsv(input: string): Array<Record<string, string>> {
   const [header, ...body] = rows.filter((r) => r.some((cell) => cell.trim() !== ''))
   if (!header) return []
   const keys = header.map((key) => key.trim())
-  return body.map((cells) => Object.fromEntries(keys.map((key, index) => [key, (cells[index] ?? '').trim()])))
+  return body.map((cells) =>
+    Object.fromEntries(keys.map((key, index) => [key, (cells[index] ?? '').trim()])),
+  )
 }
