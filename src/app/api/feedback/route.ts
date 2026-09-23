@@ -21,8 +21,8 @@ export async function POST(request: Request) {
   const db = getServiceClient()
   if (!db) return new Response(null, { status: 204 })
 
-  const ipKey = hashIp(clientIp(request.headers)) ?? 'noip'
-  if (!(await allowRequest(`feedback:${ipKey}`, 3600, 30))) {
+  const ipHash = hashIp(clientIp(request.headers))
+  if (!(await allowRequest(ipHash && `feedback:${ipHash}`, 3600, 30))) {
     return Response.json({ error: 'Too many submissions' }, { status: 429 })
   }
 
