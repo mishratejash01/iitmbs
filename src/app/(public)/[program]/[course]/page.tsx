@@ -38,14 +38,22 @@ export async function generateStaticParams() {
     await Promise.all(
       programs.map(async (program) => {
         const page = await getProgramPage(program.slug)
-        return (page?.weeks ?? []).map((w) => ({ program: program.slug, course: `week-${w.number}` }))
+        return (page?.weeks ?? []).map((w) => ({
+          program: program.slug,
+          course: `week-${w.number}`,
+        }))
       }),
     )
   ).flat()
-  return withPlaceholder([...courses, ...weekHubs], { program: PLACEHOLDER_SEGMENT, course: PLACEHOLDER_SEGMENT })
+  return withPlaceholder([...courses, ...weekHubs], {
+    program: PLACEHOLDER_SEGMENT,
+    course: PLACEHOLDER_SEGMENT,
+  })
 }
 
-export async function generateMetadata({ params }: PageProps<'/[program]/[course]'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/[program]/[course]'>): Promise<Metadata> {
   const { program, course } = await params
   const [settings, overrides] = await Promise.all([getSiteSettings(), getSeoOverrides()])
   const weekNumber = parseWeekSegment(course)
@@ -58,7 +66,11 @@ export async function generateMetadata({ params }: PageProps<'/[program]/[course
       settings,
       path,
       template: 'program_week',
-      vars: { program: data.programShortName, n: weekNumber, year: settings.current_term?.split('-')[0] },
+      vars: {
+        program: data.programShortName,
+        n: weekNumber,
+        year: settings.current_term?.split('-')[0],
+      },
       fallbackTitle: `IITM BS ${data.programShortName} Week ${weekNumber} Graded Assignments & Notes`,
       fallbackDescription: `Week ${weekNumber} notes and graded assignment help for every ${data.programShortName} qualifier course.`,
       noindex: !data.hasContent,
@@ -95,7 +107,9 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
   const { course: c } = data
   const intro = await renderMdx(c.introMdx)
   const title = `IITM ${c.shortName}: ${c.name}`
-  const aliases = c.aliases.filter((a) => !/^[a-z]{2,4}\d{4}$/i.test(a) && a.toLowerCase() !== c.shortName.toLowerCase()).slice(0, 4)
+  const aliases = c.aliases
+    .filter((a) => !/^[a-z]{2,4}\d{4}$/i.test(a) && a.toLowerCase() !== c.shortName.toLowerCase())
+    .slice(0, 4)
   const formulaSheet = data.notes.find((n) => n.kind === 'formula_sheet')
   const examPrep = data.notes.find((n) => n.kind === 'exam_prep')
   const topicNotes = data.notes.filter((n) => n.kind === 'topic')
@@ -115,7 +129,9 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
           <>
             {c.description}
             {aliases.length > 0 ? (
-              <span className="mt-2 block text-small">Also searched as {aliases.map((a) => `“${a}”`).join(', ')}.</span>
+              <span className="mt-2 block text-small">
+                Also searched as {aliases.map((a) => `“${a}”`).join(', ')}.
+              </span>
             ) : null}
           </>
         }
@@ -132,10 +148,16 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
       />
 
       <div className="container-page space-y-12 py-8 sm:py-10">
-        {intro.content ? <div className="prose-content container-reading">{intro.content}</div> : null}
+        {intro.content ? (
+          <div className="prose-content container-reading">{intro.content}</div>
+        ) : null}
 
         <section aria-labelledby="weeks">
-          <SectionHeading id="weeks" title="Week by week" description="Notes, graded assignment help and practice for each qualifier week." />
+          <SectionHeading
+            id="weeks"
+            title="Week by week"
+            description="Notes, graded assignment help and practice for each qualifier week."
+          />
           <WeekGrid weeks={data.weeks} />
         </section>
 
@@ -145,8 +167,24 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
             <LinkList
               label="Course study material"
               items={[
-                ...(formulaSheet ? [{ path: formulaSheet.path, title: `${c.shortName} formula sheet`, summary: formulaSheet.summary }] : []),
-                ...(examPrep ? [{ path: examPrep.path, title: `${c.shortName} qualifier exam preparation`, summary: examPrep.summary }] : []),
+                ...(formulaSheet
+                  ? [
+                      {
+                        path: formulaSheet.path,
+                        title: `${c.shortName} formula sheet`,
+                        summary: formulaSheet.summary,
+                      },
+                    ]
+                  : []),
+                ...(examPrep
+                  ? [
+                      {
+                        path: examPrep.path,
+                        title: `${c.shortName} qualifier exam preparation`,
+                        summary: examPrep.summary,
+                      },
+                    ]
+                  : []),
                 ...topicNotes.map((n) => ({ path: n.path, title: n.title, summary: n.summary })),
               ]}
             />
@@ -165,8 +203,14 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
           {c.officialUrl ? (
             <p className="mt-8 text-small text-muted">
               Official course page:{' '}
-              <a href={c.officialUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-medium text-accent-ink underline">
-                {c.name} on study.iitm.ac.in <ExternalLink aria-hidden="true" className="size-3.5" />
+              <a
+                href={c.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-medium text-accent-ink underline"
+              >
+                {c.name} on study.iitm.ac.in{' '}
+                <ExternalLink aria-hidden="true" className="size-3.5" />
               </a>
             </p>
           ) : null}
