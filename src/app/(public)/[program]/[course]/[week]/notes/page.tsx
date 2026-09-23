@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 
 import { noteCrumbs, noteMetadata, noteTitle, weekNoteNeighbours } from '@/components/notes/note-route'
 import { NoteView } from '@/components/notes/note-view'
 import { getCourseCore, getCourseParams } from '@/lib/data/courses'
 import { getWeekNotePage } from '@/lib/data/notes'
 import { parseWeekSegment } from '@/lib/routes'
+import { redirectOrNotFound } from '@/lib/data/redirects'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
 export async function generateStaticParams() {
@@ -35,7 +35,10 @@ export async function generateMetadata({ params }: PageProps<'/[program]/[course
 
 export default async function WeekNotesPage({ params }: PageProps<'/[program]/[course]/[week]/notes'>) {
   const data = await load(params)
-  if (!data) notFound()
+  if (!data) {
+    const { program, course, week } = await params
+    return redirectOrNotFound(`/${program}/${course}/${week}/notes`)
+  }
   const { previous, next } = weekNoteNeighbours(data)
   return <NoteView data={data} title={noteTitle(data)} crumbs={noteCrumbs(data)} previous={previous} next={next} />
 }
