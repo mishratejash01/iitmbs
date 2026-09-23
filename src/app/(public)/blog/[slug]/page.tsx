@@ -12,13 +12,14 @@ import { PageHeader } from '@/components/layout/page-header'
 import { renderMdx } from '@/components/mdx/render'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Badge } from '@/components/ui/badge'
-import { getBlogPost, getBlogPostIndex, relatedPosts } from '@/lib/data/blog'
+import { faqsFromBody, relatedPosts } from '@/lib/blog/helpers'
+import { getBlogPost, getBlogPostIndex } from '@/lib/data/blog'
 import { getPage } from '@/lib/data/pages'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { BLOG_PATH } from '@/lib/routes'
-import { blogPostingJsonLd } from '@/lib/seo/jsonld'
+import { blogPostingJsonLd, faqJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
@@ -120,18 +121,21 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
         </div>
       </ArticleShell>
       <JsonLd
-        data={blogPostingJsonLd({
-          headline: post.title,
-          description: post.summary ?? post.title,
-          path: post.path,
-          section: post.category.name,
-          keywords: [...post.tags, ...post.seo.keywords],
-          wordCount: post.wordCount,
-          author: post.author,
-          reviewer: post.reviewer,
-          datePublished: post.publishedAt,
-          dateModified: post.updatedAt,
-        })}
+        data={[
+          blogPostingJsonLd({
+            headline: post.title,
+            description: post.summary ?? post.title,
+            path: post.path,
+            section: post.category.name,
+            keywords: [...post.tags, ...post.seo.keywords],
+            wordCount: post.wordCount,
+            author: post.author,
+            reviewer: post.reviewer,
+            datePublished: post.publishedAt,
+            dateModified: post.updatedAt,
+          }),
+          faqJsonLd(faqsFromBody(post.id, post.bodyMdx)),
+        ]}
       />
     </>
   )
