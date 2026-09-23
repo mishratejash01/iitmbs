@@ -15,7 +15,11 @@ export default async function AuthLayout({ children }: LayoutProps<'/'>) {
           <Logo siteName={settings.site_name} />
         </div>
       </header>
-      <main id="main" tabIndex={-1} className="flex flex-1 items-start justify-center px-4 py-12 outline-none sm:py-20">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="flex flex-1 items-start justify-center px-4 py-12 outline-none sm:py-20"
+      >
         {children}
       </main>
       <footer className="border-t border-border py-6 text-center text-xs text-muted">
