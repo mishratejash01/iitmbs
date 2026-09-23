@@ -4,7 +4,22 @@ import { useReportWebVitals } from 'next/web-vitals'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 
-import { currentPage, flush, startPageView, track } from '@/lib/analytics/client'
+import { currentPage, flush, getConsent, readCookie, startPageView, track } from '@/lib/analytics/client'
+import { DISPLAY_COOKIE } from '@/lib/auth/display-cookie'
+
+// Page types that belong in a student's reading history, and their entity type.
+const HISTORY_ENTITY: Record<string, string> = {
+  program: 'program',
+  course: 'course',
+  week: 'week',
+  graded_assignment: 'assignment',
+  practice_assignment: 'assignment',
+  notes: 'note',
+  week_notes: 'note',
+  formula_sheet: 'note',
+  exam_prep: 'note',
+  guide: 'page',
+}
 
 const SEARCH_ENGINES = /(^|\.)(google\.|bing\.com$|duckduckgo\.com$|yahoo\.|yandex\.|ecosia\.org$)/
 
@@ -65,6 +80,20 @@ export function Analytics({ heartbeatSeconds = 15 }: { heartbeatSeconds?: number
     })
     if (context.pageType === '404') track('404_hit', { path: pathname, referrer: document.referrer || undefined })
     if (context.pageType === 'formula_sheet') track('formula_sheet_open', { course: pathname.split('/')[2] })
+    // Reading history: signed-in students with detailed consent only.
+    const entityType = context.pageType ? HISTORY_ENTITY[context.pageType] : undefined
+    if (entityType && getConsent() === 'detailed' && readCookie(DISPLAY_COOKIE)) {
+      void fetch('/api/me/history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          path: pathname,
+          title: document.title.split(' | ')[0]?.slice(0, 200) || pathname,
+          entity_type: entityType,
+          entity_id: context.entityId ?? null,
+        }),
+      }).catch(() => undefined)
+    }
     firstView.current = false
     previousPath.current = pathname
     engaged.current = 0
