@@ -26,11 +26,15 @@ async function load(params: PageProps<'/[program]/[course]/formula-sheet'>['para
   return getCourseNotePage(program, course, 'formula_sheet')
 }
 
-export async function generateMetadata({ params }: PageProps<'/[program]/[course]/formula-sheet'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/[program]/[course]/formula-sheet'>): Promise<Metadata> {
   return noteMetadata(await load(params))
 }
 
-export default async function FormulaSheetPage({ params }: PageProps<'/[program]/[course]/formula-sheet'>) {
+export default async function FormulaSheetPage({
+  params,
+}: PageProps<'/[program]/[course]/formula-sheet'>) {
   const data = await load(params)
   if (!data) {
     const { program, course } = await params
