@@ -24,6 +24,9 @@ describe('request enrichment', () => {
   it('detects bots and headless tools', () => {
     expect(isBotRequest('Googlebot/2.1 (+http://www.google.com/bot.html)')).toBe(true)
     expect(isBotRequest('Mozilla/5.0 HeadlessChrome/120')).toBe(true)
+    expect(
+      isBotRequest('Mozilla/5.0 (X11; Linux x86_64) Chrome/150.0 Safari/537.36 Playwright'),
+    ).toBe(true)
     expect(isBotRequest(null)).toBe(true)
   })
 
