@@ -7,7 +7,11 @@ import type { AnchorHTMLAttributes } from 'react'
  * tab with rel=noopener and are tracked as outbound by the analytics
  * delegate (it detects the different origin).
  */
-export function SmartLink({ href = '', children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
+export function SmartLink({
+  href = '',
+  children,
+  ...props
+}: AnchorHTMLAttributes<HTMLAnchorElement>) {
   if (href.startsWith('/') || href.startsWith('#')) {
     return (
       <Link href={href} {...props}>
