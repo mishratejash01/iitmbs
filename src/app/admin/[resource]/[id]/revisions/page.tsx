@@ -110,6 +110,14 @@ export default async function RevisionsPage({
                   </p>
                   {changed.length ? (
                     <dl className="mt-3 space-y-3 text-small">
+                      <div
+                        aria-hidden="true"
+                        className="hidden text-xs font-medium text-muted sm:grid sm:grid-cols-[10rem_1fr_1fr] sm:gap-3"
+                      >
+                        <span />
+                        <span>This version</span>
+                        <span>What replaced it</span>
+                      </div>
                       {changed.slice(0, 8).map((key) => (
                         <div key={key} className="grid gap-1 sm:grid-cols-[10rem_1fr_1fr] sm:gap-3">
                           <dt className="font-medium text-text">{columnLabel(config, key)}</dt>
@@ -118,7 +126,7 @@ export default async function RevisionsPage({
                             {displayValue(config, key, revision.snapshot[key])}
                           </dd>
                           <dd className="rounded bg-success-soft px-2 py-1 break-words text-text">
-                            <span className="sr-only">Next version: </span>
+                            <span className="sr-only">What replaced it: </span>
                             {displayValue(config, key, newer[key])}
                           </dd>
                         </div>
