@@ -12,7 +12,9 @@ type Jsx = MdxJsxFlowElementHast | MdxJsxTextElementHast
 
 const attr = (node: Jsx, name: string) => {
   const found = node.attributes.find((a) => a.type === 'mdxJsxAttribute' && a.name === name)
-  return found && found.type === 'mdxJsxAttribute' && typeof found.value === 'string' ? found.value : undefined
+  return found && found.type === 'mdxJsxAttribute' && typeof found.value === 'string'
+    ? found.value
+    : undefined
 }
 
 const el = (tagName: string, className: string, children: ElementContent[] = []): Element => ({
@@ -28,13 +30,22 @@ const text = (value: string): ElementContent => ({ type: 'text', value })
 function toPlaceholder(node: Jsx): Element {
   switch (node.name) {
     case 'Callout':
-      return el('aside', `preview-callout preview-callout-${attr(node, 'type') ?? 'info'}`, node.children as ElementContent[])
+      return el(
+        'aside',
+        `preview-callout preview-callout-${attr(node, 'type') ?? 'info'}`,
+        node.children as ElementContent[],
+      )
     case 'KeyIdea':
     case 'Steps':
     case 'Definition':
-      return el('div', 'preview-block', [el('strong', 'preview-label', [text(node.name)]), ...(node.children as ElementContent[])])
+      return el('div', 'preview-block', [
+        el('strong', 'preview-label', [text(node.name)]),
+        ...(node.children as ElementContent[]),
+      ])
     case 'RelatedLink': {
-      const link = el('a', 'preview-related', [text(`→ ${attr(node, 'title') ?? attr(node, 'href') ?? 'link'}`)])
+      const link = el('a', 'preview-related', [
+        text(`→ ${attr(node, 'title') ?? attr(node, 'href') ?? 'link'}`),
+      ])
       link.properties.href = attr(node, 'href') ?? '#'
       return link
     }
@@ -45,7 +56,11 @@ function toPlaceholder(node: Jsx): Element {
       return image
     }
     default:
-      return el('div', 'preview-placeholder', [text(`[${node.name ?? 'component'}${attr(node, 'program') ? ` ${attr(node, 'program')}` : ''}]`)])
+      return el('div', 'preview-placeholder', [
+        text(
+          `[${node.name ?? 'component'}${attr(node, 'program') ? ` ${attr(node, 'program')}` : ''}]`,
+        ),
+      ])
   }
 }
 
@@ -56,7 +71,11 @@ export async function renderMdxPreview(source: string): Promise<MdxPreview> {
   const processed = await processMdx(source)
   const tree: Root = structuredClone(processed.tree)
   visit(tree, (node, index, parent) => {
-    if ((node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') && parent && index !== undefined) {
+    if (
+      (node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') &&
+      parent &&
+      index !== undefined
+    ) {
       parent.children[index] = toPlaceholder(node as Jsx)
     }
   })
