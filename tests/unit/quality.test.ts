@@ -16,7 +16,14 @@ describe('quality gate', () => {
       duplicateTitle: true,
       mdxProblems: [{ field: 'body_mdx', message: 'Parse error' }],
     })
-    expect(warnings.map((w) => w.code).sort()).toEqual(['alt', 'duplicate', 'links', 'mdx', 'meta', 'thin'])
+    expect(warnings.map((w) => w.code).sort()).toEqual([
+      'alt',
+      'duplicate',
+      'links',
+      'mdx',
+      'meta',
+      'thin',
+    ])
   })
 
   it('passes a substantial, linked, described note', () => {
@@ -34,7 +41,12 @@ describe('quality gate', () => {
   it('warns about unscheduled solution releases on graded assignments', () => {
     const warnings = checkQuality({
       config: assignments,
-      record: { type: 'graded', solutions_release_at: '2099-01-01T00:00:00+05:30', summary: 'x', intro_mdx: '' },
+      record: {
+        type: 'graded',
+        solutions_release_at: '2099-01-01T00:00:00+05:30',
+        summary: 'x',
+        intro_mdx: '',
+      },
       minWords: 300,
       duplicateTitle: false,
       mdxProblems: [],
@@ -44,7 +56,12 @@ describe('quality gate', () => {
 })
 
 describe('field parsing', () => {
-  const field = (overrides: Partial<Field>): Field => ({ name: 'x', label: 'X', type: 'text', ...overrides })
+  const field = (overrides: Partial<Field>): Field => ({
+    name: 'x',
+    label: 'X',
+    type: 'text',
+    ...overrides,
+  })
 
   it('converts IST datetime inputs to offset timestamps and back', () => {
     expect(fromIstInput('2026-10-02T23:59')).toBe('2026-10-02T23:59:00+05:30')
@@ -52,23 +69,38 @@ describe('field parsing', () => {
   })
 
   it('parses tags, numbers, booleans, slugs and coerced selects', () => {
-    expect(parseFieldValue(field({ type: 'tags' }), 'maths 1, math 1\nm1, maths 1')).toEqual({ ok: true, value: ['maths 1', 'math 1', 'm1'] })
+    expect(parseFieldValue(field({ type: 'tags' }), 'maths 1, math 1\nm1, maths 1')).toEqual({
+      ok: true,
+      value: ['maths 1', 'math 1', 'm1'],
+    })
     expect(parseFieldValue(field({ type: 'number' }), '42')).toEqual({ ok: true, value: 42 })
     expect(parseFieldValue(field({ type: 'boolean' }), 'on')).toEqual({ ok: true, value: true })
     expect(parseFieldValue(field({ type: 'slug' }), 'Maths 1').ok).toBe(false)
     expect(
-      parseFieldValue(field({ type: 'select', coerce: 'number', options: [{ value: '301', label: '301' }] }), '301'),
+      parseFieldValue(
+        field({ type: 'select', coerce: 'number', options: [{ value: '301', label: '301' }] }),
+        '301',
+      ),
     ).toEqual({ ok: true, value: 301 })
-    expect(parseFieldValue(field({ type: 'text', required: true }), '')).toEqual({ ok: false, error: 'Required' })
+    expect(parseFieldValue(field({ type: 'text', required: true }), '')).toEqual({
+      ok: false,
+      error: 'Required',
+    })
   })
 })
 
 describe('csv parser', async () => {
   const { parseCsv } = await import('@/lib/admin/csv')
   it('handles quotes, escaped quotes, commas and newlines inside fields', () => {
-    const rows = parseCsv('position,question_mdx,source_permission\r\n1,"What is $A \\cup B$, given ""x""?",original\n2,"Line one\nline two",original\n')
+    const rows = parseCsv(
+      'position,question_mdx,source_permission\r\n1,"What is $A \\cup B$, given ""x""?",original\n2,"Line one\nline two",original\n',
+    )
     expect(rows).toEqual([
-      { position: '1', question_mdx: 'What is $A \\cup B$, given "x"?', source_permission: 'original' },
+      {
+        position: '1',
+        question_mdx: 'What is $A \\cup B$, given "x"?',
+        source_permission: 'original',
+      },
       { position: '2', question_mdx: 'Line one\nline two', source_permission: 'original' },
     ])
   })
