@@ -35,6 +35,13 @@ integrity. Everything here is done in `/admin`.
 | Formula sheet            | **Notes**, kind _Formula sheet_       | Every formula from the qualifier weeks, grouped by week, printable                                                                            |
 | Exam prep                | **Notes**, kind _Qualifier exam prep_ | What to revise, question patterns, practice sets, common mistakes                                                                             |
 | Guide or legal page      | **Pages**                             | Path (`qualifier/timeline`), summary, official sources, template _Guide_ or _Legal_                                                           |
+| Blog post                | **Blog posts**                        | Slug (`/blog/<slug>`), category, summary, tags, official sources; one search question per post                                                |
+
+Blog posts live at `/blog/<slug>` and belong to one **Blog category** (`/blog/category/<slug>`). The blog home page is
+the page with path `blog` in **Pages**: its title, summary and intro are edited there. Posts that share **Tags** are
+shown to each other as "Read next", and **Featured** posts appear under "Start here" on the blog home. Write blog posts
+in plain, simple English, answer the question in the first two sentences, and link the official handbook in **Official
+sources**.
 
 The term for an assignment is written `YYYY-jan`, `YYYY-may` or `YYYY-sep` (for example `2026-sep`). The newest term
 lives at the base URL (`/data-science/maths-1/week-2/graded-assignment`); older terms move to
