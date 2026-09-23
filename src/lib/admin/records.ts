@@ -17,7 +17,8 @@ export async function adminDb(): Promise<SupabaseClient> {
 export function statusOf(row: Record<string, unknown>): RecordStatus {
   if (row.deleted_at) return 'deleted'
   if (row.is_published === false) return 'draft'
-  if (typeof row.published_at === 'string' && Date.parse(row.published_at) > Date.now()) return 'scheduled'
+  if (typeof row.published_at === 'string' && Date.parse(row.published_at) > Date.now())
+    return 'scheduled'
   return 'live'
 }
 
@@ -30,7 +31,11 @@ export async function listRecords(
 ): Promise<{ rows: AdminRow[]; total: number; pageSize: number }> {
   const db = await adminDb()
   const key = config.primaryKey ?? 'id'
-  const columns = new Set([key, config.titleColumn, ...config.listColumns.filter((c) => c !== 'status')])
+  const columns = new Set([
+    key,
+    config.titleColumn,
+    ...config.listColumns.filter((c) => c !== 'status'),
+  ])
   if (config.publishable) ['is_published', 'published_at'].forEach((c) => columns.add(c))
   if (config.softDelete) columns.add('deleted_at')
 
@@ -49,7 +54,8 @@ export async function listRecords(
   }
   if (config.publishable) {
     if (options.status === 'draft') query = query.eq('is_published', false)
-    if (options.status === 'scheduled') query = query.eq('is_published', true).gt('published_at', now)
+    if (options.status === 'scheduled')
+      query = query.eq('is_published', true).gt('published_at', now)
     if (options.status === 'live') query = query.eq('is_published', true).lte('published_at', now)
   }
 
@@ -78,10 +84,19 @@ export async function getRecord(config: ResourceConfig, id: string): Promise<Adm
 }
 
 /** Whether another live row of the same table already uses this title. */
-export async function hasDuplicateTitle(config: ResourceConfig, title: unknown, id: string | null): Promise<boolean> {
-  if (typeof title !== 'string' || !title.trim() || config.titleColumn === 'question_mdx') return false
+export async function hasDuplicateTitle(
+  config: ResourceConfig,
+  title: unknown,
+  id: string | null,
+): Promise<boolean> {
+  if (typeof title !== 'string' || !title.trim() || config.titleColumn === 'question_mdx')
+    return false
   const db = await adminDb()
-  let query = db.from(config.table).select(config.primaryKey ?? 'id').eq(config.titleColumn, title.trim()).limit(1)
+  let query = db
+    .from(config.table)
+    .select(config.primaryKey ?? 'id')
+    .eq(config.titleColumn, title.trim())
+    .limit(1)
   if (config.softDelete) query = query.is('deleted_at', null)
   if (id) query = query.neq(config.primaryKey ?? 'id', id)
   const { data } = await query
