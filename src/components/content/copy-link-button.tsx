@@ -1,13 +1,18 @@
 'use client'
 
 import { Link2, Share2 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 
 import { track } from '@/lib/analytics/client'
+
+const subscribeNever = () => () => {}
+const canShare = () => typeof navigator.share === 'function'
 
 /** Native share sheet on phones, copy-to-clipboard elsewhere. */
 export function CopyLinkButton({ url, title }: { url: string; title: string }) {
   const [copied, setCopied] = useState(false)
+  // False on the server, so the first client render matches the static HTML.
+  const share = useSyncExternalStore(subscribeNever, canShare, () => false)
   const onClick = async () => {
     if (navigator.share) {
       try {
@@ -27,7 +32,7 @@ export function CopyLinkButton({ url, title }: { url: string; title: string }) {
       setCopied(false)
     }
   }
-  const Icon = typeof navigator !== 'undefined' && 'share' in navigator ? Share2 : Link2
+  const Icon = share ? Share2 : Link2
   return (
     <button
       type="button"
