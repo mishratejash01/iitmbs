@@ -11,8 +11,8 @@ export default function OfflinePage() {
       <div className="container-reading">
         <h1 className="text-h1 font-semibold text-text">You’re offline</h1>
         <p className="mt-3 text-muted">
-          This page isn’t saved on your device yet. Notes you have opened recently are available offline — go back or try
-          again when you’re connected.
+          This page isn’t saved on your device yet. Notes you have opened recently are available
+          offline — go back or try again when you’re connected.
         </p>
         <div className="mt-6">
           <ButtonLink href="/">Go to the home page</ButtonLink>
