@@ -22,29 +22,48 @@ export function MobileMenu({ items, programs }: { items: NavItem[]; programs: Pr
       panelClassName="fixed inset-x-0 top-16 z-50 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-border bg-bg px-4 pb-6 pt-2 shadow-card"
     >
       <nav aria-label="Mobile">
-        <p className="px-3 pt-3 pb-1 text-xs font-semibold tracking-wide text-muted uppercase">Programmes</p>
+        <p className="px-3 pt-3 pb-1 text-xs font-semibold tracking-wide text-muted uppercase">
+          Programmes
+        </p>
         <ul>
           {programs.map((program) => (
             <li key={program.id}>
-              <Link href={program.path} className={linkClass} data-track="nav_click" data-track-label={`mobile:${program.slug}`}>
+              <Link
+                href={program.path}
+                className={linkClass}
+                data-track="nav_click"
+                data-track-label={`mobile:${program.slug}`}
+              >
                 {program.shortName}
               </Link>
             </li>
           ))}
         </ul>
-        <p className="px-3 pt-4 pb-1 text-xs font-semibold tracking-wide text-muted uppercase">Explore</p>
+        <p className="px-3 pt-4 pb-1 text-xs font-semibold tracking-wide text-muted uppercase">
+          Explore
+        </p>
         <ul>
           {items
             .filter((item) => !programs.some((p) => p.path === item.href))
             .map((item) => (
               <li key={item.id}>
-                <Link href={item.href} className={linkClass} data-track="nav_click" data-track-label={`mobile:${item.label}`}>
+                <Link
+                  href={item.href}
+                  className={linkClass}
+                  data-track="nav_click"
+                  data-track-label={`mobile:${item.label}`}
+                >
                   {item.label}
                 </Link>
               </li>
             ))}
           <li>
-            <Link href="/search" className={linkClass} data-track="nav_click" data-track-label="mobile:search">
+            <Link
+              href="/search"
+              className={linkClass}
+              data-track="nav_click"
+              data-track-label="mobile:search"
+            >
               <Search aria-hidden="true" className="mr-2 size-5 text-muted" />
               Search
             </Link>
