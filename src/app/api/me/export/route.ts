@@ -11,19 +11,46 @@ export async function GET() {
   const [profile, bookmarks, history, progress, feedback] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
     supabase.from('bookmarks').select('path, title, created_at'),
-    supabase.from('reading_history').select('path, title, visit_count, first_visited_at, last_visited_at'),
+    supabase
+      .from('reading_history')
+      .select('path, title, visit_count, first_visited_at, last_visited_at'),
     supabase.from('progress').select('item_type, item_id, completed_at'),
-    supabase.from('content_feedback').select('path, helpful, comment, created_at').eq('user_id', user.id),
+    supabase
+      .from('content_feedback')
+      .select('path, helpful, comment, created_at')
+      .eq('user_id', user.id),
   ])
 
   const admin = getServiceClient()
   const analytics = admin
     ? await Promise.all([
-        admin.from('events').select('event_name, path, properties, created_at').eq('user_id', user.id).order('created_at').limit(10000),
-        admin.from('page_views').select('path, title, engaged_seconds, max_scroll, created_at').eq('user_id', user.id).order('created_at').limit(10000),
-        admin.from('searches').select('query, results_count, created_at').eq('user_id', user.id).limit(5000),
-        admin.from('downloads').select('resource_id, page_path, created_at').eq('user_id', user.id).limit(5000),
-        admin.from('auth_events').select('event_name, provider, created_at').eq('user_id', user.id).limit(5000),
+        admin
+          .from('events')
+          .select('event_name, path, properties, created_at')
+          .eq('user_id', user.id)
+          .order('created_at')
+          .limit(10000),
+        admin
+          .from('page_views')
+          .select('path, title, engaged_seconds, max_scroll, created_at')
+          .eq('user_id', user.id)
+          .order('created_at')
+          .limit(10000),
+        admin
+          .from('searches')
+          .select('query, results_count, created_at')
+          .eq('user_id', user.id)
+          .limit(5000),
+        admin
+          .from('downloads')
+          .select('resource_id, page_path, created_at')
+          .eq('user_id', user.id)
+          .limit(5000),
+        admin
+          .from('auth_events')
+          .select('event_name, provider, created_at')
+          .eq('user_id', user.id)
+          .limit(5000),
       ])
     : null
 
