@@ -30,13 +30,25 @@ export async function assignmentStaticParams(kind: AssignmentKind, withTerm: boo
     .filter((p) => (withTerm ? p.term !== undefined : p.term === undefined))
     .map((p) => (withTerm ? p : { program: p.program, course: p.course, week: p.week }))
   const placeholder: Record<string, string> = withTerm
-    ? { program: PLACEHOLDER_SEGMENT, course: PLACEHOLDER_SEGMENT, week: PLACEHOLDER_SEGMENT, term: PLACEHOLDER_SEGMENT }
+    ? {
+        program: PLACEHOLDER_SEGMENT,
+        course: PLACEHOLDER_SEGMENT,
+        week: PLACEHOLDER_SEGMENT,
+        term: PLACEHOLDER_SEGMENT,
+      }
     : { program: PLACEHOLDER_SEGMENT, course: PLACEHOLDER_SEGMENT, week: PLACEHOLDER_SEGMENT }
   return withPlaceholder(params as Array<Record<string, string>>, placeholder)
 }
 
-export async function assignmentMetadata(params: RouteParams, kind: AssignmentKind): Promise<Metadata> {
-  const [data, settings, overrides] = await Promise.all([load(params, kind), getSiteSettings(), getSeoOverrides()])
+export async function assignmentMetadata(
+  params: RouteParams,
+  kind: AssignmentKind,
+): Promise<Metadata> {
+  const [data, settings, overrides] = await Promise.all([
+    load(params, kind),
+    getSiteSettings(),
+    getSeoOverrides(),
+  ])
   const path = data?.assignment.path
   if (!data || !path) return { robots: { index: false } }
   const { core, week, assignment } = data
@@ -47,7 +59,8 @@ export async function assignmentMetadata(params: RouteParams, kind: AssignmentKi
     template: params.term ? `${kind}_assignment_term` : `${kind}_assignment`,
     vars: assignmentVars(core, week, assignment),
     fallbackTitle: `IITM ${core.course.shortName} Week ${week.number} ${label}`,
-    fallbackDescription: assignment.summary ?? `${label} for ${core.course.name}, week ${week.number}: ${week.title}.`,
+    fallbackDescription:
+      assignment.summary ?? `${label} for ${core.course.name}, week ${week.number}: ${week.title}.`,
     seo: assignment.seo,
     override: overrides[path],
     type: 'article',
@@ -56,11 +69,19 @@ export async function assignmentMetadata(params: RouteParams, kind: AssignmentKi
   })
 }
 
-export async function AssignmentRoute({ params, kind }: { params: RouteParams; kind: AssignmentKind }) {
+export async function AssignmentRoute({
+  params,
+  kind,
+}: {
+  params: RouteParams
+  kind: AssignmentKind
+}) {
   const data = await load(params, kind)
   if (!data) {
     const term = params.term ? `/${params.term}` : ''
-    return redirectOrNotFound(`/${params.program}/${params.course}/${params.week}/${kind}-assignment${term}`)
+    return redirectOrNotFound(
+      `/${params.program}/${params.course}/${params.week}/${kind}-assignment${term}`,
+    )
   }
   // The latest term lives at the evergreen URL; its /<term> twin redirects there.
   if (params.term && data.assignment.isLatest) {
