@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 
 import { getChildPages, getPage } from '@/lib/data/pages'
+import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import type { Crumb } from '@/lib/seo/jsonld'
@@ -30,7 +30,7 @@ export async function cmsMetadata(path: string): Promise<Metadata> {
 /** Renders the CMS page at `path`, with breadcrumbs built from its parents. */
 export async function CmsRoute({ path, listChildren = false }: { path: string; listChildren?: boolean }) {
   const page = await getPage(path)
-  if (!page) notFound()
+  if (!page) return redirectOrNotFound(`/${path}`)
 
   const segments = path.split('/')
   const crumbs: Crumb[] = []
