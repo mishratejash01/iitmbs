@@ -12,18 +12,26 @@ import {
   type TrackPayloadEvent,
 } from './events'
 
-type PageState = { pageViewId: string; path: string; pageType?: string; entityId?: string; title?: string }
+type PageState = {
+  pageViewId: string
+  path: string
+  pageType?: string
+  entityId?: string
+  title?: string
+}
 
 const ENDPOINT = '/api/track'
 const MAX_BATCH = 20
 const FLUSH_DELAY_MS = 2500
 
-let queue: TrackPayloadEvent[] = []
+const queue: TrackPayloadEvent[] = []
 let flushTimer: ReturnType<typeof setTimeout> | undefined
 let page: PageState | undefined
 let landingPath: string | undefined
 
 const isBrowser = () => typeof window !== 'undefined' && typeof document !== 'undefined'
+// Staff working in the admin are not visitors; their activity is never tracked.
+const isUntracked = () => location.pathname === '/admin' || location.pathname.startsWith('/admin/')
 
 export function readCookie(name: string): string | null {
   if (!isBrowser()) return null
@@ -49,7 +57,10 @@ export function uuid(): string {
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 export function getConsent(): 'essential' | 'detailed' {
-  if (isBrowser() && (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl) {
+  if (
+    isBrowser() &&
+    (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl
+  ) {
     return 'essential'
   }
   return readCookie(ANALYTICS_COOKIES.consent) === 'detailed' ? 'detailed' : 'essential'
@@ -124,8 +135,12 @@ export function flush(beacon = false) {
 }
 
 /** Queue an event for the current page. */
-export function track(name: ClientEventName, props?: EventProps, options: { immediate?: boolean } = {}) {
-  if (!isBrowser()) return
+export function track(
+  name: ClientEventName,
+  props?: EventProps,
+  options: { immediate?: boolean } = {},
+) {
+  if (!isBrowser() || isUntracked()) return
   queue.push({
     name,
     path: page?.path ?? location.pathname,
@@ -148,11 +163,18 @@ export function startPageView(input: {
   isEntry: boolean
   searchEngine?: string
   referrerHost?: string
-}): string {
+}): string | null {
+  if (isUntracked()) return null
   const session = sessionId()
   landingPath ??= input.path
   const pageViewId = uuid()
-  page = { pageViewId, path: input.path, pageType: input.pageType, entityId: input.entityId, title: input.title }
+  page = {
+    pageViewId,
+    path: input.path,
+    pageType: input.pageType,
+    entityId: input.entityId,
+    title: input.title,
+  }
   if (session.isNew) track('session_start', { landing_path: input.path })
   queue.push({
     name: 'page_view',
