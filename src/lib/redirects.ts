@@ -14,14 +14,22 @@ export type RedirectMap = {
   crossListed: Record<string, string>
 }
 
-export const emptyRedirectMap: RedirectMap = { exact: {}, programAliases: {}, courseAliases: {}, crossListed: {} }
+export const emptyRedirectMap: RedirectMap = {
+  exact: {},
+  programAliases: {},
+  courseAliases: {},
+  crossListed: {},
+}
 
 /**
  * Returns where `pathname` should permanently redirect, or null. Aliases and
  * cross-listings keep the rest of the path, so
  * /ds/math-1/week-2/graded-assignment → /data-science/maths-1/week-2/graded-assignment.
  */
-export function findRedirect(pathname: string, map: RedirectMap): { to: string; status: number } | null {
+export function findRedirect(
+  pathname: string,
+  map: RedirectMap,
+): { to: string; status: number } | null {
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '').toLowerCase() : pathname
   const exact = map.exact[path]
   if (exact) return { to: exact[0], status: exact[1] }
@@ -29,7 +37,8 @@ export function findRedirect(pathname: string, map: RedirectMap): { to: string; 
   const segments = path.split('/').filter(Boolean)
   if (segments.length === 0) return null
 
-  let [program, course, ...rest] = segments as [string, string | undefined, ...string[]]
+  const [first, course, ...rest] = segments as [string, string | undefined, ...string[]]
+  let program = first
   let changed = false
 
   const aliasProgram = map.programAliases[program]
