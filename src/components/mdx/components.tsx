@@ -34,8 +34,16 @@ export function createMdxComponents({ media }: { media: Record<string, MediaInfo
         return <Figure src={source} alt={alt} media={media[source]} />
       }
       // External images are discouraged (and blocked by CSP unless allowed).
-      // eslint-disable-next-line @next/next/no-img-element
-      return <img src={source} alt={alt ?? ''} loading="lazy" decoding="async" className="h-auto max-w-full" />
+      return (
+        // eslint-disable-next-line @next/next/no-img-element -- arbitrary external URL; next/image needs known hosts
+        <img
+          src={source}
+          alt={alt ?? ''}
+          loading="lazy"
+          decoding="async"
+          className="h-auto max-w-full"
+        />
+      )
     },
     Callout,
     RelatedLink,
@@ -46,7 +54,10 @@ export function createMdxComponents({ media }: { media: Record<string, MediaInfo
     EligibilityCalculator,
     ScoreCalculator,
     Figure: (props: ComponentProps<typeof Figure>) => (
-      <Figure {...props} media={props.src ? media[props.src.replace(/^cloudinary:/i, '')] : undefined} />
+      <Figure
+        {...props}
+        media={props.src ? media[props.src.replace(/^cloudinary:/i, '')] : undefined}
+      />
     ),
     YouTube,
     KeyIdea,
