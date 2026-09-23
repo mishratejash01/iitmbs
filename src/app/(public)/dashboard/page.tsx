@@ -13,6 +13,9 @@ import { formatTerm } from '@/lib/routes'
 import { privateMetadata } from '@/lib/seo/metadata'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
+// Reads the session, so it renders on each request.
+export const instant = false
+
 export async function generateMetadata(): Promise<Metadata> {
   return privateMetadata('Dashboard', await getSiteSettings())
 }
@@ -23,18 +26,30 @@ export default async function DashboardPage() {
   const [programs, deadlines, history, bookmarks, progress] = await Promise.all([
     getPrograms(),
     getUpcomingDeadlines(),
-    supabase.from('reading_history').select('path, title, last_visited_at').order('last_visited_at', { ascending: false }).limit(5),
-    supabase.from('bookmarks').select('path, title').order('created_at', { ascending: false }).limit(5),
+    supabase
+      .from('reading_history')
+      .select('path, title, last_visited_at')
+      .order('last_visited_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('bookmarks')
+      .select('path, title')
+      .order('created_at', { ascending: false })
+      .limit(5),
     supabase.from('progress').select('item_id', { count: 'exact', head: true }),
   ])
   const program = programs.find((p) => p.id === profile?.program_id) ?? null
   const programPage = program ? await getProgramPage(program.slug) : null
-  const myDeadlines = program ? deadlines.filter((d) => d.programShortName === program.shortName) : deadlines
+  const myDeadlines = program
+    ? deadlines.filter((d) => d.programShortName === program.shortName)
+    : deadlines
 
   return (
     <div className="space-y-10">
       <header>
-        <h1 className="text-h2 font-semibold text-text">Hi{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''} 👋</h1>
+        <h1 className="text-h2 font-semibold text-text">
+          Hi{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''} 👋
+        </h1>
         <p className="mt-1 text-muted">
           {program ? `${program.shortName} qualifier` : 'No programme chosen yet'}
           {profile?.current_term ? ` · ${formatTerm(profile.current_term)} term` : ''} ·{' '}
@@ -53,7 +68,11 @@ export default async function DashboardPage() {
               </h2>
               <LinkList
                 label="Your courses"
-                items={programPage.courses.map((c) => ({ path: c.path, title: c.name, summary: `${c.shortName} · ${c.weeksCount} weeks` }))}
+                items={programPage.courses.map((c) => ({
+                  path: c.path,
+                  title: c.name,
+                  summary: `${c.shortName} · ${c.weeksCount} weeks`,
+                }))}
               />
             </section>
           ) : null}
@@ -63,7 +82,10 @@ export default async function DashboardPage() {
               Continue reading
             </h2>
             {(history.data ?? []).length > 0 ? (
-              <LinkList label="Recently read" items={(history.data ?? []).map((h) => ({ path: h.path, title: h.title }))} />
+              <LinkList
+                label="Recently read"
+                items={(history.data ?? []).map((h) => ({ path: h.path, title: h.title }))}
+              />
             ) : (
               <EmptyState
                 title="Nothing here yet"
@@ -75,7 +97,10 @@ export default async function DashboardPage() {
 
         <div className="space-y-6 lg:col-span-2">
           <DeadlineWidget deadlines={myDeadlines} />
-          <section aria-labelledby="saved" className="rounded-card border border-border bg-card p-4">
+          <section
+            aria-labelledby="saved"
+            className="rounded-card border border-border bg-card p-4"
+          >
             <h2 id="saved" className="font-semibold text-text">
               Bookmarks
             </h2>
@@ -83,21 +108,32 @@ export default async function DashboardPage() {
               <ul className="mt-2">
                 {(bookmarks.data ?? []).map((b) => (
                   <li key={b.path}>
-                    <Link href={b.path} className="flex min-h-11 items-center text-small font-medium text-accent-ink hover:underline">
+                    <Link
+                      href={b.path}
+                      className="flex min-h-11 items-center text-small font-medium text-accent-ink hover:underline"
+                    >
                       {b.title}
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 text-small text-muted">Use the Bookmark button on any page to save it here.</p>
+              <p className="mt-2 text-small text-muted">
+                Use the Bookmark button on any page to save it here.
+              </p>
             )}
-            <ButtonLink href="/dashboard/bookmarks" variant="ghost" size="sm" className="mt-2 -ml-3">
+            <ButtonLink
+              href="/dashboard/bookmarks"
+              variant="ghost"
+              size="sm"
+              className="mt-2 -ml-3"
+            >
               All bookmarks
             </ButtonLink>
           </section>
           <p className="text-small text-muted">
-            You have ticked off <span className="font-semibold text-text">{progress.count ?? 0}</span> study items.
+            You have ticked off{' '}
+            <span className="font-semibold text-text">{progress.count ?? 0}</span> study items.
           </p>
         </div>
       </div>
