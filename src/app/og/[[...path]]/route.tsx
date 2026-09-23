@@ -11,6 +11,8 @@ const EYEBROW: Record<string, string> = {
   assignment: 'Assignment help',
   note: 'Notes',
   page: 'Guide',
+  blog_post: 'Blog',
+  blog_category: 'Blog',
 }
 
 /**
