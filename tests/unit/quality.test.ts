@@ -125,3 +125,12 @@ describe('csv export cells', async () => {
     expect(parseCsv(text)).toEqual([{ title: 'Maths 1, Week 2', note: 'line\nbreak' }])
   })
 })
+
+describe('substantive word count', async () => {
+  const { substantiveWords } = await import('@/lib/admin/quality')
+  it('credits components that render text from the database', () => {
+    expect(substantiveWords('Two words')).toBe(2)
+    expect(substantiveWords('Intro text.\n\n<SyllabusOverview program="data-science" />')).toBe(252)
+    expect(substantiveWords('<EligibilityCalculator />')).toBe(0)
+  })
+})
