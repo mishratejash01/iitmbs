@@ -15,7 +15,13 @@ const UNSCHEDULED_YEAR = 2090
  * Postgres; this only explains it, counts down, and refreshes the page once
  * the release time passes so the walkthroughs appear without a reload.
  */
-export function SolutionGate({ assignmentId, releaseAt }: { assignmentId: string; releaseAt: string }) {
+export function SolutionGate({
+  assignmentId,
+  releaseAt,
+}: {
+  assignmentId: string
+  releaseAt: string
+}) {
   const router = useRouter()
   const releaseMs = Date.parse(releaseAt)
   const scheduled = new Date(releaseAt).getUTCFullYear() < UNSCHEDULED_YEAR
@@ -44,10 +50,13 @@ export function SolutionGate({ assignmentId, releaseAt }: { assignmentId: string
   // Once released, refresh (with back-off) until the server sends walkthroughs.
   useEffect(() => {
     if (!released || attempts >= 6) return
-    const timer = setTimeout(() => {
-      router.refresh()
-      setAttempts((a) => a + 1)
-    }, attempts === 0 ? 2000 : 10000)
+    const timer = setTimeout(
+      () => {
+        router.refresh()
+        setAttempts((a) => a + 1)
+      },
+      attempts === 0 ? 2000 : 10000,
+    )
     return () => clearTimeout(timer)
   }, [released, attempts, router])
 
@@ -60,7 +69,9 @@ export function SolutionGate({ assignmentId, releaseAt }: { assignmentId: string
         <Lock aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent-ink" />
         <div className="min-w-0 flex-1">
           <h2 id="solution-gate" className="font-semibold text-text">
-            {released ? 'Walkthroughs are unlocking…' : 'Worked solutions unlock after the deadline'}
+            {released
+              ? 'Walkthroughs are unlocking…'
+              : 'Worked solutions unlock after the deadline'}
           </h2>
           {released ? (
             <div className="mt-1 flex flex-wrap items-center gap-3 text-small text-text">
@@ -89,8 +100,8 @@ export function SolutionGate({ assignmentId, releaseAt }: { assignmentId: string
               ) : (
                 'The release time will be set once the official deadline is confirmed.'
               )}{' '}
-              Until then, work through the concepts and hints below — they are designed to get you unstuck without
-              giving the answer away.
+              Until then, work through the concepts and hints below — they are designed to get you
+              unstuck without giving the answer away.
             </p>
           )}
         </div>
