@@ -1,0 +1,99 @@
+'use client'
+
+import Link from 'next/link'
+import { useEffect, useId, useState } from 'react'
+
+import { Button } from '@/components/ui/button'
+import { getConsent, readCookie, track, writeCookie } from '@/lib/analytics/client'
+import { ANALYTICS_COOKIES } from '@/lib/analytics/events'
+
+import { OPEN_CONSENT_EVENT } from './consent-settings-button'
+
+/**
+ * First-visit analytics choice (DPDP Act 2023). Essential analytics are
+ * pseudonymous and always on; detailed analytics link activity to an account
+ * and need an explicit opt-in from someone who confirms they are 18+.
+ */
+export function ConsentBanner() {
+  const [open, setOpen] = useState(false)
+  const [choosingDetailed, setChoosingDetailed] = useState(false)
+  const [adult, setAdult] = useState(false)
+  const [gpc, setGpc] = useState(false)
+  const checkboxId = useId()
+
+  useEffect(() => {
+    setGpc(Boolean((navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl))
+    if (!readCookie(ANALYTICS_COOKIES.consent)) setOpen(true)
+    const reopen = () => {
+      setChoosingDetailed(false)
+      setAdult(false)
+      setOpen(true)
+    }
+    window.addEventListener(OPEN_CONSENT_EVENT, reopen)
+    return () => window.removeEventListener(OPEN_CONSENT_EVENT, reopen)
+  }, [])
+
+  const save = (level: 'essential' | 'detailed') => {
+    const previous = getConsent()
+    writeCookie(ANALYTICS_COOKIES.consent, level, 60 * 60 * 24 * 365)
+    if (previous !== level || !readCookie(ANALYTICS_COOKIES.consent)) track('consent_update', { level })
+    // Persist on the profile when signed in (ignored otherwise).
+    void fetch('/api/me/consent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ level, adult: level === 'detailed' ? adult : false }),
+    }).catch(() => undefined)
+    setOpen(false)
+  }
+
+  if (!open) return null
+
+  return (
+    <section
+      aria-label="Analytics choices"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card p-4 shadow-card sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md sm:rounded-card sm:border"
+      data-print="hide"
+    >
+      <p className="text-small font-semibold text-text">Your analytics choice</p>
+      <p className="mt-1 text-small text-muted">
+        We use essential, pseudonymous analytics to see which pages help students — never your name, email or IP
+        address. {gpc ? 'Your browser sends Global Privacy Control, so that is all we use.' : 'You can also allow detailed analytics to power your reading history and progress.'}{' '}
+        <Link href="/privacy" className="font-medium text-accent-ink underline">
+          Privacy policy
+        </Link>
+      </p>
+
+      {choosingDetailed && !gpc ? (
+        <div className="mt-3 flex items-start gap-2">
+          <input
+            id={checkboxId}
+            type="checkbox"
+            checked={adult}
+            onChange={(event) => setAdult(event.target.checked)}
+            className="mt-1 size-4 accent-[var(--accent-strong)]"
+          />
+          <label htmlFor={checkboxId} className="text-small text-text">
+            I am 18 or older and allow detailed analytics linked to my account.
+          </label>
+        </div>
+      ) : null}
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button variant="secondary" size="sm" onClick={() => save('essential')}>
+          {gpc ? 'OK' : 'Essential only'}
+        </Button>
+        {!gpc ? (
+          choosingDetailed ? (
+            <Button size="sm" disabled={!adult} onClick={() => save('detailed')}>
+              Allow detailed
+            </Button>
+          ) : (
+            <Button variant="soft" size="sm" onClick={() => setChoosingDetailed(true)}>
+              Allow detailed…
+            </Button>
+          )
+        ) : null}
+      </div>
+    </section>
+  )
+}
