@@ -3,11 +3,18 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 
 import { tableTag } from '@/lib/cache/tags'
-import { assignmentPath, examPrepPath, formulaSheetPath, weekNotesPath, weekPath } from '@/lib/routes'
+import {
+  assignmentPath,
+  examPrepPath,
+  formulaSheetPath,
+  weekNotesPath,
+  weekPath,
+} from '@/lib/routes'
 import { parseSearchQuery, type ParsedQuery, type SearchKind } from '@/lib/search/parse'
 import { getPublicClient } from '@/lib/supabase/public'
 
 import { getCourseAliasIndex, getCourseCore } from './courses'
+import { getPrograms } from './programs'
 
 export type SearchResult = {
   path: string
@@ -24,6 +31,8 @@ export type SearchResponse = {
   parsed: ParsedQuery
   /** An exact destination when the query names a course + week (+ kind). */
   directHit: { path: string; label: string } | null
+  /** The same destination in other programmes when the course name is shared. */
+  alternatives: Array<{ path: string; label: string }>
   results: SearchResult[]
 }
 
@@ -35,17 +44,25 @@ const RPC_KIND: Partial<Record<SearchKind, string>> = {
   exam_prep: 'exam_prep',
 }
 
-async function resolveDirectHit(parsed: ParsedQuery): Promise<SearchResponse['directHit']> {
-  const course = parsed.course
+async function resolveDirectHit(
+  parsed: ParsedQuery,
+  course: ParsedQuery['course'] = parsed.course,
+): Promise<SearchResponse['directHit']> {
   if (!course) return null
   const core = await getCourseCore(course.programSlug, course.slug)
   if (!core) return null
 
   if (parsed.kind === 'formula_sheet' && core.notes.some((n) => n.kind === 'formula_sheet')) {
-    return { path: formulaSheetPath(course.programSlug, course.slug), label: `${course.shortName} formula sheet` }
+    return {
+      path: formulaSheetPath(course.programSlug, course.slug),
+      label: `${course.shortName} formula sheet`,
+    }
   }
   if (parsed.kind === 'exam_prep' && core.notes.some((n) => n.kind === 'exam_prep')) {
-    return { path: examPrepPath(course.programSlug, course.slug), label: `${course.shortName} exam preparation` }
+    return {
+      path: examPrepPath(course.programSlug, course.slug),
+      label: `${course.shortName} exam preparation`,
+    }
   }
   if (parsed.week === null) return null
   const week = core.weeks.find((w) => w.number === parsed.week)
@@ -63,7 +80,10 @@ async function resolveDirectHit(parsed: ParsedQuery): Promise<SearchResponse['di
       label: `${course.shortName} Week ${week.number} Practice Assignment`,
     }
   }
-  if (parsed.kind === 'note' && core.notes.some((n) => n.kind === 'week' && n.weekNumber === week.number)) {
+  if (
+    parsed.kind === 'note' &&
+    core.notes.some((n) => n.kind === 'week' && n.weekNumber === week.number)
+  ) {
     return {
       path: weekNotesPath(course.programSlug, course.slug, week.number),
       label: `${course.shortName} Week ${week.number} Notes`,
@@ -79,13 +99,30 @@ async function resolveDirectHit(parsed: ParsedQuery): Promise<SearchResponse['di
 export async function searchSite(query: string, limit = 20): Promise<SearchResponse> {
   'use cache'
   cacheLife('search')
-  cacheTag('search', tableTag('courses'), tableTag('weeks'), tableTag('notes'), tableTag('assignments'))
+  cacheTag(
+    'search',
+    tableTag('courses'),
+    tableTag('weeks'),
+    tableTag('notes'),
+    tableTag('assignments'),
+  )
 
   const parsed = parseSearchQuery(query, await getCourseAliasIndex())
-  if (!parsed.normalized) return { parsed, directHit: null, results: [] }
+  if (!parsed.normalized) return { parsed, directHit: null, alternatives: [], results: [] }
 
-  const [directHit, rpc] = await Promise.all([
+  const [directHit, alternatives, rpc] = await Promise.all([
     resolveDirectHit(parsed),
+    Promise.all(
+      parsed.alternatives.map(async (course) => {
+        const hit = await resolveDirectHit(parsed, course)
+        if (!hit) return null
+        const program = (await getPrograms()).find((p) => p.slug === course.programSlug)
+        return {
+          path: hit.path,
+          label: `${hit.label} (${program?.shortName ?? course.programSlug})`,
+        }
+      }),
+    ).then((hits) => hits.filter((hit): hit is { path: string; label: string } => hit !== null)),
     getPublicClient().rpc('search_content', {
       p_query: parsed.text,
       p_course_id: parsed.course?.id ?? undefined,
@@ -109,6 +146,7 @@ export async function searchSite(query: string, limit = 20): Promise<SearchRespo
   return {
     parsed,
     directHit,
+    alternatives,
     results: rows.map((row) => ({
       path: row.path,
       title: row.title,
