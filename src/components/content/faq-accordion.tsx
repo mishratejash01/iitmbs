@@ -30,7 +30,10 @@ export function FaqAccordion({
           <details key={faq.id} id={`faq-${faq.id}`} className="group">
             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 font-medium text-text [&::-webkit-details-marker]:hidden">
               <span>{faq.question}</span>
-              <ChevronDown aria-hidden="true" className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" />
+              <ChevronDown
+                aria-hidden="true"
+                className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180"
+              />
             </summary>
             <div className="px-4 pb-4 text-muted">
               <Mdx source={faq.answerMdx} headingOffset={2} className="text-body" />
