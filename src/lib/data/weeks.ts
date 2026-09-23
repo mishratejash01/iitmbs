@@ -113,7 +113,10 @@ export type ProgramWeekData = {
 }
 
 /** Cross-course week hub: every course's week-n in one place. */
-export async function getProgramWeek(programSlug: string, weekNumber: number): Promise<ProgramWeekData | null> {
+export async function getProgramWeek(
+  programSlug: string,
+  weekNumber: number,
+): Promise<ProgramWeekData | null> {
   'use cache'
   cacheLife(await contentCacheProfile())
   cacheTag(
@@ -134,7 +137,8 @@ export async function getProgramWeek(programSlug: string, weekNumber: number): P
       .map(async (course) => {
         const core = await getCourseCore(programSlug, course.slug)
         const week = core?.weeks.find((w) => w.number === weekNumber) ?? null
-        const inWeek = core?.assignments.filter((a) => a.weekNumber === weekNumber && a.isLatest) ?? []
+        const inWeek =
+          core?.assignments.filter((a) => a.weekNumber === weekNumber && a.isLatest) ?? []
         return {
           name: course.name,
           shortName: course.shortName,
@@ -143,7 +147,8 @@ export async function getProgramWeek(programSlug: string, weekNumber: number): P
           week,
           graded: inWeek.find((a) => a.type === 'graded') ?? null,
           practice: inWeek.find((a) => a.type === 'practice') ?? null,
-          weekNote: core?.notes.find((n) => n.kind === 'week' && n.weekNumber === weekNumber) ?? null,
+          weekNote:
+            core?.notes.find((n) => n.kind === 'week' && n.weekNumber === weekNumber) ?? null,
         }
       }),
   )
@@ -160,7 +165,9 @@ export async function getProgramWeek(programSlug: string, weekNumber: number): P
 }
 
 /** Every live (programme, course, week) triple — for generateStaticParams. */
-export async function getWeekParams(): Promise<Array<{ program: string; course: string; week: string }>> {
+export async function getWeekParams(): Promise<
+  Array<{ program: string; course: string; week: string }>
+> {
   'use cache'
   cacheLife(await contentCacheProfile())
   cacheTag(tableTag('programs'), tableTag('courses'), tableTag('weeks'))
