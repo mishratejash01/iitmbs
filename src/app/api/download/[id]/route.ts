@@ -2,6 +2,8 @@ import { after } from 'next/server'
 import { z } from 'zod'
 
 import { features } from '@/env'
+import { allowRequest } from '@/lib/analytics/rate-limit'
+import { clientIp, hashIp } from '@/lib/analytics/request'
 import { getAnalyticsContext } from '@/lib/analytics/server'
 import { getSessionUser } from '@/lib/auth/session'
 import { privateDownloadUrl } from '@/lib/cloudinary/server'
@@ -26,6 +28,15 @@ export async function GET(request: Request, { params }: RouteContext<'/api/downl
     pagePath = referer ? new URL(referer).pathname : null
   } catch {
     pagePath = null
+  }
+
+  // Signed links are cheap to mint; cap them per visitor to stop bulk scraping.
+  const ipHash = hashIp(clientIp(request.headers))
+  if (!(await allowRequest(ipHash && `download:${ipHash}`, 600, 60))) {
+    return new Response('Too many downloads. Please try again in a few minutes.', {
+      status: 429,
+      headers: { 'Retry-After': '600' },
+    })
   }
 
   if (target.requiresLogin && !(await getSessionUser())) {
