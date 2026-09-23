@@ -53,7 +53,10 @@ export function Disclosure({
 
   return (
     <details ref={ref} className={cn('group relative', className)}>
-      <summary aria-label={label} className={cn('list-none [&::-webkit-details-marker]:hidden', summaryClassName)}>
+      <summary
+        aria-label={label}
+        className={cn('list-none [&::-webkit-details-marker]:hidden', summaryClassName)}
+      >
         {summary}
       </summary>
       <div className={panelClassName}>{children}</div>
