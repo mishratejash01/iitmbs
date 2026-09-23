@@ -1,0 +1,654 @@
+import type { ContentTable } from '@/lib/cache/tags'
+
+import type { Field, FieldOption } from './fields'
+
+/**
+ * Every table the admin can edit, described once. The list view, edit form,
+ * value parsing, permissions and publishing side effects all come from here.
+ */
+
+export type AdminTable =
+  | 'programs'
+  | 'courses'
+  | 'weeks'
+  | 'assignments'
+  | 'questions'
+  | 'notes'
+  | 'resources'
+  | 'faqs'
+  | 'pages'
+  | 'authors'
+  | 'media'
+  | 'nav_items'
+  | 'footer_links'
+  | 'redirects'
+  | 'seo_overrides'
+  | 'keyword_clusters'
+  | 'event_definitions'
+
+export type ResourceConfig = {
+  key: string
+  table: AdminTable
+  label: string
+  singular: string
+  group: 'Content' | 'Library' | 'Site' | 'SEO' | 'Analytics'
+  primaryKey?: 'id' | 'name'
+  titleColumn: string
+  /** Columns shown in the list (must exist in `fields` or be system columns). */
+  listColumns: string[]
+  searchColumns: string[]
+  orderBy: { column: string; ascending: boolean }
+  fields: Field[]
+  publishable?: boolean
+  softDelete?: boolean
+  adminOnly?: boolean
+  /** Long-form MDX fields checked by the quality gate. */
+  bodyFields?: string[]
+  /** Tables whose revision history is kept (content_revisions). */
+  revisions?: boolean
+}
+
+const SOURCE_OPTIONS: FieldOption[] = [
+  { value: 'original', label: 'Original — written by our team' },
+  { value: 'permission_granted', label: 'Shared with the owner’s permission' },
+  { value: 'official_link', label: 'Official source (linked, summarised)' },
+]
+
+const publishing: Field[] = [
+  { name: 'is_published', label: 'Published', type: 'boolean', section: 'publishing' },
+  {
+    name: 'published_at',
+    label: 'Go live at (IST)',
+    type: 'datetime',
+    section: 'publishing',
+    help: 'Leave empty to publish immediately. A future time schedules it.',
+  },
+]
+
+const seo: Field[] = [
+  { name: 'seo_title', label: 'SEO title', type: 'text', section: 'seo', max: 120, help: 'Overrides the title template. Aim for ≤ 60 characters.' },
+  { name: 'seo_description', label: 'Meta description', type: 'textarea', section: 'seo', max: 320, rows: 3, help: 'Aim for 120–155 characters.' },
+  { name: 'og_image_public_id', label: 'Social image', type: 'image', section: 'seo', help: 'Optional. Otherwise a branded card is generated.' },
+  { name: 'canonical_path', label: 'Canonical path', type: 'text', section: 'seo', help: 'Only if this page duplicates another URL.' },
+  { name: 'noindex', label: 'Hide from search engines (noindex)', type: 'boolean', section: 'seo' },
+  { name: 'keywords', label: 'Keywords', type: 'tags', section: 'seo', help: 'Comma separated. Used for internal planning and meta keywords.' },
+  { name: 'schema_overrides', label: 'Schema overrides (JSON)', type: 'json', section: 'seo' },
+]
+
+const provenance: Field[] = [
+  { name: 'source_permission', label: 'Source', type: 'select', section: 'source', required: true, options: SOURCE_OPTIONS },
+  { name: 'source_url', label: 'Source URL', type: 'url', section: 'source', help: 'Required for shared or official material.' },
+]
+
+const bylines: Field[] = [
+  { name: 'author_id', label: 'Author', type: 'reference', reference: 'authors', section: 'source' },
+  { name: 'reviewer_id', label: 'Reviewer', type: 'reference', reference: 'authors', section: 'source' },
+]
+
+export const RESOURCES: ResourceConfig[] = [
+  {
+    key: 'programs',
+    table: 'programs',
+    label: 'Programmes',
+    singular: 'Programme',
+    group: 'Content',
+    titleColumn: 'name',
+    listColumns: ['name', 'slug', 'status', 'updated_at'],
+    searchColumns: ['name', 'slug'],
+    orderBy: { column: 'sort_order', ascending: true },
+    publishable: true,
+    softDelete: true,
+    bodyFields: ['intro_mdx'],
+    fields: [
+      { name: 'name', label: 'Official name', type: 'text', required: true, max: 160 },
+      { name: 'short_name', label: 'Short name', type: 'text', required: true, max: 60 },
+      { name: 'slug', label: 'URL slug', type: 'slug', required: true, help: 'e.g. data-science → /data-science' },
+      { name: 'aliases', label: 'Aliases', type: 'tags', help: 'Other spellings; slug forms redirect here.' },
+      { name: 'description', label: 'Description', type: 'textarea', rows: 4, max: 2000 },
+      { name: 'intro_mdx', label: 'Introduction', type: 'mdx', section: 'content' },
+      { name: 'official_url', label: 'Official page', type: 'url' },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      ...publishing,
+      ...seo,
+    ],
+  },
+  {
+    key: 'courses',
+    table: 'courses',
+    label: 'Courses',
+    singular: 'Course',
+    group: 'Content',
+    titleColumn: 'name',
+    listColumns: ['name', 'code', 'slug', 'status', 'updated_at'],
+    searchColumns: ['name', 'short_name', 'code', 'slug'],
+    orderBy: { column: 'sort_order', ascending: true },
+    publishable: true,
+    softDelete: true,
+    bodyFields: ['intro_mdx'],
+    fields: [
+      { name: 'program_id', label: 'Home programme', type: 'reference', reference: 'programs', required: true },
+      { name: 'name', label: 'Official name', type: 'text', required: true, max: 160 },
+      { name: 'short_name', label: 'Short name', type: 'text', required: true, max: 60, help: 'Used in titles: “IITM Maths 1 …”' },
+      { name: 'code', label: 'Course code', type: 'text', max: 16 },
+      { name: 'slug', label: 'URL slug', type: 'slug', required: true },
+      { name: 'aliases', label: 'Aliases', type: 'tags', help: 'e.g. maths 1, math 1, m1 — mentioned on the page and redirected.' },
+      { name: 'description', label: 'Description', type: 'textarea', rows: 4, max: 2000 },
+      { name: 'intro_mdx', label: 'Introduction', type: 'mdx', section: 'content' },
+      { name: 'official_url', label: 'Official course page', type: 'url' },
+      { name: 'credits', label: 'Credits', type: 'number' },
+      { name: 'weeks_count', label: 'Qualifier weeks', type: 'number', required: true },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      ...publishing,
+      ...seo,
+    ],
+  },
+  {
+    key: 'weeks',
+    table: 'weeks',
+    label: 'Weeks',
+    singular: 'Week',
+    group: 'Content',
+    titleColumn: 'title',
+    listColumns: ['title', 'week_number', 'status', 'updated_at'],
+    searchColumns: ['title'],
+    orderBy: { column: 'week_number', ascending: true },
+    publishable: true,
+    softDelete: true,
+    bodyFields: ['intro_mdx'],
+    fields: [
+      { name: 'course_id', label: 'Course', type: 'reference', reference: 'courses', required: true },
+      { name: 'week_number', label: 'Week number', type: 'number', required: true },
+      { name: 'title', label: 'Title', type: 'text', required: true, max: 160 },
+      { name: 'summary', label: 'Summary', type: 'textarea', rows: 3, max: 1000 },
+      { name: 'topics', label: 'Topics', type: 'tags', help: 'One per line or comma separated, from the official syllabus.' },
+      { name: 'intro_mdx', label: 'Week overview', type: 'mdx', section: 'content' },
+      ...publishing,
+      ...seo,
+    ],
+  },
+  {
+    key: 'assignments',
+    table: 'assignments',
+    label: 'Assignments',
+    singular: 'Assignment',
+    group: 'Content',
+    titleColumn: 'title',
+    listColumns: ['title', 'type', 'term', 'due_at', 'status', 'updated_at'],
+    searchColumns: ['title', 'term'],
+    orderBy: { column: 'updated_at', ascending: false },
+    publishable: true,
+    softDelete: true,
+    revisions: true,
+    bodyFields: ['intro_mdx'],
+    fields: [
+      { name: 'course_id', label: 'Course', type: 'reference', reference: 'courses', required: true },
+      { name: 'week_id', label: 'Week', type: 'reference', reference: 'weeks', help: 'Leave empty for a course-level exam-prep practice set.' },
+      {
+        name: 'type',
+        label: 'Type',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'graded', label: 'Graded assignment' },
+          { value: 'practice', label: 'Practice assignment' },
+          { value: 'activity', label: 'Activity questions' },
+        ],
+      },
+      { name: 'term', label: 'Term', type: 'text', required: true, placeholder: '2026-sep', help: 'YYYY-jan, YYYY-may or YYYY-sep' },
+      { name: 'title', label: 'Title', type: 'text', required: true, max: 200 },
+      { name: 'summary', label: 'Summary', type: 'textarea', rows: 2, max: 1000 },
+      { name: 'due_at', label: 'Due (IST)', type: 'datetime', section: 'publishing' },
+      {
+        name: 'solutions_release_at',
+        label: 'Release worked solutions at (IST)',
+        type: 'datetime',
+        required: true,
+        section: 'publishing',
+        help: 'Answers stay locked in the database until this time. Must be after the due time for graded work.',
+      },
+      { name: 'estimated_minutes', label: 'Estimated minutes', type: 'number' },
+      { name: 'intro_mdx', label: 'What this assignment covers', type: 'mdx', section: 'content' },
+      { name: 'concepts', label: 'Concepts tested', type: 'tags', section: 'content' },
+      { name: 'common_mistakes_mdx', label: 'Common mistakes', type: 'mdx', section: 'content' },
+      ...bylines,
+      ...provenance,
+      ...publishing,
+      ...seo,
+    ],
+  },
+  {
+    key: 'questions',
+    table: 'questions',
+    label: 'Questions',
+    singular: 'Question',
+    group: 'Content',
+    titleColumn: 'question_mdx',
+    listColumns: ['question_mdx', 'position', 'question_type', 'updated_at'],
+    searchColumns: ['question_mdx'],
+    orderBy: { column: 'position', ascending: true },
+    softDelete: true,
+    revisions: true,
+    bodyFields: ['question_mdx', 'hint_mdx', 'explanation_mdx'],
+    fields: [
+      { name: 'assignment_id', label: 'Assignment', type: 'reference', reference: 'assignments', required: true },
+      { name: 'position', label: 'Position', type: 'number', required: true },
+      {
+        name: 'question_type',
+        label: 'Type',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'mcq', label: 'Single choice (MCQ)' },
+          { value: 'msq', label: 'Multiple select (MSQ)' },
+          { value: 'numeric', label: 'Numerical answer' },
+          { value: 'text', label: 'Short answer' },
+        ],
+      },
+      { name: 'question_mdx', label: 'Question', type: 'mdx', required: true, section: 'content' },
+      { name: 'options', label: 'Options', type: 'options', section: 'content', help: 'For MCQ/MSQ.' },
+      { name: 'hint_mdx', label: 'Hint (shown before the deadline)', type: 'mdx', section: 'content' },
+      { name: 'answer_mdx', label: 'Answer (locked until release)', type: 'mdx', section: 'content' },
+      { name: 'explanation_mdx', label: 'Worked explanation (locked until release)', type: 'mdx', section: 'content' },
+      {
+        name: 'answer_key',
+        label: 'Answer key (JSON, locked until release)',
+        type: 'json',
+        section: 'content',
+        help: '{"correct":["a"]} · {"value":3.5,"tolerance":0.01} · {"accepted":["…"]}',
+      },
+      { name: 'concept_tags', label: 'Concept tags', type: 'tags' },
+      {
+        name: 'difficulty',
+        label: 'Difficulty',
+        type: 'select',
+        options: [
+          { value: 'easy', label: 'Easy' },
+          { value: 'medium', label: 'Medium' },
+          { value: 'hard', label: 'Hard' },
+        ],
+      },
+      { name: 'marks', label: 'Marks', type: 'number' },
+      ...provenance,
+    ],
+  },
+  {
+    key: 'notes',
+    table: 'notes',
+    label: 'Notes',
+    singular: 'Note',
+    group: 'Content',
+    titleColumn: 'title',
+    listColumns: ['title', 'kind', 'status', 'updated_at'],
+    searchColumns: ['title', 'slug'],
+    orderBy: { column: 'updated_at', ascending: false },
+    publishable: true,
+    softDelete: true,
+    revisions: true,
+    bodyFields: ['body_mdx'],
+    fields: [
+      { name: 'course_id', label: 'Course', type: 'reference', reference: 'courses', required: true },
+      { name: 'week_id', label: 'Week', type: 'reference', reference: 'weeks', help: 'Required for week notes.' },
+      {
+        name: 'kind',
+        label: 'Kind',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'week', label: 'Week notes (/week-n/notes)' },
+          { value: 'topic', label: 'Topic note (/notes/slug)' },
+          { value: 'formula_sheet', label: 'Formula sheet' },
+          { value: 'exam_prep', label: 'Qualifier exam prep' },
+        ],
+      },
+      { name: 'title', label: 'Title', type: 'text', required: true, max: 200 },
+      { name: 'slug', label: 'URL slug', type: 'slug', required: true },
+      { name: 'summary', label: 'Summary', type: 'textarea', rows: 2, max: 1000 },
+      { name: 'body_mdx', label: 'Body', type: 'mdx', section: 'content', rows: 28 },
+      { name: 'reviewed_at', label: 'Last reviewed (IST)', type: 'datetime', section: 'source' },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      ...bylines,
+      ...provenance,
+      ...publishing,
+      ...seo,
+    ],
+  },
+  {
+    key: 'resources',
+    table: 'resources',
+    label: 'Resources',
+    singular: 'Resource',
+    group: 'Library',
+    titleColumn: 'title',
+    listColumns: ['title', 'kind', 'download_count', 'status', 'updated_at'],
+    searchColumns: ['title'],
+    orderBy: { column: 'updated_at', ascending: false },
+    publishable: true,
+    softDelete: true,
+    fields: [
+      {
+        name: 'kind',
+        label: 'Kind',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'pdf', label: 'PDF' },
+          { value: 'sheet', label: 'Spreadsheet' },
+          { value: 'link', label: 'Link' },
+          { value: 'video', label: 'Video' },
+        ],
+      },
+      { name: 'title', label: 'Title', type: 'text', required: true, max: 200 },
+      { name: 'description', label: 'Description (in your own words)', type: 'textarea', rows: 2, max: 500 },
+      { name: 'course_id', label: 'Course', type: 'reference', reference: 'courses' },
+      { name: 'week_id', label: 'Week', type: 'reference', reference: 'weeks' },
+      { name: 'url', label: 'Link URL', type: 'url', help: 'For links and hosted videos.' },
+      { name: 'cloudinary_public_id', label: 'File', type: 'file', help: 'Uploaded privately; served only through tracked, signed links.' },
+      {
+        name: 'cloudinary_resource_type',
+        label: 'File type',
+        type: 'select',
+        options: [
+          { value: 'raw', label: 'Document (PDF, sheet)' },
+          { value: 'image', label: 'Image' },
+          { value: 'video', label: 'Video' },
+        ],
+      },
+      { name: 'file_format', label: 'Format', type: 'text', max: 16 },
+      { name: 'file_bytes', label: 'Size (bytes)', type: 'number' },
+      { name: 'requires_login', label: 'Requires sign-in to download', type: 'boolean' },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      ...provenance,
+      ...publishing,
+    ],
+  },
+  {
+    key: 'faqs',
+    table: 'faqs',
+    label: 'FAQs',
+    singular: 'FAQ',
+    group: 'Content',
+    titleColumn: 'question',
+    listColumns: ['question', 'scope', 'status', 'updated_at'],
+    searchColumns: ['question'],
+    orderBy: { column: 'sort_order', ascending: true },
+    publishable: true,
+    softDelete: true,
+    bodyFields: ['answer_mdx'],
+    fields: [
+      {
+        name: 'scope',
+        label: 'Shown on',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'global', label: 'Qualifier hub and home page' },
+          { value: 'program', label: 'A programme page' },
+          { value: 'course', label: 'A course page' },
+          { value: 'week', label: 'A week page' },
+          { value: 'assignment', label: 'An assignment page' },
+          { value: 'page', label: 'A CMS page' },
+        ],
+      },
+      { name: 'scope_id', label: 'Which page', type: 'reference', reference: 'faqScopes', help: 'Leave empty for global FAQs.' },
+      { name: 'question', label: 'Question', type: 'text', required: true, max: 300 },
+      { name: 'answer_mdx', label: 'Answer', type: 'mdx', required: true, section: 'content', rows: 8 },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      ...publishing,
+    ],
+  },
+  {
+    key: 'pages',
+    table: 'pages',
+    label: 'Pages',
+    singular: 'Page',
+    group: 'Content',
+    titleColumn: 'title',
+    listColumns: ['title', 'path', 'template', 'status', 'updated_at'],
+    searchColumns: ['title', 'path'],
+    orderBy: { column: 'path', ascending: true },
+    publishable: true,
+    softDelete: true,
+    revisions: true,
+    bodyFields: ['body_mdx'],
+    fields: [
+      { name: 'path', label: 'Path', type: 'text', required: true, help: 'e.g. qualifier/eligibility → /qualifier/eligibility' },
+      { name: 'title', label: 'Title', type: 'text', required: true, max: 200 },
+      { name: 'summary', label: 'Summary', type: 'textarea', rows: 2, max: 1000 },
+      { name: 'body_mdx', label: 'Body', type: 'mdx', section: 'content', rows: 28 },
+      { name: 'sources', label: 'Official sources', type: 'sources', section: 'content' },
+      {
+        name: 'template',
+        label: 'Template',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'guide', label: 'Guide (with learning-resource schema)' },
+          { value: 'legal', label: 'Legal (no feedback box)' },
+        ],
+      },
+      { name: 'last_reviewed_at', label: 'Last reviewed (IST)', type: 'datetime', section: 'source' },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      ...bylines,
+      ...publishing,
+      ...seo,
+    ],
+  },
+  {
+    key: 'authors',
+    table: 'authors',
+    label: 'Authors',
+    singular: 'Author',
+    group: 'Library',
+    titleColumn: 'name',
+    listColumns: ['name', 'slug', 'updated_at'],
+    searchColumns: ['name', 'slug'],
+    orderBy: { column: 'name', ascending: true },
+    fields: [
+      { name: 'name', label: 'Name', type: 'text', required: true, max: 120 },
+      { name: 'slug', label: 'Slug', type: 'slug', required: true },
+      { name: 'headline', label: 'Headline', type: 'text', max: 160 },
+      { name: 'credentials', label: 'Credentials', type: 'text', max: 300, help: 'e.g. “IITM BS DS, CGPA 9.1” — only true claims.' },
+      { name: 'bio', label: 'Bio', type: 'textarea', rows: 4, max: 2000 },
+      { name: 'avatar_public_id', label: 'Photo', type: 'image' },
+      { name: 'same_as', label: 'Profile links', type: 'tags', help: 'LinkedIn, GitHub… used for schema.org sameAs.' },
+    ],
+  },
+  {
+    key: 'media',
+    table: 'media',
+    label: 'Media',
+    singular: 'Media item',
+    group: 'Library',
+    titleColumn: 'public_id',
+    listColumns: ['public_id', 'resource_type', 'alt_text', 'updated_at'],
+    searchColumns: ['public_id', 'alt_text'],
+    orderBy: { column: 'updated_at', ascending: false },
+    fields: [
+      { name: 'public_id', label: 'Cloudinary ID', type: 'text', required: true, readOnly: true },
+      { name: 'alt_text', label: 'Alt text', type: 'text', max: 300, help: 'Describe what the image shows — required for images.' },
+      { name: 'caption', label: 'Caption', type: 'text', max: 500 },
+      { name: 'credit', label: 'Credit', type: 'text', max: 300 },
+      ...provenance,
+    ],
+  },
+  {
+    key: 'nav',
+    table: 'nav_items',
+    label: 'Navigation',
+    singular: 'Navigation link',
+    group: 'Site',
+    adminOnly: true,
+    titleColumn: 'label',
+    listColumns: ['label', 'location', 'href', 'is_active'],
+    searchColumns: ['label', 'href'],
+    orderBy: { column: 'sort_order', ascending: true },
+    fields: [
+      {
+        name: 'location',
+        label: 'Location',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'header', label: 'Header' },
+          { value: 'mobile', label: 'Mobile menu' },
+          { value: 'quick', label: 'Home quick links' },
+        ],
+      },
+      { name: 'label', label: 'Label', type: 'text', required: true, max: 60 },
+      { name: 'href', label: 'Link', type: 'url', required: true },
+      { name: 'description', label: 'Description', type: 'text', max: 160 },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      { name: 'is_active', label: 'Active', type: 'boolean' },
+      { name: 'open_in_new_tab', label: 'Open in new tab', type: 'boolean' },
+    ],
+  },
+  {
+    key: 'footer',
+    table: 'footer_links',
+    label: 'Footer links',
+    singular: 'Footer link',
+    group: 'Site',
+    adminOnly: true,
+    titleColumn: 'label',
+    listColumns: ['label', 'group_label', 'href', 'is_active'],
+    searchColumns: ['label', 'group_label', 'href'],
+    orderBy: { column: 'group_order', ascending: true },
+    fields: [
+      { name: 'group_label', label: 'Column heading', type: 'text', required: true, max: 60 },
+      { name: 'group_order', label: 'Column order', type: 'number' },
+      { name: 'label', label: 'Label', type: 'text', required: true, max: 60 },
+      { name: 'href', label: 'Link', type: 'url', required: true },
+      { name: 'sort_order', label: 'Sort order', type: 'number' },
+      { name: 'is_active', label: 'Active', type: 'boolean' },
+      { name: 'open_in_new_tab', label: 'Open in new tab', type: 'boolean' },
+    ],
+  },
+  {
+    key: 'redirects',
+    table: 'redirects',
+    label: 'Redirects',
+    singular: 'Redirect',
+    group: 'SEO',
+    adminOnly: true,
+    titleColumn: 'from_path',
+    listColumns: ['from_path', 'to_path', 'status_code', 'is_active'],
+    searchColumns: ['from_path', 'to_path'],
+    orderBy: { column: 'from_path', ascending: true },
+    fields: [
+      { name: 'from_path', label: 'From path', type: 'text', required: true, help: 'Lower-case, starting with /' },
+      { name: 'to_path', label: 'To', type: 'url', required: true },
+      {
+        name: 'status_code',
+        label: 'Status',
+        type: 'select',
+        coerce: 'number',
+        required: true,
+        options: [
+          { value: '301', label: '301 Moved permanently' },
+          { value: '308', label: '308 Permanent redirect' },
+          { value: '302', label: '302 Found (temporary)' },
+          { value: '307', label: '307 Temporary redirect' },
+        ],
+      },
+      { name: 'is_active', label: 'Active', type: 'boolean' },
+      { name: 'notes', label: 'Notes', type: 'text', max: 500 },
+    ],
+  },
+  {
+    key: 'seo-overrides',
+    table: 'seo_overrides',
+    label: 'SEO overrides',
+    singular: 'SEO override',
+    group: 'SEO',
+    titleColumn: 'path',
+    listColumns: ['path', 'title', 'noindex', 'updated_at'],
+    searchColumns: ['path', 'title'],
+    orderBy: { column: 'path', ascending: true },
+    fields: [
+      { name: 'path', label: 'Path', type: 'text', required: true, help: 'Exact site path, e.g. /data-science' },
+      { name: 'title', label: 'Title', type: 'text', max: 120 },
+      { name: 'description', label: 'Description', type: 'textarea', rows: 3, max: 320 },
+      { name: 'canonical', label: 'Canonical', type: 'text' },
+      {
+        name: 'noindex',
+        label: 'Indexing',
+        type: 'select',
+        coerce: 'boolean',
+        options: [
+          { value: 'false', label: 'Allow indexing' },
+          { value: 'true', label: 'noindex' },
+        ],
+      },
+      { name: 'og_image_public_id', label: 'Social image', type: 'image' },
+    ],
+  },
+  {
+    key: 'keywords',
+    table: 'keyword_clusters',
+    label: 'Keyword notes',
+    singular: 'Keyword note',
+    group: 'SEO',
+    titleColumn: 'primary_keyword',
+    listColumns: ['primary_keyword', 'path', 'intent', 'updated_at'],
+    searchColumns: ['primary_keyword', 'path'],
+    orderBy: { column: 'path', ascending: true },
+    fields: [
+      { name: 'path', label: 'Page path', type: 'text', required: true },
+      { name: 'primary_keyword', label: 'Primary keyword', type: 'text', required: true, max: 200 },
+      { name: 'secondary_keywords', label: 'Secondary keywords', type: 'tags' },
+      {
+        name: 'intent',
+        label: 'Intent',
+        type: 'select',
+        options: [
+          { value: 'informational', label: 'Informational' },
+          { value: 'navigational', label: 'Navigational' },
+          { value: 'answer_seeking', label: 'Answer-seeking' },
+          { value: 'transactional', label: 'Transactional' },
+        ],
+      },
+      { name: 'notes', label: 'Notes', type: 'textarea', rows: 6, max: 4000 },
+    ],
+  },
+  {
+    key: 'events',
+    table: 'event_definitions',
+    label: 'Event catalogue',
+    singular: 'Event',
+    group: 'Analytics',
+    adminOnly: true,
+    primaryKey: 'name',
+    titleColumn: 'name',
+    listColumns: ['name', 'category', 'store_raw', 'is_active'],
+    searchColumns: ['name', 'description'],
+    orderBy: { column: 'category', ascending: true },
+    fields: [
+      { name: 'name', label: 'Event name', type: 'text', required: true, help: 'snake_case' },
+      {
+        name: 'category',
+        label: 'Category',
+        type: 'select',
+        required: true,
+        options: ['session', 'navigation', 'content', 'downloads', 'search', 'auth', 'engagement', 'errors', 'performance'].map((c) => ({
+          value: c,
+          label: c,
+        })),
+      },
+      { name: 'description', label: 'Description', type: 'textarea', rows: 2, required: true, max: 500 },
+      { name: 'properties', label: 'Properties (JSON documentation)', type: 'json' },
+      { name: 'store_raw', label: 'Store raw events', type: 'boolean' },
+      { name: 'requires_detailed_consent', label: 'Requires detailed consent', type: 'boolean' },
+      { name: 'is_active', label: 'Accepted by /api/track', type: 'boolean' },
+    ],
+  },
+]
+
+export function getResource(key: string): ResourceConfig | undefined {
+  return RESOURCES.find((resource) => resource.key === key)
+}
+
+/** Tables whose writes change public pages (revalidated on save). */
+export function isPublicTable(table: AdminTable): table is AdminTable & ContentTable {
+  return table !== 'keyword_clusters' && table !== 'event_definitions'
+}
