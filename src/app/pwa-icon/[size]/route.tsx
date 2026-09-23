@@ -21,30 +21,32 @@ export async function GET(_request: Request, { params }: RouteContext<'/pwa-icon
   const radius = maskable ? 0 : size * 0.28
 
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: size,
-          height: size,
-          background: accent,
-          borderRadius: radius,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <svg width={inner} height={inner} viewBox="0 0 32 32">
-          <path
-            d="M9.5 16.5l4.2 4.2L22.5 11.8"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-    ),
-    { width: size, height: size, headers: { 'Cache-Control': 'public, max-age=31536000, immutable' } },
+    <div
+      style={{
+        width: size,
+        height: size,
+        background: accent,
+        borderRadius: radius,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <svg width={inner} height={inner} viewBox="0 0 32 32">
+        <path
+          d="M9.5 16.5l4.2 4.2L22.5 11.8"
+          fill="none"
+          stroke="#fff"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>,
+    {
+      width: size,
+      height: size,
+      headers: { 'Cache-Control': 'public, max-age=31536000, immutable' },
+    },
   )
 }
