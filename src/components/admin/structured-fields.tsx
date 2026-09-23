@@ -163,14 +163,20 @@ export function ImageField({
   defaultValue,
   label,
   invalid,
+  onValueChange,
 }: {
   name: string
   defaultValue: string
   label: string
   invalid?: boolean
+  onValueChange?: (value: string) => void
 }) {
   const id = useId()
-  const [value, setValue] = useState(defaultValue)
+  const [value, setStateValue] = useState(defaultValue)
+  const setValue = (next: string) => {
+    setStateValue(next)
+    onValueChange?.(next)
+  }
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-3">
