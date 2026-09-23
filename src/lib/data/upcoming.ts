@@ -28,7 +28,12 @@ export type Deadline = {
 export async function getUpcomingDeadlines(): Promise<Deadline[]> {
   'use cache'
   cacheLife('hours')
-  cacheTag(tableTag('assignments'), tableTag('courses'), tableTag('weeks'), tableTag('site_settings'))
+  cacheTag(
+    tableTag('assignments'),
+    tableTag('courses'),
+    tableTag('weeks'),
+    tableTag('site_settings'),
+  )
 
   const settings = await getSiteSettings()
   if (!settings.current_term) return []
