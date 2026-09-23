@@ -10,7 +10,13 @@ import { cn } from '@/lib/utils/cn'
 
 type State = 'idle' | 'commenting' | 'sending' | 'done' | 'error'
 
-export function FeedbackWidget({ pageType, entityId }: { pageType: string; entityId?: string | null }) {
+export function FeedbackWidget({
+  pageType,
+  entityId,
+}: {
+  pageType: string
+  entityId?: string | null
+}) {
   const pathname = usePathname()
   const commentId = useId()
   const [helpful, setHelpful] = useState<boolean | null>(null)
@@ -24,7 +30,13 @@ export function FeedbackWidget({ pageType, entityId }: { pageType: string; entit
       const res = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: pathname, page_type: pageType, entity_id: entityId ?? null, helpful: value, comment: text || null }),
+        body: JSON.stringify({
+          path: pathname,
+          page_type: pageType,
+          entity_id: entityId ?? null,
+          helpful: value,
+          comment: text || null,
+        }),
       })
       setState(res.ok ? 'done' : 'error')
     } catch {
@@ -34,14 +46,21 @@ export function FeedbackWidget({ pageType, entityId }: { pageType: string; entit
 
   if (state === 'done') {
     return (
-      <p role="status" className="rounded-card border border-border bg-surface px-4 py-3 text-small text-text">
+      <p
+        role="status"
+        className="rounded-card border border-border bg-surface px-4 py-3 text-small text-text"
+      >
         Thanks — your feedback helps us decide what to improve next.
       </p>
     )
   }
 
   return (
-    <section aria-label="Page feedback" className="rounded-card border border-border bg-card px-4 py-4" data-print="hide">
+    <section
+      aria-label="Page feedback"
+      className="rounded-card border border-border bg-card px-4 py-4"
+      data-print="hide"
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="font-medium text-text">Was this page helpful?</p>
         <div className="flex gap-2">
@@ -58,7 +77,9 @@ export function FeedbackWidget({ pageType, entityId }: { pageType: string; entit
                 }}
                 className={cn(
                   'inline-flex min-h-11 items-center gap-2 rounded-control border px-4 text-small font-medium',
-                  helpful === value ? 'border-accent bg-accent-soft text-accent-ink' : 'border-border text-text hover:border-accent',
+                  helpful === value
+                    ? 'border-accent bg-accent-soft text-accent-ink'
+                    : 'border-border text-text hover:border-accent',
                 )}
               >
                 <Icon aria-hidden="true" className="size-4" />
@@ -90,7 +111,9 @@ export function FeedbackWidget({ pageType, entityId }: { pageType: string; entit
             <Button type="submit" size="sm" disabled={state === 'sending'}>
               {state === 'sending' ? 'Sending…' : 'Send feedback'}
             </Button>
-            {state === 'error' ? <span className="text-small text-danger">Couldn’t send — please try again.</span> : null}
+            {state === 'error' ? (
+              <span className="text-small text-danger">Couldn’t send — please try again.</span>
+            ) : null}
           </div>
         </form>
       ) : null}
