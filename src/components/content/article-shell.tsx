@@ -5,7 +5,15 @@ import type { TocItem } from '@/lib/mdx/process'
 import { MobileToc, Toc } from './toc'
 
 /** Reading layout: ~720px column with a sticky table of contents on desktop. */
-export function ArticleShell({ toc = [], children, aside }: { toc?: TocItem[]; children: ReactNode; aside?: ReactNode }) {
+export function ArticleShell({
+  toc = [],
+  children,
+  aside,
+}: {
+  toc?: TocItem[]
+  children: ReactNode
+  aside?: ReactNode
+}) {
   const hasSidebar = toc.length >= 2 || Boolean(aside)
   return (
     <div className="container-page py-8 sm:py-10">
