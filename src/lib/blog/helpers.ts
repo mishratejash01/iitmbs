@@ -61,3 +61,15 @@ export function faqsFromBody(postId: string, bodyMdx: string): Faq[] {
         : []
     })
 }
+
+/** The best few posts from a list: featured first, then pinned order, then newest. */
+export function topPosts(posts: BlogPostSummary[], limit: number): BlogPostSummary[] {
+  return [...posts]
+    .sort(
+      (a, b) =>
+        Number(b.isFeatured) - Number(a.isFeatured) ||
+        a.sortOrder - b.sortOrder ||
+        (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''),
+    )
+    .slice(0, limit)
+}
