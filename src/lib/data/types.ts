@@ -88,6 +88,8 @@ export type AssignmentSummary = {
   summary: string | null
   dueAt: string | null
   solutionsReleaseAt: string
+  /** Whether solutions were released when this data was cached. */
+  released: boolean
   weekNumber: number | null
   isLatest: boolean
   path: string | null
