@@ -63,7 +63,9 @@ export default async function HomePage() {
           <h1 className="max-w-3xl text-[1.875rem] leading-[2.375rem] font-semibold tracking-tight text-text sm:text-display">
             {heroTitle}
           </h1>
-          {heroSubtitle ? <p className="mt-4 max-w-2xl text-muted sm:text-lg sm:leading-8">{heroSubtitle}</p> : null}
+          {heroSubtitle ? (
+            <p className="mt-4 max-w-2xl text-muted sm:text-lg sm:leading-8">{heroSubtitle}</p>
+          ) : null}
 
           {settings.features.search ? (
             <form action="/search" role="search" className="mt-6 flex max-w-xl gap-2">
@@ -71,7 +73,10 @@ export default async function HomePage() {
                 Search courses, weeks and topics
               </label>
               <div className="relative flex-1">
-                <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted" />
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted"
+                />
                 <input
                   id="home-search"
                   name="q"
