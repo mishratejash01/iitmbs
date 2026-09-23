@@ -6,6 +6,9 @@
  */
 export const PLACEHOLDER_SEGMENT = '__placeholder__'
 
-export function withPlaceholder<T extends Record<string, string>>(params: T[], placeholder: T): T[] {
+export function withPlaceholder<T extends Record<string, string>>(
+  params: T[],
+  placeholder: T,
+): T[] {
   return params.length > 0 ? params : [placeholder]
 }
