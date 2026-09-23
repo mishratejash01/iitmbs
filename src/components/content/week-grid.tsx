@@ -6,7 +6,13 @@ import type { WeekSummary } from '@/lib/data/types'
 function Status({ ok, label }: { ok: boolean; label: string }) {
   const Icon = ok ? CheckCircle2 : CircleDashed
   return (
-    <span className={ok ? 'inline-flex items-center gap-1 text-success' : 'inline-flex items-center gap-1 text-muted'}>
+    <span
+      className={
+        ok
+          ? 'inline-flex items-center gap-1 text-success'
+          : 'inline-flex items-center gap-1 text-muted'
+      }
+    >
       <Icon aria-hidden="true" className="size-3.5" />
       {label}
       <span className="sr-only">{ok ? ' available' : ' coming soon'}</span>
@@ -14,7 +20,13 @@ function Status({ ok, label }: { ok: boolean; label: string }) {
   )
 }
 
-export function WeekGrid({ weeks, headingLevel = 'h3' }: { weeks: WeekSummary[]; headingLevel?: 'h2' | 'h3' }) {
+export function WeekGrid({
+  weeks,
+  headingLevel = 'h3',
+}: {
+  weeks: WeekSummary[]
+  headingLevel?: 'h2' | 'h3'
+}) {
   const Heading = headingLevel
   return (
     <ol className="grid gap-4 sm:grid-cols-2">
@@ -26,7 +38,9 @@ export function WeekGrid({ weeks, headingLevel = 'h3' }: { weeks: WeekSummary[];
             data-track-area="week-grid"
           >
             <span className="text-small font-medium text-accent-ink">Week {week.number}</span>
-            <Heading className="mt-0.5 font-semibold text-text group-hover:text-accent-ink">{week.title}</Heading>
+            <Heading className="mt-0.5 font-semibold text-text group-hover:text-accent-ink">
+              {week.title}
+            </Heading>
             {week.topics.length > 0 ? (
               <p className="mt-2 line-clamp-2 text-small text-muted">{week.topics.join(' · ')}</p>
             ) : null}
@@ -34,7 +48,10 @@ export function WeekGrid({ weeks, headingLevel = 'h3' }: { weeks: WeekSummary[];
               <Status ok={week.hasNotes} label="Notes" />
               <Status ok={week.hasGraded} label="Graded assignment" />
               <Status ok={week.hasPractice} label="Practice" />
-              <ArrowRight aria-hidden="true" className="ml-auto size-4 text-accent-ink transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight
+                aria-hidden="true"
+                className="ml-auto size-4 text-accent-ink transition-transform group-hover:translate-x-0.5"
+              />
             </span>
           </Link>
         </li>
