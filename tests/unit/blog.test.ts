@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { faqsFromBody, relatedPosts } from '@/lib/blog/helpers'
+import { faqsFromBody, relatedPosts, topPosts } from '@/lib/blog/helpers'
 import type { BlogPostSummary } from '@/lib/data/blog'
 
 const post = (id: string, over: Partial<BlogPostSummary> = {}): BlogPostSummary => ({
@@ -67,5 +67,17 @@ describe('relatedPosts', () => {
       'tags',
       'category',
     ])
+  })
+})
+
+describe('topPosts', () => {
+  it('puts featured posts first, then pinned order, then newest', () => {
+    const posts = [
+      post('old', { sortOrder: 1, publishedAt: '2026-01-01T00:00:00Z' }),
+      post('new', { sortOrder: 1, publishedAt: '2026-09-01T00:00:00Z' }),
+      post('pinned', { sortOrder: 0 }),
+      post('featured', { sortOrder: 5, isFeatured: true }),
+    ]
+    expect(topPosts(posts, 3).map((p) => p.id)).toEqual(['featured', 'pinned', 'new'])
   })
 })
