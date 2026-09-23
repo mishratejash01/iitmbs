@@ -49,7 +49,7 @@ export type Field = {
 }
 
 export type ReferenceKey =
-  'programs' | 'courses' | 'weeks' | 'assignments' | 'authors' | 'faqScopes'
+  'programs' | 'courses' | 'weeks' | 'assignments' | 'authors' | 'faqScopes' | 'blogCategories'
 
 const IST_OFFSET_MINUTES = 330
 
