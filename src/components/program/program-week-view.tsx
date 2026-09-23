@@ -7,17 +7,31 @@ import { EmptyState } from '@/components/ui/empty-state'
 import type { ProgramWeekData } from '@/lib/data/weeks'
 import { cn } from '@/lib/utils/cn'
 
-function Row({ href, label, available }: { href: string | null; label: string; available: boolean }) {
+function Row({
+  href,
+  label,
+  available,
+}: {
+  href: string | null
+  label: string
+  available: boolean
+}) {
   const Icon = available ? CheckCircle2 : CircleDashed
   const content = (
     <>
-      <Icon aria-hidden="true" className={cn('size-4 shrink-0', available ? 'text-success' : 'text-muted')} />
+      <Icon
+        aria-hidden="true"
+        className={cn('size-4 shrink-0', available ? 'text-success' : 'text-muted')}
+      />
       <span>{label}</span>
       {!available ? <span className="text-xs text-muted">(coming soon)</span> : null}
     </>
   )
   return href && available ? (
-    <Link href={href} className="flex min-h-10 items-center gap-2 text-small font-medium text-accent-ink hover:underline">
+    <Link
+      href={href}
+      className="flex min-h-10 items-center gap-2 text-small font-medium text-accent-ink hover:underline"
+    >
       {content}
     </Link>
   ) : (
@@ -48,7 +62,9 @@ export function ProgramWeekView({ data }: { data: ProgramWeekData }) {
                 aria-current={n === data.weekNumber ? 'page' : undefined}
                 className={cn(
                   'inline-flex min-h-10 items-center rounded-full border px-4 text-small font-medium',
-                  n === data.weekNumber ? 'border-accent bg-accent-soft text-accent-ink' : 'border-border bg-card text-text hover:border-accent',
+                  n === data.weekNumber
+                    ? 'border-accent bg-accent-soft text-accent-ink'
+                    : 'border-border bg-card text-text hover:border-accent',
                 )}
               >
                 Week {n}
@@ -59,11 +75,17 @@ export function ProgramWeekView({ data }: { data: ProgramWeekData }) {
       />
       <div className="container-page py-8 sm:py-10">
         {data.courses.length === 0 ? (
-          <EmptyState title="No courses yet" description="Course pages will appear here once they are published." />
+          <EmptyState
+            title="No courses yet"
+            description="Course pages will appear here once they are published."
+          />
         ) : (
           <ul className="grid gap-4 md:grid-cols-2">
             {data.courses.map((course) => (
-              <li key={course.coursePath} className="rounded-card border border-border bg-card p-4 sm:p-5">
+              <li
+                key={course.coursePath}
+                className="rounded-card border border-border bg-card p-4 sm:p-5"
+              >
                 <p className="text-small font-medium text-accent-ink">{course.name}</p>
                 <h2 className="mt-0.5 font-semibold text-text">
                   {course.week ? (
@@ -75,9 +97,21 @@ export function ProgramWeekView({ data }: { data: ProgramWeekData }) {
                   )}
                 </h2>
                 <div className="mt-3 divide-y divide-border">
-                  <Row href={course.graded?.path ?? null} label="Graded assignment" available={Boolean(course.graded?.path)} />
-                  <Row href={course.weekNote?.path ?? null} label="Week notes" available={Boolean(course.weekNote)} />
-                  <Row href={course.practice?.path ?? null} label="Practice assignment" available={Boolean(course.practice?.path)} />
+                  <Row
+                    href={course.graded?.path ?? null}
+                    label="Graded assignment"
+                    available={Boolean(course.graded?.path)}
+                  />
+                  <Row
+                    href={course.weekNote?.path ?? null}
+                    label="Week notes"
+                    available={Boolean(course.weekNote)}
+                  />
+                  <Row
+                    href={course.practice?.path ?? null}
+                    label="Practice assignment"
+                    available={Boolean(course.practice?.path)}
+                  />
                 </div>
               </li>
             ))}
