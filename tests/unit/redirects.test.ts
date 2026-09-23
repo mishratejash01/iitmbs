@@ -5,7 +5,10 @@ import { findRedirect, type RedirectMap } from '@/lib/redirects'
 const map: RedirectMap = {
   exact: { '/old-guide': ['/qualifier/eligibility', 301] },
   programAliases: { ds: 'data-science' },
-  courseAliases: { 'data-science/math-1': '/data-science/maths-1', 'data-science/ct': '/data-science/computational-thinking' },
+  courseAliases: {
+    'data-science/math-1': '/data-science/maths-1',
+    'data-science/ct': '/data-science/computational-thinking',
+  },
   crossListed: { 'management-data-science/maths-1': '/data-science/maths-1' },
 }
 
@@ -24,7 +27,10 @@ describe('findRedirect', () => {
 
   it('maps programme aliases, alone or combined with course aliases', () => {
     expect(findRedirect('/ds', map)).toEqual({ to: '/data-science', status: 308 })
-    expect(findRedirect('/ds/ct/week-1', map)).toEqual({ to: '/data-science/computational-thinking/week-1', status: 308 })
+    expect(findRedirect('/ds/ct/week-1', map)).toEqual({
+      to: '/data-science/computational-thinking/week-1',
+      status: 308,
+    })
   })
 
   it('sends cross-listed programme paths to the canonical course', () => {
