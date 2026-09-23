@@ -1,7 +1,6 @@
 import { BookOpen, CalendarClock, ClipboardCheck, ExternalLink, PenLine } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { BookmarkButton } from '@/components/content/bookmark-button'
@@ -16,6 +15,7 @@ import { renderMdx } from '@/components/mdx/render'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import type { AssignmentSummary } from '@/lib/data/types'
@@ -88,7 +88,10 @@ function AssignmentCard({ assignment, label, icon: Icon }: { assignment: Assignm
 
 export default async function WeekPage({ params }: PageProps<'/[program]/[course]/[week]'>) {
   const data = await load(params)
-  if (!data) notFound()
+  if (!data) {
+    const { program, course, week } = await params
+    return redirectOrNotFound(`/${program}/${course}/${week}`)
+  }
   const { core, week } = data
   const { course } = core
   const title = `IITM ${course.shortName} Week ${week.number}: ${week.title}`
