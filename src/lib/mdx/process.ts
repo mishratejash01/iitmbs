@@ -57,7 +57,10 @@ function remarkImages() {
       if (CLOUDINARY_SCHEME.test(node.url)) {
         const publicId = node.url.replace(CLOUDINARY_SCHEME, '').replace(/^\/+/, '')
         node.url = publicId
-        node.data = { ...node.data, hProperties: { ...(node.data?.hProperties ?? {}), dataCloudinary: 'true' } }
+        node.data = {
+          ...node.data,
+          hProperties: { ...(node.data?.hProperties ?? {}), dataCloudinary: 'true' },
+        }
         ids.push(publicId)
       }
     })
@@ -83,7 +86,12 @@ function rehypeWrapTables() {
       const wrapper: Element = {
         type: 'element',
         tagName: 'div',
-        properties: { className: ['table-scroll'], tabIndex: 0, role: 'region', ariaLabel: 'Table' },
+        properties: {
+          className: ['table-scroll'],
+          tabIndex: 0,
+          role: 'region',
+          ariaLabel: 'Table',
+        },
         children: [node as ElementContent],
       }
       parent.children[index] = wrapper
@@ -95,8 +103,15 @@ function rehypeCollectToc() {
   return (tree: HastRoot, file: VFile) => {
     const toc: TocItem[] = []
     visit(tree, 'element', (node: Element) => {
-      if ((node.tagName === 'h2' || node.tagName === 'h3') && typeof node.properties?.id === 'string') {
-        toc.push({ id: node.properties.id, text: hastToString(node).trim(), depth: node.tagName === 'h2' ? 2 : 3 })
+      if (
+        (node.tagName === 'h2' || node.tagName === 'h3') &&
+        typeof node.properties?.id === 'string'
+      ) {
+        toc.push({
+          id: node.properties.id,
+          text: hastToString(node).trim(),
+          depth: node.tagName === 'h2' ? 2 : 3,
+        })
       }
     })
     file.data.toc = toc
@@ -134,7 +149,10 @@ async function build(mode: 'mdx' | 'markdown', options: ProcessOptions) {
  * "<" or "{" in prose), it is rendered as plain Markdown instead and the
  * error is returned so the admin can show it.
  */
-export async function processMdx(source: string, options: ProcessOptions = {}): Promise<ProcessedMdx> {
+export async function processMdx(
+  source: string,
+  options: ProcessOptions = {},
+): Promise<ProcessedMdx> {
   const run = async (mode: 'mdx' | 'markdown') => {
     const processor = await build(mode, options)
     const file = new VFile({ value: source })
@@ -157,7 +175,14 @@ export async function processMdx(source: string, options: ProcessOptions = {}): 
     } catch (markdownError) {
       const fallback: HastRoot = {
         type: 'root',
-        children: [{ type: 'element', tagName: 'p', properties: {}, children: [{ type: 'text', value: source }] }],
+        children: [
+          {
+            type: 'element',
+            tagName: 'p',
+            properties: {},
+            children: [{ type: 'text', value: source }],
+          },
+        ],
       }
       return {
         tree: fallback,
