@@ -31,7 +31,7 @@ export type CmsPage = {
 
 export type PageLink = { path: string; title: string; summary: string | null }
 
-function toSources(value: unknown): PageSource[] {
+export function toSources(value: unknown): PageSource[] {
   if (!Array.isArray(value)) return []
   return value.flatMap((item) =>
     item &&
