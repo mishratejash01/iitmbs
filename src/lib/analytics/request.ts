@@ -134,11 +134,18 @@ export function clientIp(headers: Headers): string | null {
 export function hashIp(ip: string | null): string | null {
   if (!ip || !env.analyticsHashSecret) return null
   const day = new Date().toISOString().slice(0, 10)
-  return createHmac('sha256', env.analyticsHashSecret).update(`${day}:${ip}`).digest('hex').slice(0, 32)
+  return createHmac('sha256', env.analyticsHashSecret)
+    .update(`${day}:${ip}`)
+    .digest('hex')
+    .slice(0, 32)
 }
 
 /** Coarse location from the hosting platform's geo headers. */
-export function geoFromHeaders(headers: Headers): { country: string | null; region: string | null; city: string | null } {
+export function geoFromHeaders(headers: Headers): {
+  country: string | null
+  region: string | null
+  city: string | null
+} {
   const decode = (value: string | null) => {
     if (!value) return null
     try {
