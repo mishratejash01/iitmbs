@@ -2,15 +2,20 @@ import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/env', () => ({ env: { analyticsHashSecret: 'test-secret-value-123' } }))
 
-const { parseUserAgent, referrerHost, trafficSource, hashIp, isBotRequest } = await import('@/lib/analytics/request')
+const { parseUserAgent, referrerHost, trafficSource, hashIp, isBotRequest } =
+  await import('@/lib/analytics/request')
 const { trackPayloadSchema } = await import('@/lib/analytics/schema')
 
 describe('request enrichment', () => {
   it('classifies devices, browsers and operating systems', () => {
     expect(
-      parseUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/128.0 Mobile Safari/537.36'),
+      parseUserAgent(
+        'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/128.0 Mobile Safari/537.36',
+      ),
     ).toEqual({ device: 'mobile', browser: 'Chrome', os: 'Android' })
-    expect(parseUserAgent('Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) Version/17.0 Safari/605.1.15')).toMatchObject({
+    expect(
+      parseUserAgent('Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) Version/17.0 Safari/605.1.15'),
+    ).toMatchObject({
       device: 'tablet',
       os: 'iOS',
     })
@@ -26,7 +31,9 @@ describe('request enrichment', () => {
     const base = { utmSource: null, userAgent: 'Mozilla/5.0', siteHost: 'example.com' }
     expect(trafficSource({ ...base, referrer: 'https://www.google.co.in/' })).toBe('google')
     expect(trafficSource({ ...base, referrer: 'https://t.me/somechannel' })).toBe('telegram')
-    expect(trafficSource({ ...base, referrer: null, userAgent: 'Mozilla/5.0 WhatsApp/2.23' })).toBe('whatsapp')
+    expect(trafficSource({ ...base, referrer: null, userAgent: 'Mozilla/5.0 WhatsApp/2.23' })).toBe(
+      'whatsapp',
+    )
     expect(trafficSource({ ...base, referrer: 'https://example.com/a' })).toBe('internal')
     expect(trafficSource({ ...base, referrer: null, utmSource: 'Newsletter' })).toBe('newsletter')
     expect(trafficSource({ ...base, referrer: null })).toBe('direct')
@@ -54,10 +61,18 @@ describe('track payload schema', () => {
   })
 
   it('rejects unknown events, bad paths and oversized batches', () => {
-    expect(trackPayloadSchema.safeParse({ ...valid, events: [{ name: 'hack', path: '/' }] }).success).toBe(false)
-    expect(trackPayloadSchema.safeParse({ ...valid, events: [{ name: 'page_view', path: 'http://x' }] }).success).toBe(false)
     expect(
-      trackPayloadSchema.safeParse({ ...valid, events: Array.from({ length: 26 }, () => valid.events[0]) }).success,
+      trackPayloadSchema.safeParse({ ...valid, events: [{ name: 'hack', path: '/' }] }).success,
+    ).toBe(false)
+    expect(
+      trackPayloadSchema.safeParse({ ...valid, events: [{ name: 'page_view', path: 'http://x' }] })
+        .success,
+    ).toBe(false)
+    expect(
+      trackPayloadSchema.safeParse({
+        ...valid,
+        events: Array.from({ length: 26 }, () => valid.events[0]),
+      }).success,
     ).toBe(false)
   })
 })
