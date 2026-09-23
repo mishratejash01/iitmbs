@@ -41,10 +41,15 @@ export function Byline({
   }
   if (parts.length === 0) return null
   return (
-    <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-small text-muted">
+    <p className="flex flex-col gap-y-1 text-small text-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2">
       {parts.map((part, index) => (
         <span key={index} className="flex items-center gap-2">
-          {index > 0 ? <span aria-hidden="true">·</span> : null}
+          {/* On phones each part gets its own line, so no separator starts a line. */}
+          {index > 0 ? (
+            <span aria-hidden="true" className="hidden sm:inline">
+              ·
+            </span>
+          ) : null}
           {part}
         </span>
       ))}
