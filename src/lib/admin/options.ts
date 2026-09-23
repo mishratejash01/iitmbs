@@ -16,43 +16,52 @@ export async function loadReferenceOptions(
     ['programs', 'courses', 'weeks', 'assignments'].forEach((k) => wanted.add(k as ReferenceKey))
   const supabase = await createSupabaseServerClient()
 
-  const [programs, courses, weeks, assignments, authors, pages] = await Promise.all([
-    wanted.has('programs') ||
-    wanted.has('courses') ||
-    wanted.has('weeks') ||
-    wanted.has('assignments')
-      ? supabase
-          .from('programs')
-          .select('id, short_name')
-          .is('deleted_at', null)
-          .order('sort_order')
-      : null,
-    wanted.has('courses') || wanted.has('weeks') || wanted.has('assignments')
-      ? supabase
-          .from('courses')
-          .select('id, short_name, program_id')
-          .is('deleted_at', null)
-          .order('sort_order')
-      : null,
-    wanted.has('weeks') || wanted.has('assignments')
-      ? supabase
-          .from('weeks')
-          .select('id, week_number, title, course_id')
-          .is('deleted_at', null)
-          .order('week_number')
-      : null,
-    wanted.has('assignments')
-      ? supabase
-          .from('assignments')
-          .select('id, type, term, course_id, week_id')
-          .is('deleted_at', null)
-          .order('term', { ascending: false })
-      : null,
-    wanted.has('authors') ? supabase.from('authors').select('id, name').order('name') : null,
-    wanted.has('faqScopes')
-      ? supabase.from('pages').select('id, title').is('deleted_at', null).order('path')
-      : null,
-  ])
+  const [programs, courses, weeks, assignments, authors, pages, blogCategories] = await Promise.all(
+    [
+      wanted.has('programs') ||
+      wanted.has('courses') ||
+      wanted.has('weeks') ||
+      wanted.has('assignments')
+        ? supabase
+            .from('programs')
+            .select('id, short_name')
+            .is('deleted_at', null)
+            .order('sort_order')
+        : null,
+      wanted.has('courses') || wanted.has('weeks') || wanted.has('assignments')
+        ? supabase
+            .from('courses')
+            .select('id, short_name, program_id')
+            .is('deleted_at', null)
+            .order('sort_order')
+        : null,
+      wanted.has('weeks') || wanted.has('assignments')
+        ? supabase
+            .from('weeks')
+            .select('id, week_number, title, course_id')
+            .is('deleted_at', null)
+            .order('week_number')
+        : null,
+      wanted.has('assignments')
+        ? supabase
+            .from('assignments')
+            .select('id, type, term, course_id, week_id')
+            .is('deleted_at', null)
+            .order('term', { ascending: false })
+        : null,
+      wanted.has('authors') ? supabase.from('authors').select('id, name').order('name') : null,
+      wanted.has('faqScopes')
+        ? supabase.from('pages').select('id, title').is('deleted_at', null).order('path')
+        : null,
+      wanted.has('blogCategories')
+        ? supabase
+            .from('blog_categories')
+            .select('id, name')
+            .is('deleted_at', null)
+            .order('sort_order')
+        : null,
+    ],
+  )
 
   const programName = new Map((programs?.data ?? []).map((p) => [p.id, p.short_name]))
   const courseLabel = new Map(
@@ -82,6 +91,11 @@ export async function loadReferenceOptions(
   }
   if (wanted.has('authors'))
     result.authors = (authors?.data ?? []).map((a) => ({ value: a.id, label: a.name }))
+  if (wanted.has('blogCategories'))
+    result.blogCategories = (blogCategories?.data ?? []).map((c) => ({
+      value: c.id,
+      label: c.name,
+    }))
   if (wanted.has('faqScopes')) {
     result.faqScopes = [
       ...(result.programs ?? []).map((o) => ({ value: o.value, label: `Programme · ${o.label}` })),
