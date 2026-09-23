@@ -56,7 +56,12 @@ export function EligibilityCalculator({
             options={programs.map((p) => ({ value: p.slug, label: p.name }))}
           />
         ) : null}
-        <Select label="Category" value={category.id} onChange={setCategoryId} options={categoryOptions(rules.categories)} />
+        <Select
+          label="Category"
+          value={category.id}
+          onChange={setCategoryId}
+          options={categoryOptions(rules.categories)}
+        />
       </div>
 
       <div className="mt-5 overflow-x-auto">
@@ -66,13 +71,17 @@ export function EligibilityCalculator({
           </caption>
           <thead>
             <tr className="text-left text-muted">
-              <th scope="col" className="pb-2 font-medium">Course</th>
+              <th scope="col" className="pb-2 font-medium">
+                Course
+              </th>
               {Array.from({ length: weeks }, (_, w) => (
                 <th key={w} scope="col" className="pb-2 text-center font-medium">
                   Week {w + 1}
                 </th>
               ))}
-              <th scope="col" className="pb-2 text-right font-medium">Best {rules.ga_rule.best_of} avg</th>
+              <th scope="col" className="pb-2 text-right font-medium">
+                Best {rules.ga_rule.best_of} avg
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -94,7 +103,9 @@ export function EligibilityCalculator({
                     </td>
                   ))}
                   <td className="py-2 pl-2 text-right tabular-nums">
-                    <span className={cn('font-semibold', row?.passes ? 'text-success' : 'text-danger')}>
+                    <span
+                      className={cn('font-semibold', row?.passes ? 'text-success' : 'text-danger')}
+                    >
                       {row?.average.toFixed(1)}%
                     </span>
                   </td>
