@@ -8,7 +8,8 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const tokens = resolveTokens(settings.theme)
   return {
     name: settings.site_name,
-    short_name: settings.site_name.length > 12 ? settings.site_name.split(' ')[0] : settings.site_name,
+    short_name:
+      settings.site_name.length > 12 ? settings.site_name.split(' ')[0] : settings.site_name,
     description: settings.description || settings.tagline,
     start_url: '/?source=pwa',
     scope: '/',
