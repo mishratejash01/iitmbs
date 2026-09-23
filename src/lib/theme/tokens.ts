@@ -128,7 +128,10 @@ function declarations(tokens: ThemeTokens): string {
  * apply when the visitor chose dark explicitly (`data-theme="dark"` on <html>)
  * or when their OS prefers dark and they have not forced light.
  */
-export function buildThemeCss(overrides: ThemeOverrides = {}, options: { dark?: boolean } = {}): string {
+export function buildThemeCss(
+  overrides: ThemeOverrides = {},
+  options: { dark?: boolean } = {},
+): string {
   const { light, dark } = resolveTokens(sanitizeThemeOverrides(overrides))
   const lightBlock = `:root{color-scheme:light;${declarations(light)}}`
   // With dark mode switched off in settings, only the light palette exists.
