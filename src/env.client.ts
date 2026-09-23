@@ -40,3 +40,6 @@ export const clientEnv = {
 } as const
 
 export type ClientEnv = typeof clientEnv
+
+/** True in production builds (inlined at build time). */
+export const isProductionBuild = process.env.NODE_ENV === 'production'
