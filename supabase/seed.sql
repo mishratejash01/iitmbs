@@ -951,6 +951,7 @@ values
   ('copy_text', 'content', 'Text was copied from the page.', '{"length":"number"}', true),
   ('code_copy', 'content', 'A code block copy button was used.', '{"language":"string","length":"number"}', true),
   ('formula_sheet_open', 'content', 'A formula sheet was opened.', '{"course":"string"}', true),
+  ('print_click', 'content', 'The print button on a formula sheet or note was used.', '{"page_type":"string"}', true),
   ('download_click', 'downloads', 'A download or resource link was clicked (client side).', '{"resource_id":"uuid","kind":"string"}', true),
   ('download_complete', 'downloads', 'Server-confirmed download issued by /api/download (stored in downloads).', '{"resource_id":"uuid","file_type":"string","file_bytes":"number"}', false),
   ('search_query', 'search', 'A search was run (logged server-side in searches).', '{"query":"string","results_count":"number"}', false),
