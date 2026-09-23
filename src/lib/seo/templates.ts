@@ -5,7 +5,11 @@ export type TemplateVars = Record<string, string | number | null | undefined>
  * the fallback when there is no template or a placeholder has no value, so a
  * half-filled title never reaches search results.
  */
-export function fillTemplate(template: string | null | undefined, vars: TemplateVars, fallback: string): string {
+export function fillTemplate(
+  template: string | null | undefined,
+  vars: TemplateVars,
+  fallback: string,
+): string {
   if (!template) return fallback
   let missing = false
   const filled = template.replace(/\{([a-z_]+)\}/g, (_, key: string) => {
