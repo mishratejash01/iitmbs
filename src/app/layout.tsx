@@ -32,7 +32,10 @@ export async function generateMetadata(): Promise<Metadata> {
     applicationName: settings.site_name,
     title: {
       default: settings.seo.default_title || settings.site_name,
-      template: `%s | ${settings.site_name}`,
+      // Admin-editable, e.g. "%s | {site_name}"; must keep the %s placeholder.
+      template: settings.seo.title_template.includes('%s')
+        ? settings.seo.title_template.replaceAll('{site_name}', settings.site_name)
+        : `%s | ${settings.site_name}`,
     },
     description: settings.seo.default_description || settings.description,
     verification: {
@@ -73,7 +76,9 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
         <style
           id="theme-tokens"
           // Token values are validated hex colours (sanitizeThemeOverrides).
-          dangerouslySetInnerHTML={{ __html: buildThemeCss(settings.theme, { dark: settings.features.dark_mode }) }}
+          dangerouslySetInnerHTML={{
+            __html: buildThemeCss(settings.theme, { dark: settings.features.dark_mode }),
+          }}
         />
       </head>
       <body className="flex min-h-dvh flex-col">
