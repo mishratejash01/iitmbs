@@ -3,11 +3,12 @@
 import { LayoutDashboard, LogOut, Shield, Bookmark, History } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 
 import { Disclosure } from '@/components/ui/disclosure'
-import { readCookie, track } from '@/lib/analytics/client'
-import { decodeDisplayUser, DISPLAY_COOKIE, type DisplayUser } from '@/lib/auth/display-cookie'
+import { track } from '@/lib/analytics/client'
+import { decodeDisplayUser, DISPLAY_COOKIE } from '@/lib/auth/display-cookie'
+import { useCookie } from '@/lib/hooks/browser-state'
 
 function initials(name: string) {
   return name
@@ -19,11 +20,10 @@ function initials(name: string) {
 }
 
 export function AuthMenu() {
-  const [user, setUser] = useState<DisplayUser | null>(null)
   const pathname = usePathname()
-
-  // Read after hydration so static HTML is identical for everyone.
-  useEffect(() => setUser(decodeDisplayUser(readCookie(DISPLAY_COOKIE))), [pathname])
+  // Null on the server, so static HTML is identical for everyone.
+  const cookie = useCookie(DISPLAY_COOKIE)
+  const user = useMemo(() => decodeDisplayUser(cookie), [cookie])
 
   if (!user) {
     return (
@@ -37,7 +37,8 @@ export function AuthMenu() {
     )
   }
 
-  const itemClass = 'flex min-h-11 w-full items-center gap-2 rounded-control px-3 text-small text-text hover:bg-surface'
+  const itemClass =
+    'flex min-h-11 w-full items-center gap-2 rounded-control px-3 text-small text-text hover:bg-surface'
   return (
     <Disclosure
       label={`Account menu for ${user.name}`}
@@ -45,7 +46,14 @@ export function AuthMenu() {
       summary={
         user.avatar ? (
           // eslint-disable-next-line @next/next/no-img-element -- tiny avatar from the identity provider
-          <img src={user.avatar} alt="" width={32} height={32} referrerPolicy="no-referrer" className="size-8 rounded-full" />
+          <img
+            src={user.avatar}
+            alt=""
+            width={32}
+            height={32}
+            referrerPolicy="no-referrer"
+            className="size-8 rounded-full"
+          />
         ) : (
           <span className="flex size-8 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent-ink">
             {initials(user.name)}
