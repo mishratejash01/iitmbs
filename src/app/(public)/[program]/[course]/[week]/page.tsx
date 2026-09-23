@@ -41,8 +41,14 @@ async function load(params: PageProps<'/[program]/[course]/[week]'>['params']) {
   return n === null ? null : getWeekPage(program, course, n)
 }
 
-export async function generateMetadata({ params }: PageProps<'/[program]/[course]/[week]'>): Promise<Metadata> {
-  const [data, settings, overrides] = await Promise.all([load(params), getSiteSettings(), getSeoOverrides()])
+export async function generateMetadata({
+  params,
+}: PageProps<'/[program]/[course]/[week]'>): Promise<Metadata> {
+  const [data, settings, overrides] = await Promise.all([
+    load(params),
+    getSiteSettings(),
+    getSeoOverrides(),
+  ])
   if (!data) return { robots: { index: false } }
   const { core, week } = data
   return buildMetadata({
@@ -58,7 +64,15 @@ export async function generateMetadata({ params }: PageProps<'/[program]/[course
   })
 }
 
-function AssignmentCard({ assignment, label, icon: Icon }: { assignment: AssignmentSummary; label: string; icon: typeof ClipboardCheck }) {
+function AssignmentCard({
+  assignment,
+  label,
+  icon: Icon,
+}: {
+  assignment: AssignmentSummary
+  label: string
+  icon: typeof ClipboardCheck
+}) {
   return (
     <Link
       href={assignment.path ?? '#'}
@@ -67,13 +81,18 @@ function AssignmentCard({ assignment, label, icon: Icon }: { assignment: Assignm
       <span className="flex items-center gap-2 text-small font-medium text-accent-ink">
         <Icon aria-hidden="true" className="size-4" /> {label}
       </span>
-      <span className="mt-1 font-semibold text-text group-hover:text-accent-ink">{assignment.title}</span>
-      {assignment.summary ? <span className="mt-1 text-small text-muted">{assignment.summary}</span> : null}
+      <span className="mt-1 font-semibold text-text group-hover:text-accent-ink">
+        {assignment.title}
+      </span>
+      {assignment.summary ? (
+        <span className="mt-1 text-small text-muted">{assignment.summary}</span>
+      ) : null}
       <span className="mt-auto flex flex-wrap gap-2 pt-3">
         <Badge tone="accent">{formatTerm(assignment.term)}</Badge>
         {assignment.dueAt ? (
           <Badge>
-            <CalendarClock aria-hidden="true" className="size-3.5" /> Due {formatDateTime(assignment.dueAt)}
+            <CalendarClock aria-hidden="true" className="size-3.5" /> Due{' '}
+            {formatDateTime(assignment.dueAt)}
           </Badge>
         ) : null}
         {assignment.type === 'graded' ? (
@@ -98,9 +117,33 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
   const intro = await renderMdx(week.introMdx)
 
   const progressItems = [
-    ...(data.weekNote ? [{ id: data.weekNote.id, type: 'note' as const, label: `Read the week ${week.number} notes` }] : []),
-    ...(data.graded ? [{ id: data.graded.id, type: 'assignment' as const, label: 'Attempt the graded assignment' }] : []),
-    ...(data.practice ? [{ id: data.practice.id, type: 'assignment' as const, label: 'Finish the practice assignment' }] : []),
+    ...(data.weekNote
+      ? [
+          {
+            id: data.weekNote.id,
+            type: 'note' as const,
+            label: `Read the week ${week.number} notes`,
+          },
+        ]
+      : []),
+    ...(data.graded
+      ? [
+          {
+            id: data.graded.id,
+            type: 'assignment' as const,
+            label: 'Attempt the graded assignment',
+          },
+        ]
+      : []),
+    ...(data.practice
+      ? [
+          {
+            id: data.practice.id,
+            type: 'assignment' as const,
+            label: 'Finish the practice assignment',
+          },
+        ]
+      : []),
   ]
 
   return (
@@ -128,7 +171,10 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                 </h2>
                 <ul className="mt-3 flex flex-wrap gap-2">
                   {week.topics.map((topic) => (
-                    <li key={topic} className="rounded-full border border-border bg-surface px-3 py-1 text-small text-text">
+                    <li
+                      key={topic}
+                      className="rounded-full border border-border bg-surface px-3 py-1 text-small text-text"
+                    >
                       {topic}
                     </li>
                   ))}
@@ -136,7 +182,9 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
               </section>
             ) : null}
 
-            {intro.content ? <div className="prose-content container-reading">{intro.content}</div> : null}
+            {intro.content ? (
+              <div className="prose-content container-reading">{intro.content}</div>
+            ) : null}
 
             {week.hasContent ? (
               <section aria-labelledby="this-week">
@@ -145,16 +193,35 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                 </h2>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {data.weekNote ? (
-                    <Link href={data.weekNote.path} className="group flex flex-col rounded-card border border-border bg-card p-4 hover:border-accent sm:p-5">
+                    <Link
+                      href={data.weekNote.path}
+                      className="group flex flex-col rounded-card border border-border bg-card p-4 hover:border-accent sm:p-5"
+                    >
                       <span className="flex items-center gap-2 text-small font-medium text-accent-ink">
                         <BookOpen aria-hidden="true" className="size-4" /> Notes
                       </span>
-                      <span className="mt-1 font-semibold text-text group-hover:text-accent-ink">{data.weekNote.title}</span>
-                      <span className="mt-1 text-small text-muted">{data.weekNote.readingTimeMinutes} min read</span>
+                      <span className="mt-1 font-semibold text-text group-hover:text-accent-ink">
+                        {data.weekNote.title}
+                      </span>
+                      <span className="mt-1 text-small text-muted">
+                        {data.weekNote.readingTimeMinutes} min read
+                      </span>
                     </Link>
                   ) : null}
-                  {data.graded?.path ? <AssignmentCard assignment={data.graded} label="Graded assignment" icon={ClipboardCheck} /> : null}
-                  {data.practice?.path ? <AssignmentCard assignment={data.practice} label="Practice assignment" icon={PenLine} /> : null}
+                  {data.graded?.path ? (
+                    <AssignmentCard
+                      assignment={data.graded}
+                      label="Graded assignment"
+                      icon={ClipboardCheck}
+                    />
+                  ) : null}
+                  {data.practice?.path ? (
+                    <AssignmentCard
+                      assignment={data.practice}
+                      label="Practice assignment"
+                      icon={PenLine}
+                    />
+                  ) : null}
                 </div>
               </section>
             ) : (
@@ -164,7 +231,12 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                 description="Notes and graded assignment help for this week are being written. The topics above are what the week covers."
                 action={
                   course.officialUrl ? (
-                    <a href={course.officialUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-small font-medium text-accent-ink underline">
+                    <a
+                      href={course.officialUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-small font-medium text-accent-ink underline"
+                    >
                       Official course page <ExternalLink aria-hidden="true" className="size-3.5" />
                     </a>
                   ) : undefined
@@ -177,7 +249,14 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                 <h2 id="topic-notes" className="mb-3 text-h3 font-semibold">
                   Topic notes
                 </h2>
-                <LinkList items={data.topicNotes.map((n) => ({ path: n.path, title: n.title, summary: n.summary }))} label="Topic notes" />
+                <LinkList
+                  items={data.topicNotes.map((n) => ({
+                    path: n.path,
+                    title: n.title,
+                    summary: n.summary,
+                  }))}
+                  label="Topic notes"
+                />
               </section>
             ) : null}
 
@@ -197,7 +276,15 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                 </h2>
                 <LinkList
                   items={data.olderTerms.flatMap((a) =>
-                    a.path ? [{ path: a.path, title: `${a.type === 'graded' ? 'Graded' : 'Practice'} assignment — ${formatTerm(a.term)}`, summary: a.summary }] : [],
+                    a.path
+                      ? [
+                          {
+                            path: a.path,
+                            title: `${a.type === 'graded' ? 'Graded' : 'Practice'} assignment — ${formatTerm(a.term)}`,
+                            summary: a.summary,
+                          },
+                        ]
+                      : [],
                   )}
                   label="Previous terms"
                 />
@@ -209,28 +296,53 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
             <ShareButtons path={week.path} title={title} />
 
             <PrevNext
-              previous={data.previous ? { href: data.previous.path, label: 'Previous week', title: `Week ${data.previous.number}: ${data.previous.title}` } : null}
-              next={data.next ? { href: data.next.path, label: 'Next week', title: `Week ${data.next.number}: ${data.next.title}` } : null}
+              previous={
+                data.previous
+                  ? {
+                      href: data.previous.path,
+                      label: 'Previous week',
+                      title: `Week ${data.previous.number}: ${data.previous.title}`,
+                    }
+                  : null
+              }
+              next={
+                data.next
+                  ? {
+                      href: data.next.path,
+                      label: 'Next week',
+                      title: `Week ${data.next.number}: ${data.next.title}`,
+                    }
+                  : null
+              }
             />
           </div>
 
           <aside className="mt-10 space-y-6 lg:mt-0">
             <ProgressChecklist items={progressItems} />
             {data.otherCourses.length > 0 ? (
-              <section aria-labelledby="other-courses" className="rounded-card border border-border bg-card p-4">
+              <section
+                aria-labelledby="other-courses"
+                className="rounded-card border border-border bg-card p-4"
+              >
                 <h2 id="other-courses" className="font-semibold text-text">
                   Other courses this week
                 </h2>
                 <ul className="mt-2">
                   {data.otherCourses.map((other) => (
                     <li key={other.path}>
-                      <Link href={other.path} className="flex min-h-11 items-center text-small font-medium text-accent-ink hover:underline">
+                      <Link
+                        href={other.path}
+                        className="flex min-h-11 items-center text-small font-medium text-accent-ink hover:underline"
+                      >
                         {other.shortName} week {week.number}
                       </Link>
                     </li>
                   ))}
                 </ul>
-                <Link href={`${course.program.path}/week-${week.number}`} className="mt-1 block text-xs text-muted hover:text-text">
+                <Link
+                  href={`${course.program.path}/week-${week.number}`}
+                  className="mt-1 block text-xs text-muted hover:text-text"
+                >
                   All {course.program.shortName} courses, week {week.number} →
                 </Link>
               </section>
