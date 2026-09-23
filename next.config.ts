@@ -80,6 +80,9 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    // The stylesheet is small (~17 KB); inlining it removes two render-blocking
+    // requests from every first visit, which is most search traffic.
+    inlineCss: true,
   },
 
   async headers() {
