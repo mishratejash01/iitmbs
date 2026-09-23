@@ -1,7 +1,6 @@
 import { ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { BookmarkButton } from '@/components/content/bookmark-button'
@@ -18,6 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import { SectionHeading } from '@/components/ui/section-heading'
 import { getCourseParams, getCoursePage } from '@/lib/data/courses'
 import { getProgramPage, getPrograms } from '@/lib/data/programs'
+import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getProgramWeek } from '@/lib/data/weeks'
@@ -86,12 +86,12 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
 
   if (weekNumber !== null) {
     const data = await getProgramWeek(program, weekNumber)
-    if (!data) notFound()
+    if (!data) return redirectOrNotFound(`/${program}/${course}`)
     return <ProgramWeekView data={data} />
   }
 
   const data = await getCoursePage(program, course)
-  if (!data) notFound()
+  if (!data) return redirectOrNotFound(`/${program}/${course}`)
   const { course: c } = data
   const intro = await renderMdx(c.introMdx)
   const title = `IITM ${c.shortName}: ${c.name}`
