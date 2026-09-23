@@ -204,11 +204,11 @@ insert into public.courses (program_id, slug, name, short_name, code, aliases, d
 select p.id, c.slug, c.name, c.short_name, c.code, c.aliases, c.description, c.official_url, 4, 4, c.sort_order, true
 from (values
   ('data-science', 'maths-1', 'Mathematics for Data Science I', 'Maths 1', 'BSMA1001',
-   '{"maths 1","math 1","maths1","math1","mathematics 1","mathematics i","mathematics for data science 1","mathematics for data science i","m1","ma1","bsma1001"}'::text[],
+   '{"maths 1","math 1","maths1","math1","maths","math","mathematics 1","mathematics i","mathematics for data science 1","mathematics for data science i","m1","ma1","bsma1001"}'::text[],
    'Mathematics for Data Science I builds the algebra-and-functions toolkit the rest of the degree leans on. The four qualifier weeks cover sets, relations and functions; straight lines and slope; quadratic functions; and the algebra and graphs of polynomials.',
    'https://study.iitm.ac.in/ds/course_pages/BSMA1001.html', 1),
   ('data-science', 'stats-1', 'Statistics for Data Science I', 'Stats 1', 'BSMA1002',
-   '{"stats 1","stat 1","stats1","stat1","statistics 1","statistics i","statistics for data science 1","statistics for data science i","s1","bsma1002"}'::text[],
+   '{"stats 1","stat 1","stats1","stat1","stats","statistics","statistics 1","statistics i","statistics for data science 1","statistics for data science i","s1","bsma1002"}'::text[],
    'Statistics for Data Science I teaches you to describe data before you model it. The qualifier weeks move from types of data and scales of measurement to summarising categorical and numerical data, and then to measuring how two variables move together.',
    'https://study.iitm.ac.in/ds/course_pages/BSMA1002.html', 2),
   ('data-science', 'computational-thinking', 'Computational Thinking', 'CT', 'BSCS1001',
@@ -224,7 +224,7 @@ from (values
    'English I for Electronic Systems covers sounds and words, parts of speech and articles, vocabulary with phrasal and modal verbs, and spoken and telephone English.',
    'https://study.iitm.ac.in/es/course_pages/HS1101.html', 1),
   ('electronic-systems', 'math-for-electronics-1', 'Math for Electronics I', 'MfE 1', 'MA1101',
-   '{"math for electronics 1","maths for electronics 1","math for electronics i","mfe 1","mfe1","es maths 1","maths 1","math 1","ma1101"}'::text[],
+   '{"math for electronics 1","maths for electronics 1","math for electronics i","mfe 1","mfe1","es maths 1","es maths","es math","maths 1","math 1","ma1101"}'::text[],
    'Math for Electronics I starts from functions and straight lines, solves systems of linear equations with matrices, and then introduces sequences, limits and continuity — the groundwork for circuits and signals.',
    'https://study.iitm.ac.in/es/course_pages/MA1101.html', 2),
   ('electronic-systems', 'estc', 'Electronic Systems Thinking and Circuits', 'ESTC', 'EE1101',
