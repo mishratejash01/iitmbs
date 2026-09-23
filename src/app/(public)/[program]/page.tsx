@@ -9,11 +9,14 @@ import { PageHeader } from '@/components/layout/page-header'
 import { renderMdx } from '@/components/mdx/render'
 import { EmptyState } from '@/components/ui/empty-state'
 import { SectionHeading } from '@/components/ui/section-heading'
+import { topPosts } from '@/lib/blog/helpers'
+import { getBlogPostIndex } from '@/lib/data/blog'
 import { getChildPages } from '@/lib/data/pages'
 import { getProgramPage, getProgramSlugs } from '@/lib/data/programs'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { BLOG_PATH } from '@/lib/routes'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
@@ -47,8 +50,16 @@ export async function generateMetadata({ params }: PageProps<'/[program]'>): Pro
 
 export default async function ProgramPage({ params }: PageProps<'/[program]'>) {
   const { program } = await params
-  const [data, guides] = await Promise.all([getProgramPage(program), getChildPages('qualifier')])
+  const [data, guides, posts] = await Promise.all([
+    getProgramPage(program),
+    getChildPages('qualifier'),
+    getBlogPostIndex(),
+  ])
   if (!data) return redirectOrNotFound(`/${program}`)
+  const programPosts = topPosts(
+    posts.filter((post) => post.program?.slug === data.program.slug),
+    8,
+  )
   const intro = await renderMdx(data.program.introMdx)
 
   return (
@@ -110,6 +121,17 @@ export default async function ProgramPage({ params }: PageProps<'/[program]'>) {
           <section aria-labelledby="guides" className="container-reading">
             <SectionHeading id="guides" title="Qualifier guides" />
             <LinkList items={guides} label="Qualifier guides" />
+          </section>
+        ) : null}
+
+        {programPosts.length > 0 ? (
+          <section aria-labelledby="program-posts" className="container-reading">
+            <SectionHeading
+              id="program-posts"
+              title={`${data.program.shortName} guides from the blog`}
+              action={{ href: BLOG_PATH, label: 'All posts' }}
+            />
+            <LinkList items={programPosts} label={`${data.program.shortName} blog posts`} />
           </section>
         ) : null}
 
