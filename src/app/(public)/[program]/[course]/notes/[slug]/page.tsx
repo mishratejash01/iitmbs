@@ -19,11 +19,15 @@ async function load(params: PageProps<'/[program]/[course]/notes/[slug]'>['param
   return getTopicNotePage(program, course, slug)
 }
 
-export async function generateMetadata({ params }: PageProps<'/[program]/[course]/notes/[slug]'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/[program]/[course]/notes/[slug]'>): Promise<Metadata> {
   return noteMetadata(await load(params))
 }
 
-export default async function TopicNotePage({ params }: PageProps<'/[program]/[course]/notes/[slug]'>) {
+export default async function TopicNotePage({
+  params,
+}: PageProps<'/[program]/[course]/notes/[slug]'>) {
   const data = await load(params)
   if (!data) {
     const { program, course, slug } = await params
