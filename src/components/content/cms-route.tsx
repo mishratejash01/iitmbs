@@ -10,7 +10,11 @@ import { buildMetadata } from '@/lib/seo/metadata'
 import { CmsPageView } from './cms-page-view'
 
 export async function cmsMetadata(path: string): Promise<Metadata> {
-  const [page, settings, overrides] = await Promise.all([getPage(path), getSiteSettings(), getSeoOverrides()])
+  const [page, settings, overrides] = await Promise.all([
+    getPage(path),
+    getSiteSettings(),
+    getSeoOverrides(),
+  ])
   if (!page) return { robots: { index: false } }
   return buildMetadata({
     settings,
@@ -28,7 +32,13 @@ export async function cmsMetadata(path: string): Promise<Metadata> {
 }
 
 /** Renders the CMS page at `path`, with breadcrumbs built from its parents. */
-export async function CmsRoute({ path, listChildren = false }: { path: string; listChildren?: boolean }) {
+export async function CmsRoute({
+  path,
+  listChildren = false,
+}: {
+  path: string
+  listChildren?: boolean
+}) {
   const page = await getPage(path)
   if (!page) return redirectOrNotFound(`/${path}`)
 
@@ -37,7 +47,8 @@ export async function CmsRoute({ path, listChildren = false }: { path: string; l
   for (let i = 1; i < segments.length; i++) {
     const parentPath = segments.slice(0, i).join('/')
     const parent = await getPage(parentPath)
-    if (parent) crumbs.push({ name: parent.title.split(':')[0] ?? parent.title, path: `/${parent.path}` })
+    if (parent)
+      crumbs.push({ name: parent.title.split(':')[0] ?? parent.title, path: `/${parent.path}` })
   }
   crumbs.push({ name: page.title.split(':')[0] ?? page.title, path: `/${page.path}` })
 
