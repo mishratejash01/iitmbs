@@ -33,7 +33,12 @@ export async function getLinkIndex(): Promise<Record<string, LinkIndexEntry>> {
   return Object.fromEntries(
     data.map((row) => [
       row.path,
-      { path: row.path, title: row.title, summary: row.summary, kind: row.kind as LinkIndexEntry['kind'] },
+      {
+        path: row.path,
+        title: row.title,
+        summary: row.summary,
+        kind: row.kind as LinkIndexEntry['kind'],
+      },
     ]),
   )
 }
