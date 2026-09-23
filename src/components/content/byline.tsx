@@ -14,8 +14,18 @@ export function Byline({
   reviewedAt?: string | null
 }) {
   const parts: React.ReactNode[] = []
-  if (author) parts.push(<span key="a">By <span className="font-medium text-text">{author.name}</span></span>)
-  if (reviewer) parts.push(<span key="r">Reviewed by <span className="font-medium text-text">{reviewer.name}</span></span>)
+  if (author)
+    parts.push(
+      <span key="a">
+        By <span className="font-medium text-text">{author.name}</span>
+      </span>,
+    )
+  if (reviewer)
+    parts.push(
+      <span key="r">
+        Reviewed by <span className="font-medium text-text">{reviewer.name}</span>
+      </span>,
+    )
   if (reviewedAt) {
     parts.push(
       <span key="rv">
