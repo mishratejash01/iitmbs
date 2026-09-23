@@ -2,17 +2,19 @@ import { ArrowRight, Search } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { after } from 'next/server'
-import { Suspense } from 'react'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { Highlight } from '@/components/search/highlight'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
-import { SkeletonText } from '@/components/ui/skeleton'
-import { recordSearch } from '@/lib/analytics/server'
+import { getAnalyticsContext, recordSearch } from '@/lib/analytics/server'
 import { searchSite } from '@/lib/data/search'
 import { getSiteSettings } from '@/lib/data/settings'
 import { privateMetadata } from '@/lib/seo/metadata'
+
+// Results are rendered into the HTML (not streamed behind a placeholder), so
+// the page also works with JavaScript off — it is the search box's fallback.
+export const instant = false
 
 export async function generateMetadata(): Promise<Metadata> {
   // Search results are never indexed.
@@ -31,10 +33,11 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
     )
   }
 
-  const response = await searchSite(query, 30)
+  const [response, context] = await Promise.all([searchSite(query, 30), getAnalyticsContext()])
   const searchId = crypto.randomUUID()
   after(() =>
     recordSearch({
+      context,
       id: searchId,
       query,
       normalized: response.parsed.normalized,
@@ -159,16 +162,10 @@ export default function SearchPage({ searchParams }: PageProps<'/search'>) {
         <div className="container-reading">
           <h1 className="text-h2 font-semibold sm:text-h1">Search</h1>
           <div className="mt-4">
-            <Suspense
-              fallback={<div className="min-h-12 rounded-control border border-border bg-card" />}
-            >
-              <SearchBox searchParams={searchParams} />
-            </Suspense>
+            <SearchBox searchParams={searchParams} />
           </div>
           <div className="mt-8">
-            <Suspense fallback={<SkeletonText lines={6} />}>
-              <Results searchParams={searchParams} />
-            </Suspense>
+            <Results searchParams={searchParams} />
           </div>
         </div>
       </div>
