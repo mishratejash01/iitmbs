@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import { track } from '@/lib/analytics/client'
+import { useNow } from '@/lib/hooks/browser-state'
 import { formatDateTime, formatDuration } from '@/lib/utils/dates'
 
 /** A release date this far out means "not scheduled yet". */
@@ -25,16 +26,10 @@ export function SolutionGate({
   const router = useRouter()
   const releaseMs = Date.parse(releaseAt)
   const scheduled = new Date(releaseAt).getUTCFullYear() < UNSCHEDULED_YEAR
-  const [now, setNow] = useState<number | null>(null)
+  // Null until hydrated, so the server HTML and the first client render match.
+  const now = useNow(1000)
   const [attempts, setAttempts] = useState(0)
   const reported = useRef(false)
-
-  useEffect(() => {
-    const tick = () => setNow(Date.now())
-    tick()
-    const interval = setInterval(tick, 1000)
-    return () => clearInterval(interval)
-  }, [])
 
   useEffect(() => {
     if (now === null || reported.current) return
@@ -63,6 +58,7 @@ export function SolutionGate({
   return (
     <section
       aria-labelledby="solution-gate"
+      data-solution-gate=""
       className="rounded-card border border-accent/40 bg-accent-soft px-4 py-4 sm:px-5"
     >
       <div className="flex items-start gap-3">
