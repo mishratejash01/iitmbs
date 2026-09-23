@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 
 import { noteCrumbs, noteMetadata, noteTitle } from '@/components/notes/note-route'
 import { NoteView } from '@/components/notes/note-view'
 import { getCourseCore, getCourseParams } from '@/lib/data/courses'
 import { getCourseNotePage } from '@/lib/data/notes'
+import { redirectOrNotFound } from '@/lib/data/redirects'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
 export async function generateStaticParams() {
@@ -34,6 +34,9 @@ export async function generateMetadata({ params }: PageProps<'/[program]/[course
 
 export default async function ExamPrepPage({ params }: PageProps<'/[program]/[course]/qualifier-exam-prep'>) {
   const data = await load(params)
-  if (!data) notFound()
+  if (!data) {
+    const { program, course } = await params
+    return redirectOrNotFound(`/${program}/${course}/qualifier-exam-prep`)
+  }
   return <NoteView data={data} title={noteTitle(data)} crumbs={noteCrumbs(data)} />
 }
