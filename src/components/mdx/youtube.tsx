@@ -7,7 +7,15 @@ import { useState } from 'react'
  * Click-to-load YouTube embed: shows the thumbnail and loads the privacy-
  * enhanced player only when asked, so videos never slow the page down.
  */
-export function YouTube({ id, title = 'Video', start }: { id?: string; title?: string; start?: string }) {
+export function YouTube({
+  id,
+  title = 'Video',
+  start,
+}: {
+  id?: string
+  title?: string
+  start?: string
+}) {
   const [active, setActive] = useState(false)
   if (!id || !/^[\w-]{11}$/.test(id)) return null
   const startParam = start && /^\d+$/.test(start) ? `&start=${start}` : ''
