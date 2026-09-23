@@ -56,7 +56,9 @@ export function checkQuality({
   const bodyText = bodies.map((b) => b.text).join('\n')
 
   if (
-    (config.table === 'notes' || (config.table === 'pages' && record.template !== 'legal')) &&
+    (config.table === 'notes' ||
+      config.table === 'blog_posts' ||
+      (config.table === 'pages' && record.template !== 'legal')) &&
     substantiveWords(bodyText) < minWords
   ) {
     warnings.push({
@@ -106,7 +108,10 @@ export function checkQuality({
 
   const linksInternally = /\]\(\/[^)]*\)|<RelatedLink\b/.test(bodyText)
   if (
-    (config.table === 'notes' || config.table === 'pages' || config.table === 'assignments') &&
+    (config.table === 'notes' ||
+      config.table === 'pages' ||
+      config.table === 'assignments' ||
+      config.table === 'blog_posts') &&
     bodyText.trim() &&
     !linksInternally
   ) {
