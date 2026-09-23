@@ -278,6 +278,209 @@ export type Database = {
           },
         ]
       }
+      blog_categories: {
+        Row: {
+          canonical_path: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          description: string | null
+          id: string
+          intro_mdx: string
+          is_published: boolean
+          keywords: string[]
+          name: string
+          noindex: boolean
+          og_image_public_id: string | null
+          published_at: string | null
+          schema_overrides: Json
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          canonical_path?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          intro_mdx?: string
+          is_published?: boolean
+          keywords?: string[]
+          name: string
+          noindex?: boolean
+          og_image_public_id?: string | null
+          published_at?: string | null
+          schema_overrides?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          canonical_path?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          intro_mdx?: string
+          is_published?: boolean
+          keywords?: string[]
+          name?: string
+          noindex?: boolean
+          og_image_public_id?: string | null
+          published_at?: string | null
+          schema_overrides?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          body_mdx: string
+          canonical_path: string | null
+          category_id: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          id: string
+          is_featured: boolean
+          is_published: boolean
+          keywords: string[]
+          last_reviewed_at: string | null
+          noindex: boolean
+          og_image_public_id: string | null
+          program_id: string | null
+          published_at: string | null
+          reading_time_minutes: number
+          reviewer_id: string | null
+          schema_overrides: Json
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number
+          source_permission: Database["public"]["Enums"]["source_permission"]
+          source_url: string | null
+          sources: Json
+          summary: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+          updated_by: string | null
+          word_count: number
+        }
+        Insert: {
+          author_id?: string | null
+          body_mdx?: string
+          canonical_path?: string | null
+          category_id: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          keywords?: string[]
+          last_reviewed_at?: string | null
+          noindex?: boolean
+          og_image_public_id?: string | null
+          program_id?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number
+          reviewer_id?: string | null
+          schema_overrides?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number
+          source_permission?: Database["public"]["Enums"]["source_permission"]
+          source_url?: string | null
+          sources?: Json
+          summary?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+          word_count?: number
+        }
+        Update: {
+          author_id?: string | null
+          body_mdx?: string
+          canonical_path?: string | null
+          category_id?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          keywords?: string[]
+          last_reviewed_at?: string | null
+          noindex?: boolean
+          og_image_public_id?: string | null
+          program_id?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number
+          reviewer_id?: string | null
+          schema_overrides?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number
+          source_permission?: Database["public"]["Enums"]["source_permission"]
+          source_url?: string | null
+          sources?: Json
+          summary?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          word_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "authors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "blog_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_posts_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_posts_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "authors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookmarks: {
         Row: {
           created_at: string
