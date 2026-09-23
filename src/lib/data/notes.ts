@@ -53,7 +53,9 @@ async function loadNote(core: CourseCore, summary: NoteSummary): Promise<NotePag
   const practiceSets =
     summary.kind === 'exam_prep'
       ? await getAssignmentSets(
-          core.assignments.filter((a) => a.weekNumber === null && a.type === 'practice').map((a) => a.id),
+          core.assignments
+            .filter((a) => a.weekNumber === null && a.type === 'practice')
+            .map((a) => a.id),
         )
       : []
 
@@ -70,7 +72,9 @@ async function loadNote(core: CourseCore, summary: NoteSummary): Promise<NotePag
       sourceUrl: data.source_url,
       seo: toSeo(data),
     },
-    week: summary.weekNumber ? (core.weeks.find((w) => w.number === summary.weekNumber) ?? null) : null,
+    week: summary.weekNumber
+      ? (core.weeks.find((w) => w.number === summary.weekNumber) ?? null)
+      : null,
     author: data.author_id ? (authors[data.author_id] ?? null) : null,
     reviewer: data.reviewer_id ? (authors[data.reviewer_id] ?? null) : null,
     related: core.notes.filter((n) => n.id !== summary.id && n.kind !== 'exam_prep').slice(0, 8),
@@ -147,7 +151,10 @@ export async function getCourseNotePage(
         readingTimeMinutes: 1,
         weekNumber: null,
         path: `${core.course.path}/qualifier-exam-prep`,
-        updatedAt: sets.reduce((max, s) => (s.updatedAt > max ? s.updatedAt : max), sets[0]!.updatedAt),
+        updatedAt: sets.reduce(
+          (max, s) => (s.updatedAt > max ? s.updatedAt : max),
+          sets[0]!.updatedAt,
+        ),
         bodyMdx: '',
         wordCount: 0,
         version: 1,
@@ -176,7 +183,9 @@ export async function getCourseNotePage(
 }
 
 /** Every live topic note URL — for generateStaticParams. */
-export async function getTopicNoteParams(): Promise<Array<{ program: string; course: string; slug: string }>> {
+export async function getTopicNoteParams(): Promise<
+  Array<{ program: string; course: string; slug: string }>
+> {
   'use cache'
   cacheLife(await contentCacheProfile())
   cacheTag(tableTag('programs'), tableTag('courses'), tableTag('notes'))
