@@ -28,7 +28,12 @@ export function Select({
       <label htmlFor={id} className="mb-1 block text-small font-medium text-text">
         {label}
       </label>
-      <select id={id} className={fieldClasses} value={value} onChange={(e) => onChange(e.target.value)}>
+      <select
+        id={id}
+        className={fieldClasses}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
