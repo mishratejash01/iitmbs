@@ -48,10 +48,10 @@ export async function POST(request: Request) {
   })
   if (!context || context.isBot) return noContent()
 
-  const ipKey = hashIp(clientIp(request.headers)) ?? 'noip'
+  const ipHash = hashIp(clientIp(request.headers))
   const [visitorOk, ipOk] = await Promise.all([
     allowRequest(`track:a:${payload.anonymous_id}`, 60, 60),
-    allowRequest(`track:i:${ipKey}`, 60, 300),
+    allowRequest(ipHash && `track:i:${ipHash}`, 60, 300),
   ])
   if (!visitorOk || !ipOk) return new Response(null, { status: 429 })
 
