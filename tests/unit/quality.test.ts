@@ -105,3 +105,23 @@ describe('csv parser', async () => {
     ])
   })
 })
+
+describe('csv export cells', async () => {
+  const { csvCell, parseCsv } = await import('@/lib/admin/csv')
+  it('quotes separators and neutralises spreadsheet formulas', () => {
+    expect(csvCell('plain')).toBe('plain')
+    expect(csvCell('a, b')).toBe('"a, b"')
+    expect(csvCell('say "hi"')).toBe('"say ""hi"""')
+    expect(csvCell('=HYPERLINK("x")')).toBe(`"'=HYPERLINK(""x"")"`)
+    expect(csvCell('@SUM(A1)')).toBe("'@SUM(A1)")
+    expect(csvCell(-12.5)).toBe('-12.5')
+    expect(csvCell(null)).toBe('')
+  })
+  it('round-trips through the parser', () => {
+    const text = [
+      'title,note',
+      [csvCell('Maths 1, Week 2'), csvCell('line\nbreak')].join(','),
+    ].join('\n')
+    expect(parseCsv(text)).toEqual([{ title: 'Maths 1, Week 2', note: 'line\nbreak' }])
+  })
+})
