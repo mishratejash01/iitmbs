@@ -22,7 +22,9 @@ function keepAttribute(element: string, attribute: JsxElement['attributes'][numb
   if (attribute.type !== 'mdxJsxAttribute') return false
   if (!allowedAttributes(element).includes(attribute.name)) return false
   // Only literal strings or bare booleans (<details open>) — never expressions.
-  return attribute.value === null || attribute.value === undefined || typeof attribute.value === 'string'
+  return (
+    attribute.value === null || attribute.value === undefined || typeof attribute.value === 'string'
+  )
 }
 
 /**
