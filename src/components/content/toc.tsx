@@ -1,11 +1,24 @@
 import type { TocItem } from '@/lib/mdx/process'
 import { cn } from '@/lib/utils/cn'
 
-export function Toc({ items, className }: { items: TocItem[]; className?: string }) {
+export function Toc({
+  items,
+  className,
+  heading = true,
+}: {
+  items: TocItem[]
+  className?: string
+  /** Hide the visible label when a surrounding control already shows it. */
+  heading?: boolean
+}) {
   if (items.length < 2) return null
   return (
     <nav aria-label="On this page" className={className}>
-      <p className="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">On this page</p>
+      {heading ? (
+        <p className="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">
+          On this page
+        </p>
+      ) : null}
       <ol className="space-y-1 border-l border-border">
         {items.map((item) => (
           <li key={item.id}>
@@ -36,7 +49,7 @@ export function MobileToc({ items }: { items: TocItem[] }) {
       <summary className="flex min-h-12 cursor-pointer items-center px-4 font-medium text-text">
         On this page
       </summary>
-      <Toc items={items} className="px-4 pb-4" />
+      <Toc items={items} heading={false} className="px-4 pb-4" />
     </details>
   )
 }
