@@ -1,0 +1,30 @@
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+
+import { noteCrumbs, noteMetadata, noteTitle } from '@/components/notes/note-route'
+import { NoteView } from '@/components/notes/note-view'
+import { getTopicNotePage, getTopicNoteParams } from '@/lib/data/notes'
+import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
+
+export async function generateStaticParams() {
+  return withPlaceholder(await getTopicNoteParams(), {
+    program: PLACEHOLDER_SEGMENT,
+    course: PLACEHOLDER_SEGMENT,
+    slug: PLACEHOLDER_SEGMENT,
+  })
+}
+
+async function load(params: PageProps<'/[program]/[course]/notes/[slug]'>['params']) {
+  const { program, course, slug } = await params
+  return getTopicNotePage(program, course, slug)
+}
+
+export async function generateMetadata({ params }: PageProps<'/[program]/[course]/notes/[slug]'>): Promise<Metadata> {
+  return noteMetadata(await load(params))
+}
+
+export default async function TopicNotePage({ params }: PageProps<'/[program]/[course]/notes/[slug]'>) {
+  const data = await load(params)
+  if (!data) notFound()
+  return <NoteView data={data} title={noteTitle(data)} crumbs={noteCrumbs(data)} />
+}
