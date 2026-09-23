@@ -54,7 +54,10 @@ export function websiteJsonLd(settings: SiteSettings): WithContext<WebSite> {
     publisher: { '@id': orgId() },
     potentialAction: {
       '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${env.siteUrl}/search?q={search_term_string}` },
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${env.siteUrl}/search?q={search_term_string}`,
+      },
       // schema-dts does not model the "query-input" shorthand Google uses.
       ...({ 'query-input': 'required name=search_term_string' } as object),
     },
@@ -115,7 +118,8 @@ export function learningResourceJsonLd(input: {
   name: string
   description: string
   path: string
-  resourceType: 'Lecture notes' | 'Assignment' | 'Practice problems' | 'Formula sheet' | 'Study guide'
+  resourceType:
+    'Lecture notes' | 'Assignment' | 'Practice problems' | 'Formula sheet' | 'Study guide'
   teaches: string[]
   minutes?: number | null
   author?: AuthorRef | null
@@ -143,7 +147,9 @@ export function learningResourceJsonLd(input: {
     publisher: { '@id': orgId() } as Organization,
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified } : {}),
-    ...(input.partOf ? { isPartOf: { '@type': 'Course', name: input.partOf.name, url: url(input.partOf.path) } } : {}),
+    ...(input.partOf
+      ? { isPartOf: { '@type': 'Course', name: input.partOf.name, url: url(input.partOf.path) } }
+      : {}),
   }
 }
 
@@ -179,18 +185,19 @@ export function quizJsonLd(input: {
     name: input.name,
     url: url(input.path),
     educationalLevel: 'Undergraduate (IIT Madras BS qualifier)',
-    ...(input.topics.length > 0 ? { about: input.topics.map((name) => ({ '@type': 'Thing', name })) } : {}),
-    hasPart: answered.map(
-      (q): SchemaQuestion => ({
-        '@type': 'Question',
-        eduQuestionType: q.type === 'mcq' ? 'Multiple choice' : q.type === 'msq' ? 'Checkbox' : 'Short answer',
-        text: truncate(mdxToPlainText(q.questionMdx), 500),
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: truncate(mdxToPlainText(q.explanationMdx ?? q.answerMdx), 1000),
-        },
-      }),
-    ),
+    ...(input.topics.length > 0
+      ? { about: input.topics.map((name) => ({ '@type': 'Thing', name })) }
+      : {}),
+    hasPart: answered.map((q): SchemaQuestion => ({
+      '@type': 'Question',
+      eduQuestionType:
+        q.type === 'mcq' ? 'Multiple choice' : q.type === 'msq' ? 'Checkbox' : 'Short answer',
+      text: truncate(mdxToPlainText(q.questionMdx), 500),
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: truncate(mdxToPlainText(q.explanationMdx ?? q.answerMdx), 1000),
+      },
+    })),
   }
 }
 
