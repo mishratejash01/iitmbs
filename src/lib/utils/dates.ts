@@ -37,9 +37,10 @@ export function formatDateTime(iso: string | Date): string {
 
 /** Calendar year in IST, e.g. for "{year}" in titles. */
 export function yearInIst(iso: string | Date = new Date()): number {
-  const parts = new Intl.DateTimeFormat('en-GB', { timeZone: DISPLAY_TIME_ZONE, year: 'numeric' }).formatToParts(
-    typeof iso === 'string' ? new Date(iso) : iso,
-  )
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: DISPLAY_TIME_ZONE,
+    year: 'numeric',
+  }).formatToParts(typeof iso === 'string' ? new Date(iso) : iso)
   return Number(parts.find((p) => p.type === 'year')?.value ?? new Date().getUTCFullYear())
 }
 
@@ -50,8 +51,17 @@ export function formatDuration(totalSeconds: number): string {
   const hours = Math.floor((s % 86400) / 3600)
   const minutes = Math.floor((s % 3600) / 60)
   const plural = (n: number, unit: string) => `${n} ${unit}${n === 1 ? '' : 's'}`
-  if (days > 0) return hours > 0 ? `${plural(days, 'day')} ${plural(hours, 'hour')}` : plural(days, 'day')
-  if (hours > 0) return minutes > 0 ? `${plural(hours, 'hour')} ${plural(minutes, 'minute')}` : plural(hours, 'hour')
+  if (days > 0)
+    return hours > 0 ? `${plural(days, 'day')} ${plural(hours, 'hour')}` : plural(days, 'day')
+  if (hours > 0)
+    return minutes > 0
+      ? `${plural(hours, 'hour')} ${plural(minutes, 'minute')}`
+      : plural(hours, 'hour')
   if (minutes > 0) return plural(minutes, 'minute')
   return plural(s, 'second')
+}
+
+/** The moment `days` days before now (for "last 30 days" style ranges). */
+export function daysAgo(days: number): Date {
+  return new Date(Date.now() - days * 86_400_000)
 }
