@@ -14,7 +14,8 @@ export function formatBytes(bytes: number | null | undefined): string | null {
 /** "1.2k", "3.4M" */
 export function formatCount(value: number): string {
   if (value < 1000) return String(value)
-  if (value < 1_000_000) return `${(value / 1000).toFixed(value < 10_000 ? 1 : 0).replace(/\.0$/, '')}k`
+  if (value < 1_000_000)
+    return `${(value / 1000).toFixed(value < 10_000 ? 1 : 0).replace(/\.0$/, '')}k`
   return `${(value / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`
 }
 
