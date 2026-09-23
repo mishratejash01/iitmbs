@@ -40,9 +40,14 @@ export async function SiteHeader({ settings }: { settings: SiteSettings }) {
 
         <div className="ml-auto flex items-center gap-1">
           {settings.features.search ? <SearchTrigger /> : null}
-          {settings.features.dark_mode ? <ThemeToggle /> : null}
+          {/* On phones the theme switch lives in the menu, leaving room for the name. */}
+          {settings.features.dark_mode ? (
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
+          ) : null}
           <AuthMenu />
-          <MobileMenu items={items} programs={programs} />
+          <MobileMenu items={items} programs={programs} themeToggle={settings.features.dark_mode} />
         </div>
       </div>
     </header>
