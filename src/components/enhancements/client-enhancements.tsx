@@ -9,7 +9,9 @@ import { useEffect } from 'react'
 export function ClientEnhancements() {
   useEffect(() => {
     const onClick = async (event: MouseEvent) => {
-      const button = (event.target as Element | null)?.closest<HTMLButtonElement>('[data-copy-code]')
+      const button = (event.target as Element | null)?.closest<HTMLButtonElement>(
+        '[data-copy-code]',
+      )
       if (!button) return
       const code = button.parentElement?.querySelector('pre')?.innerText ?? ''
       try {
