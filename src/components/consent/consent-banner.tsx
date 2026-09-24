@@ -76,17 +76,20 @@ export function ConsentBanner() {
         // The inline script below may reveal it before hydration.
         suppressHydrationWarning
         aria-label="Analytics choices"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card p-4 shadow-card sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md sm:rounded-card sm:border"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-border-strong bg-card p-5 sm:inset-x-auto sm:right-4 sm:bottom-4 sm:max-w-md sm:rounded-card sm:border"
         data-print="hide"
       >
-        <p className="text-small font-semibold text-text">Your analytics choice</p>
+        <p className="font-semibold text-text">Your analytics choice</p>
         <p className="mt-1 text-small text-muted">
-          We use pseudonymous analytics to see which pages help — never your name, email or IP
+          We use pseudonymous analytics to see which pages help. Never your name, email or IP
           address.{' '}
           {gpc
             ? 'Your browser sends Global Privacy Control, so that is all we use.'
             : 'Detailed analytics, linked to your account and with Google Analytics cookies, are optional.'}{' '}
-          <Link href="/privacy" className="font-medium text-accent-ink underline">
+          <Link
+            href="/privacy"
+            className="font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+          >
             Privacy policy
           </Link>
         </p>
@@ -107,8 +110,8 @@ export function ConsentBanner() {
           </div>
         ) : null}
 
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Button variant="secondary" size="sm" onClick={() => save('essential')}>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => save('essential')}>
             {gpc ? 'OK' : 'Essential only'}
           </Button>
           {!gpc ? (
@@ -117,7 +120,7 @@ export function ConsentBanner() {
                 Allow detailed
               </Button>
             ) : (
-              <Button variant="soft" size="sm" onClick={() => setChoosingDetailed(true)}>
+              <Button variant="secondary" size="sm" onClick={() => setChoosingDetailed(true)}>
                 Allow detailed…
               </Button>
             )
