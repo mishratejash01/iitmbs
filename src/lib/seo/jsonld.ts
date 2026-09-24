@@ -169,6 +169,8 @@ export function blogPostingJsonLd(input: {
   reviewer?: AuthorRef | null
   datePublished?: string | null
   dateModified?: string | null
+  /** BCP 47 tag of the article's language; defaults to Indian English. */
+  inLanguage?: string
 }): WithContext<BlogPosting> {
   const author = person(input.author ?? null)
   const reviewer = person(input.reviewer ?? null)
@@ -180,7 +182,7 @@ export function blogPostingJsonLd(input: {
     url: url(input.path),
     mainEntityOfPage: url(input.path),
     image: url(`/og${input.path}`),
-    inLanguage: 'en-IN',
+    inLanguage: input.inLanguage ?? 'en-IN',
     articleSection: input.section,
     ...(input.keywords.length > 0 ? { keywords: input.keywords.slice(0, 20).join(', ') } : {}),
     ...(input.wordCount > 0 ? { wordCount: input.wordCount } : {}),
