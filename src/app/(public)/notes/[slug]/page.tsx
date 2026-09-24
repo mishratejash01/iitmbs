@@ -106,6 +106,7 @@ export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug
             <Badge>
               {course.noteCount} {course.noteCount === 1 ? 'note' : 'notes'}
             </Badge>
+            <Badge>Handwritten and PDF</Badge>
           </>
         }
       />
