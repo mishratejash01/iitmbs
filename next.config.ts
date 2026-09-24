@@ -13,6 +13,11 @@ function originOf(value: string | undefined): string | null {
 
 const supabaseOrigin = originOf(process.env.NEXT_PUBLIC_SUPABASE_URL)
 
+// Set only on a retired deployment (such as an old Vercel project) to send
+// every request to the live site with a permanent redirect, so search engines
+// move their index and ranking signals to the new address.
+const redirectAllTo = originOf(process.env.REDIRECT_ALL_TO)
+
 /**
  * Static Content-Security-Policy. Pages are statically prerendered, so a
  * per-request nonce is not possible; inline scripts are therefore allowed, but
@@ -83,6 +88,12 @@ const nextConfig: NextConfig = {
     // The stylesheet is small (~17 KB); inlining it removes two render-blocking
     // requests from every first visit, which is most search traffic.
     inlineCss: true,
+  },
+
+  async redirects() {
+    return redirectAllTo
+      ? [{ source: '/:path*', destination: `${redirectAllTo}/:path*`, permanent: true }]
+      : []
   },
 
   async headers() {
