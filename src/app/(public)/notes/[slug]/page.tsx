@@ -5,7 +5,7 @@ import { PageContext } from '@/components/analytics/page-context'
 import { ResourceList } from '@/components/content/resource-list'
 import { PageHeader } from '@/components/layout/page-header'
 import { JsonLd } from '@/components/seo/json-ld'
-import { Badge } from '@/components/ui/badge'
+import { Badge, metaRowClasses } from '@/components/ui/badge'
 import { getBlogPostIndex } from '@/lib/data/blog'
 import { getCourseHubPaths } from '@/lib/data/course-hubs'
 import { getPage } from '@/lib/data/pages'
@@ -110,12 +110,12 @@ export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug
         <div className="container-reading space-y-8">
           {groups.length > 1 ? (
             <nav aria-label={`${course.shortName} notes sections`} data-print="hide">
-              <ul className="flex flex-wrap gap-2">
+              <ul className={`text-small ${metaRowClasses}`}>
                 {groups.map((group) => (
                   <li key={group.id}>
                     <a
                       href={`#${group.id}`}
-                      className="inline-flex min-h-10 items-center rounded-full border border-border bg-card px-3.5 text-small text-text hover:border-accent"
+                      className="inline-flex min-h-10 items-center font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
                     >
                       {sectionLabel(group.heading, course.shortName)}
                     </a>
