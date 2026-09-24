@@ -16,8 +16,8 @@ export async function loadReferenceOptions(
     ['programs', 'courses', 'weeks', 'assignments'].forEach((k) => wanted.add(k as ReferenceKey))
   const supabase = await createSupabaseServerClient()
 
-  const [programs, courses, weeks, assignments, authors, pages, blogCategories] = await Promise.all(
-    [
+  const [programs, courses, weeks, assignments, authors, pages, blogCategories, noteCourses] =
+    await Promise.all([
       wanted.has('programs') ||
       wanted.has('courses') ||
       wanted.has('weeks') ||
@@ -60,8 +60,14 @@ export async function loadReferenceOptions(
             .is('deleted_at', null)
             .order('sort_order')
         : null,
-    ],
-  )
+      wanted.has('noteCourses')
+        ? supabase
+            .from('note_courses')
+            .select('id, name, code')
+            .is('deleted_at', null)
+            .order('sort_order')
+        : null,
+    ])
 
   const programName = new Map((programs?.data ?? []).map((p) => [p.id, p.short_name]))
   const courseLabel = new Map(
@@ -91,6 +97,11 @@ export async function loadReferenceOptions(
   }
   if (wanted.has('authors'))
     result.authors = (authors?.data ?? []).map((a) => ({ value: a.id, label: a.name }))
+  if (wanted.has('noteCourses'))
+    result.noteCourses = (noteCourses?.data ?? []).map((c) => ({
+      value: c.id,
+      label: `${c.name} (${c.code})`,
+    }))
   if (wanted.has('blogCategories'))
     result.blogCategories = (blogCategories?.data ?? []).map((c) => ({
       value: c.id,
