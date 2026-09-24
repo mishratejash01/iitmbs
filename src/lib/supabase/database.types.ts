@@ -1081,6 +1081,77 @@ export type Database = {
         }
         Relationships: []
       }
+      lecture_videos: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          duration_seconds: number | null
+          id: string
+          is_published: boolean
+          lecture: string | null
+          note_course_id: string
+          playlist_id: string | null
+          position: number
+          published_at: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+          updated_by: string | null
+          uploaded_at: string | null
+          week: number | null
+          youtube_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_published?: boolean
+          lecture?: string | null
+          note_course_id: string
+          playlist_id?: string | null
+          position?: number
+          published_at?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+          uploaded_at?: string | null
+          week?: number | null
+          youtube_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_published?: boolean
+          lecture?: string | null
+          note_course_id?: string
+          playlist_id?: string | null
+          position?: number
+          published_at?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+          uploaded_at?: string | null
+          week?: number | null
+          youtube_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lecture_videos_note_course_id_fkey"
+            columns: ["note_course_id"]
+            isOneToOne: false
+            referencedRelation: "note_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       media: {
         Row: {
           alt_text: string | null
