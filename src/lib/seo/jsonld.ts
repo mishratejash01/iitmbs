@@ -9,6 +9,7 @@ import type {
   Person,
   Question as SchemaQuestion,
   Quiz,
+  VideoObject,
   WebSite,
   WithContext,
 } from 'schema-dts'
@@ -18,6 +19,7 @@ import type { AuthorRef, Faq, Question } from '@/lib/data/types'
 import { mdxToPlainText, truncate } from '@/lib/mdx/plain'
 import { absoluteUrl } from '@/lib/routes'
 import type { SiteSettings } from '@/lib/settings/schema'
+import { isoDurationFromSeconds } from '@/lib/lectures/videos'
 import { isoDuration } from '@/lib/utils/format'
 
 /**
@@ -286,4 +288,52 @@ export function serializeJsonLd(data: object): string {
     .replace(/&/g, '\\u0026')
     .replace(LINE_SEPARATOR, '\\u2028')
     .replace(PARAGRAPH_SEPARATOR, '\\u2029')
+}
+
+/**
+ * A week of lecture videos: a collection page whose items are the videos, each
+ * with its YouTube thumbnail, upload date, length and embed address.
+ */
+export function lectureVideosJsonLd(input: {
+  name: string
+  path: string
+  course: { name: string; code: string }
+  videos: Array<{
+    youtubeId: string
+    name: string
+    uploadedAt: string | null
+    durationSeconds: number | null
+    lecture: string | null
+  }>
+}): WithContext<CollectionPage> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: input.name,
+    url: url(input.path),
+    inLanguage: 'en-IN',
+    isAccessibleForFree: true,
+    publisher: { '@id': orgId() } as Organization,
+    about: { '@type': 'Course', name: input.course.name, courseCode: input.course.code },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: input.videos.length,
+      itemListElement: input.videos.map((video, index) => {
+        const item: VideoObject = {
+          '@type': 'VideoObject',
+          name: video.name,
+          description: `${input.course.name} lecture by IIT Madras: ${video.name}`,
+          thumbnailUrl: `https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`,
+          embedUrl: `https://www.youtube-nocookie.com/embed/${video.youtubeId}`,
+          contentUrl: `https://www.youtube.com/watch?v=${video.youtubeId}`,
+          url: video.lecture ? `${url(input.path)}?lecture=${video.lecture}` : url(input.path),
+          ...(video.uploadedAt ? { uploadDate: video.uploadedAt } : {}),
+          ...(isoDurationFromSeconds(video.durationSeconds)
+            ? { duration: isoDurationFromSeconds(video.durationSeconds) }
+            : {}),
+        }
+        return { '@type': 'ListItem', position: index + 1, item }
+      }),
+    },
+  }
 }
