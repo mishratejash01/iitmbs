@@ -25,12 +25,12 @@ export function OnboardingForm({
     <form action={action} className="mt-8 space-y-6">
       <input type="hidden" name="next" value={next} />
       <fieldset>
-        <legend className="font-medium text-text">Your programme</legend>
+        <legend className="font-semibold text-text">Your programme</legend>
         <div className="mt-3 space-y-2">
           {programs.map((program, index) => (
             <label
               key={program.id}
-              className="flex cursor-pointer items-center gap-3 rounded-control border border-border px-4 py-3 has-[:checked]:border-accent has-[:checked]:bg-accent-soft"
+              className="flex cursor-pointer items-center gap-3 rounded-control border border-border bg-card px-4 py-3 has-[:checked]:border-accent-strong has-[:checked]:bg-accent-soft"
             >
               <input
                 type="radio"
@@ -50,14 +50,14 @@ export function OnboardingForm({
       </fieldset>
 
       <div>
-        <label htmlFor="current_term" className="font-medium text-text">
+        <label htmlFor="current_term" className="font-semibold text-text">
           Your qualifier term
         </label>
         <select
           id="current_term"
           name="current_term"
           defaultValue={defaultTerm ?? terms[1]}
-          className="mt-2 min-h-11 w-full rounded-control border border-border-strong bg-card px-3 text-text"
+          className="mt-2 min-h-11 w-full rounded-control border border-border-strong bg-card px-3 text-text focus-visible:border-accent-strong"
         >
           {terms.map((term) => (
             <option key={term} value={term}>
