@@ -3,29 +3,39 @@
 import { Play } from 'lucide-react'
 import { useRef, useState, useSyncExternalStore } from 'react'
 
+import { lectureLabel } from '@/lib/lectures/videos'
 import { cn } from '@/lib/utils/cn'
 
 export type PlayerLecture = {
   youtubeId: string
   title: string
-  /** "5A"; null for videos without a number. */
+  /** "5A", "1.1" or "T2" (a tutorial); null for videos without a number. */
   lecture: string | null
   duration: string | null
 }
 
-const label = (lecture: PlayerLecture, index: number) =>
-  lecture.lecture !== null ? `Lecture ${lecture.lecture}` : `Video ${index + 1}`
+/** "Lecture 5A" or "Tutorial 2"; list positions stand in only when no video has a number. */
+const label = (lecture: PlayerLecture, index: number, numbered: boolean) =>
+  lectureLabel(lecture.lecture) ?? (numbered ? null : `Video ${index + 1}`)
 
 /**
- * One week's lectures: a click-to-play YouTube player (privacy-enhanced; the
- * player loads only when asked) and the list beside it. Choosing a lecture
- * plays it here; the choice is kept in the address (?lecture=5A) for sharing.
+ * A list of lectures (usually one week's): a click-to-play YouTube player
+ * (privacy-enhanced; the player loads only when asked) and the list beside it.
+ * Choosing a lecture plays it here; the choice is kept in the address
+ * (?lecture=5A) for sharing.
  */
 // The lecture asked for in the address; null on the server and before hydration.
 const subscribeNever = () => () => {}
 const readWanted = () => new URLSearchParams(window.location.search).get('lecture')
 
-export function LecturePlayer({ lectures }: { lectures: PlayerLecture[] }) {
+export function LecturePlayer({
+  lectures,
+  listLabel = 'Lectures this week',
+}: {
+  lectures: PlayerLecture[]
+  /** The list's accessible name. */
+  listLabel?: string
+}) {
   const wanted = useSyncExternalStore(subscribeNever, readWanted, () => null)
   const [chosen, setChosen] = useState<number | null>(null)
   const [playing, setPlaying] = useState(false)
@@ -37,6 +47,9 @@ export function LecturePlayer({ lectures }: { lectures: PlayerLecture[] }) {
     : -1
   const index = chosen ?? (linked >= 0 ? linked : 0)
   const current = lectures[index] ?? lectures[0]!
+  const numbered = lectures.some((l) => l.lecture !== null)
+  const currentLabel = label(current, index, numbered)
+  const eyebrow = [currentLabel, current.duration].filter(Boolean).join(' · ')
 
   const choose = (next: number) => {
     setChosen(next)
@@ -73,7 +86,7 @@ export function LecturePlayer({ lectures }: { lectures: PlayerLecture[] }) {
               type="button"
               onClick={() => choose(index)}
               className="group absolute inset-0 flex items-center justify-center"
-              aria-label={`Play ${label(current, index)}: ${current.title}`}
+              aria-label={`Play ${currentLabel ? `${currentLabel}: ` : ''}${current.title}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- YouTube thumbnails are external */}
               <img
@@ -89,11 +102,12 @@ export function LecturePlayer({ lectures }: { lectures: PlayerLecture[] }) {
           )}
         </div>
         <div className="mt-5">
-          <p className="text-xs font-semibold tracking-[0.08em] text-accent-ink uppercase">
-            {label(current, index)}
-            {current.duration ? ` · ${current.duration}` : ''}
-          </p>
-          <h2 className="mt-1.5 text-h3 font-semibold text-text sm:text-h2">{current.title}</h2>
+          {eyebrow ? (
+            <p className="mb-1.5 text-xs font-semibold tracking-[0.08em] text-accent-ink uppercase">
+              {eyebrow}
+            </p>
+          ) : null}
+          <h2 className="text-h3 font-semibold text-text sm:text-h2">{current.title}</h2>
           <a
             href={`https://www.youtube.com/watch?v=${current.youtubeId}`}
             target="_blank"
@@ -107,7 +121,7 @@ export function LecturePlayer({ lectures }: { lectures: PlayerLecture[] }) {
       </div>
 
       <ol
-        aria-label="Lectures this week"
+        aria-label={listLabel}
         className="border-t border-border lg:max-h-[34rem] lg:overflow-y-auto"
       >
         {lectures.map((lecture, i) => {
@@ -126,7 +140,7 @@ export function LecturePlayer({ lectures }: { lectures: PlayerLecture[] }) {
                 )}
               >
                 <span className="pt-0.5 text-small font-semibold text-accent-ink tabular-nums">
-                  {lecture.lecture ?? i + 1}
+                  {lecture.lecture ?? (numbered ? '' : i + 1)}
                 </span>
                 <span className="min-w-0">
                   <span
