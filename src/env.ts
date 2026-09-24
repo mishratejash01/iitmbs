@@ -36,6 +36,9 @@ const schema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: origin,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20, 'looks truncated'),
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: optional(z.string().regex(/^[a-z0-9_-]+$/i)),
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: optional(
+    z.string().regex(/^[\w-]+\.apps\.googleusercontent\.com$/, 'must be a Google OAuth client ID'),
+  ),
 
   // Server-only
   SUPABASE_SERVICE_ROLE_KEY: optional(z.string().min(20, 'looks truncated')),
