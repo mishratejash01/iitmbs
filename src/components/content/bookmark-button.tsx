@@ -1,13 +1,12 @@
 'use client'
 
-import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+import { buttonClasses } from '@/components/ui/button'
 import { track } from '@/lib/analytics/client'
 import { DISPLAY_COOKIE } from '@/lib/auth/display-cookie'
 import { useCookie } from '@/lib/hooks/browser-state'
-import { cn } from '@/lib/utils/cn'
 
 /**
  * Bookmark toggle for signed-in students. Renders nothing for visitors, so
@@ -72,7 +71,6 @@ export function BookmarkButton({
     }
   }
 
-  const Icon = bookmarked ? BookmarkCheck : Bookmark
   return (
     <button
       type="button"
@@ -80,14 +78,8 @@ export function BookmarkButton({
       disabled={busy}
       aria-pressed={bookmarked}
       data-print="hide"
-      className={cn(
-        'inline-flex min-h-11 items-center gap-2 rounded-control border px-3 text-small font-medium',
-        bookmarked
-          ? 'border-accent bg-accent-soft text-accent-ink'
-          : 'border-border text-text hover:border-accent',
-      )}
+      className={buttonClasses(bookmarked ? 'primary' : 'secondary', 'sm')}
     >
-      <Icon aria-hidden="true" className="size-4" />
       {bookmarked ? 'Bookmarked' : 'Bookmark'}
     </button>
   )
