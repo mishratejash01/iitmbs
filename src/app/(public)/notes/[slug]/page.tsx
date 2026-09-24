@@ -9,6 +9,7 @@ import { Badge, metaRowClasses } from '@/components/ui/badge'
 import { getBlogPostIndex } from '@/lib/data/blog'
 import { getCourseHubPaths } from '@/lib/data/course-hubs'
 import { getPage } from '@/lib/data/pages'
+import { getLectureCourses } from '@/lib/data/lectures'
 import { getPyqCourses } from '@/lib/data/question-papers'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
@@ -74,13 +75,15 @@ export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug
   const course = courses.find((c) => c.slug === slug)
   if (!course) return redirectOrNotFound(noteCoursePath(slug))
 
-  const [notes, posts, hubs, pyqCourses] = await Promise.all([
+  const [notes, posts, hubs, pyqCourses, lectureCourses] = await Promise.all([
     getCourseNotes(course.id),
     getBlogPostIndex(),
     getCourseHubPaths(),
     getPyqCourses(),
+    getLectureCourses(),
   ])
   const papers = pyqCourses.find((p) => p.id === course.id)
+  const lectures = lectureCourses.find((l) => l.id === course.id)
   const groups = groupNotes(notes, course.shortName)
   const guide = course.blogPostId ? posts.find((post) => post.id === course.blogPostId) : undefined
   const hub = course.courseId ? hubs.get(course.courseId) : undefined
@@ -139,8 +142,13 @@ export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug
             </section>
           ))}
 
-          {guide || hub || papers ? (
+          {guide || hub || papers || lectures ? (
             <p className="flex flex-wrap gap-x-5 gap-y-2 text-small">
+              {lectures ? (
+                <Link href={lectures.path} className="text-accent-ink underline underline-offset-2">
+                  IIT Madras {course.shortName} lectures
+                </Link>
+              ) : null}
               {papers ? (
                 <Link href={papers.path} className="text-accent-ink underline underline-offset-2">
                   {course.shortName} previous year papers
