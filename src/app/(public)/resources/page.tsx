@@ -27,11 +27,7 @@ export default async function ResourcesPage() {
   return (
     <>
       <PageContext type="resources" />
-      <PageHeader
-        crumbs={[{ name: 'Resources', path: '/resources' }]}
-        title="Resources"
-        description="Official IIT Madras BS links and downloads for the qualifier courses. Every file is shared with permission or links to its official source."
-      />
+      <PageHeader crumbs={[{ name: 'Resources', path: '/resources' }]} title="Resources" />
       <div className="container-page py-8 sm:py-10">
         <div className="container-reading space-y-10">
           {groups.length === 0 ? (
