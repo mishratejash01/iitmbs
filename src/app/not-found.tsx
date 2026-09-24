@@ -50,7 +50,7 @@ export default async function NotFound() {
                   name="q"
                   type="search"
                   placeholder="e.g. stats 1 week 3"
-                  className="min-h-12 w-full rounded-control border border-border-strong bg-card pr-3 pl-10 text-text placeholder:text-muted focus-visible:border-accent"
+                  className="min-h-12 w-full rounded-control border border-border-strong bg-card pr-3 pl-10 text-text placeholder:text-muted focus-visible:border-accent-strong"
                 />
               </div>
               <Button type="submit" size="lg">
