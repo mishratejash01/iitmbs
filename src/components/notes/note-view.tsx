@@ -1,5 +1,3 @@
-import { Clock } from 'lucide-react'
-
 import { PageContext } from '@/components/analytics/page-context'
 import { QuestionCard } from '@/components/assignment/question-card'
 import { ArticleShell } from '@/components/content/article-shell'
@@ -57,12 +55,7 @@ export async function NoteView({
         title={title}
         meta={
           <>
-            {note.readingTimeMinutes ? (
-              <Badge>
-                <Clock aria-hidden="true" className="size-3.5" />
-                {note.readingTimeMinutes} min read
-              </Badge>
-            ) : null}
+            {note.readingTimeMinutes ? <Badge>{note.readingTimeMinutes} min read</Badge> : null}
             {week ? <Badge tone="accent">Week {week.number}</Badge> : null}
           </>
         }
