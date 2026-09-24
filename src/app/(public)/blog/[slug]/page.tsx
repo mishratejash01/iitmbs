@@ -76,13 +76,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
           { name: post.category.name, path: post.category.path },
           { name: post.title, path: post.path },
         ]}
-        eyebrow={
-          <Link href={post.category.path} className="hover:underline">
-            {post.category.name}
-          </Link>
-        }
         title={post.title}
-        description={post.summary}
         meta={
           <>
             <Byline
