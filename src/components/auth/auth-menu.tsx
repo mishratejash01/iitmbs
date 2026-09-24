@@ -1,6 +1,5 @@
 'use client'
 
-import { LayoutDashboard, LogOut, Shield, Bookmark, History } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
@@ -30,7 +29,7 @@ export function AuthMenu() {
       <Link
         href={`/login?next=${encodeURIComponent(pathname)}`}
         onClick={() => track('login_click', { provider: 'google', source: 'header' })}
-        className="flex min-h-11 min-w-[4.5rem] items-center justify-center rounded-control px-3 text-small font-medium text-text hover:bg-surface"
+        className="ml-1 flex min-h-11 min-w-[4.75rem] items-center justify-center rounded-control bg-accent-strong px-4 text-small font-semibold text-on-accent hover:bg-accent-hover sm:min-h-10"
       >
         Log in
       </Link>
@@ -38,7 +37,7 @@ export function AuthMenu() {
   }
 
   const itemClass =
-    'flex min-h-11 w-full items-center gap-2 rounded-control px-3 text-small text-text hover:bg-surface'
+    'flex min-h-11 w-full items-center rounded-control px-3 text-small text-text hover:bg-surface'
   return (
     <Disclosure
       label={`Account menu for ${user.name}`}
@@ -66,30 +65,30 @@ export function AuthMenu() {
       <ul>
         <li>
           <Link href="/dashboard" className={itemClass}>
-            <LayoutDashboard aria-hidden="true" className="size-4 text-muted" /> Dashboard
+            Dashboard
           </Link>
         </li>
         <li>
           <Link href="/dashboard/bookmarks" className={itemClass}>
-            <Bookmark aria-hidden="true" className="size-4 text-muted" /> Bookmarks
+            Bookmarks
           </Link>
         </li>
         <li>
           <Link href="/dashboard/history" className={itemClass}>
-            <History aria-hidden="true" className="size-4 text-muted" /> History
+            History
           </Link>
         </li>
         {user.staff ? (
           <li>
             <Link href="/admin" className={itemClass}>
-              <Shield aria-hidden="true" className="size-4 text-muted" /> Admin
+              Admin
             </Link>
           </li>
         ) : null}
         <li className="mt-1 border-t border-border pt-1">
           <form action="/auth/signout" method="post">
             <button type="submit" className={itemClass}>
-              <LogOut aria-hidden="true" className="size-4 text-muted" /> Log out
+              Log out
             </button>
           </form>
         </li>
