@@ -4,6 +4,7 @@ import { Poppins } from 'next/font/google'
 import './globals.css'
 
 import { Analytics } from '@/components/analytics/analytics'
+import { GoogleAnalytics } from '@/components/analytics/google-analytics'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import { ConsentBanner } from '@/components/consent/consent-banner'
 import { ClientEnhancements } from '@/components/enhancements/client-enhancements'
@@ -88,6 +89,7 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
         {children}
         <Analytics heartbeatSeconds={settings.analytics.heartbeat_seconds} />
         <VercelAnalytics />
+        <GoogleAnalytics />
         <ConsentBanner />
         <ClientEnhancements />
         {settings.features.pwa ? <ServiceWorkerRegister /> : null}
