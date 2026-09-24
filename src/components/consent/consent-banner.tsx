@@ -7,6 +7,7 @@ import { useEffect, useId, useState, useSyncExternalStore } from 'react'
 import { Button } from '@/components/ui/button'
 import { getConsent, readCookie, track, writeCookie } from '@/lib/analytics/client'
 import { ANALYTICS_COOKIES } from '@/lib/analytics/events'
+import { syncGoogleConsent } from '@/lib/analytics/google'
 
 import { OPEN_CONSENT_EVENT } from './consent-settings-button'
 
@@ -53,6 +54,7 @@ export function ConsentBanner() {
     const firstChoice = !readHasChoice()
     const previous = getConsent()
     writeCookie(ANALYTICS_COOKIES.consent, level, 60 * 60 * 24 * 365)
+    syncGoogleConsent()
     if (firstChoice || previous !== level) track('consent_update', { level })
     // Persist on the profile when signed in (ignored otherwise).
     void fetch('/api/me/consent', {
@@ -83,7 +85,7 @@ export function ConsentBanner() {
           address.{' '}
           {gpc
             ? 'Your browser sends Global Privacy Control, so that is all we use.'
-            : 'Detailed analytics, linked to your account, are optional.'}{' '}
+            : 'Detailed analytics, linked to your account and with Google Analytics cookies, are optional.'}{' '}
           <Link href="/privacy" className="font-medium text-accent-ink underline">
             Privacy policy
           </Link>
@@ -99,7 +101,8 @@ export function ConsentBanner() {
               className="mt-1 size-4 accent-[var(--accent-strong)]"
             />
             <label htmlFor={checkboxId} className="text-small text-text">
-              I am 18 or older and allow detailed analytics linked to my account.
+              I am 18 or older and allow detailed analytics linked to my account, including Google
+              Analytics cookies.
             </label>
           </div>
         ) : null}
