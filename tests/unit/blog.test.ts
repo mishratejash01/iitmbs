@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { faqsFromBody, relatedPosts, topPosts } from '@/lib/blog/helpers'
+import { faqsFromBody, postLanguage, relatedPosts, topPosts } from '@/lib/blog/helpers'
 import type { BlogPostSummary } from '@/lib/data/blog'
 
 const post = (id: string, over: Partial<BlogPostSummary> = {}): BlogPostSummary => ({
@@ -79,5 +79,20 @@ describe('topPosts', () => {
       post('featured', { sortOrder: 5, isFeatured: true }),
     ]
     expect(topPosts(posts, 3).map((p) => p.id)).toEqual(['featured', 'pinned', 'new'])
+  })
+})
+
+describe('postLanguage', () => {
+  it('spots Hindi posts and ignores Latin link targets', () => {
+    expect(
+      postLanguage(
+        'यही जानकारी English में पढ़ें: [What Is the IIT Madras BS Degree?](/blog/what-is-iitm-bs-degree)\n\nIIT Madras का BS degree एक online degree है, जिसमें पढ़ाई घर से होती है।',
+      ),
+    ).toBe('hi')
+    expect(
+      postLanguage(
+        'The IITM BS is taught in English. [Hindi explainer](/blog/iit-madras-bs-degree-kya-hai)',
+      ),
+    ).toBe('en')
   })
 })
