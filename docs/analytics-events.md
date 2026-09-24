@@ -1,8 +1,8 @@
 # Analytics events
 
-Qualifier Hub uses its own first-party analytics — no third-party scripts. This page lists every event, what is
-stored, and how consent changes it. The authoritative catalogue is the `event_definitions` table (**Admin → Event
-catalogue**); `/api/track` rejects any event that is not active there.
+Qualifier Hub uses its own first-party analytics (Google Analytics and Vercel Web Analytics also count visits; see
+decision 7). This page lists every event, what is stored, and how consent changes it. The authoritative catalogue is
+the `event_definitions` table (**Admin → Event catalogue**); `/api/track` rejects any event that is not active there.
 
 ## How data flows
 
