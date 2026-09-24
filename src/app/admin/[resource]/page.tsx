@@ -22,6 +22,7 @@ const FILTER_REFERENCES: ReferenceKey[] = [
   'weeks',
   'assignments',
   'blogCategories',
+  'noteCourses',
 ]
 const FILTER_SELECTS = new Set([
   'type',
