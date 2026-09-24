@@ -4,7 +4,8 @@ import { PageContext } from '@/components/analytics/page-context'
 import { PageHeader } from '@/components/layout/page-header'
 import { CourseFilter } from '@/components/pyq/course-filter'
 import { JsonLd } from '@/components/seo/json-ld'
-import { getLectureCourses } from '@/lib/data/lectures'
+import { getLectureCourses, type LectureCourse } from '@/lib/data/lectures'
+import { getPrograms } from '@/lib/data/programs'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { NOTE_LEVELS } from '@/lib/data/student-notes'
@@ -37,23 +38,40 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-/** Every course with IIT Madras lecture videos, by level. */
+const courseLink = (course: LectureCourse) => ({
+  path: course.path,
+  title:
+    course.shortName.toLowerCase() === course.name.toLowerCase()
+      ? `${course.name} lectures (${course.videoCount})`
+      : `${course.shortName} lectures: ${course.name} (${course.videoCount})`,
+  search: `${course.shortName} ${course.name} ${course.code}`.toLowerCase(),
+})
+
+/** Every course with IIT Madras lecture videos, by programme and level. */
 export default async function LecturesIndexPage() {
-  const courses = await getLectureCourses()
-  const groups = NOTE_LEVELS.map(({ level, label }) => ({
-    id: `${level}-lectures`,
-    heading: `${label} level lectures`,
-    items: courses
-      .filter((course) => course.level === level)
-      .map((course) => ({
-        path: course.path,
-        title:
-          course.shortName.toLowerCase() === course.name.toLowerCase()
-            ? `${course.name} lectures (${course.videoCount})`
-            : `${course.shortName} lectures: ${course.name} (${course.videoCount})`,
-        search: `${course.shortName} ${course.name} ${course.code}`.toLowerCase(),
+  const [courses, programs] = await Promise.all([getLectureCourses(), getPrograms()])
+  const known = new Set(programs.map((program) => program.slug))
+  const sections = [
+    ...programs.map((program) => ({
+      key: program.slug,
+      heading: (label: string) => `${program.shortName} ${label.toLowerCase()} level`,
+      courses: courses.filter((course) => course.program === program.slug),
+    })),
+    {
+      key: 'other',
+      heading: (label: string) => `${label} level`,
+      courses: courses.filter((course) => !known.has(course.program)),
+    },
+  ]
+  const groups = sections
+    .flatMap((section) =>
+      NOTE_LEVELS.map(({ level, label }) => ({
+        id: `${section.key}-${level}-lectures`,
+        heading: section.heading(label),
+        items: section.courses.filter((course) => course.level === level).map(courseLink),
       })),
-  })).filter((group) => group.items.length > 0)
+    )
+    .filter((group) => group.items.length > 0)
 
   return (
     <>
