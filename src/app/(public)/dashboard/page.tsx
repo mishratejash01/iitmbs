@@ -71,7 +71,6 @@ export default async function DashboardPage() {
                 items={programPage.courses.map((c) => ({
                   path: c.path,
                   title: c.name,
-                  summary: `${c.shortName} · ${c.weeksCount} weeks`,
                 }))}
               />
             </section>
