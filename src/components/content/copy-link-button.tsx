@@ -1,6 +1,5 @@
 'use client'
 
-import { Link2, Share2 } from 'lucide-react'
 import { useState, useSyncExternalStore } from 'react'
 
 import { track } from '@/lib/analytics/client'
@@ -20,7 +19,7 @@ export function CopyLinkButton({ url, title }: { url: string; title: string }) {
         track('share_click', { channel: 'native' })
         return
       } catch {
-        // Share sheet dismissed — fall back to copying.
+        // Share sheet dismissed: fall back to copying.
       }
     }
     try {
@@ -32,15 +31,14 @@ export function CopyLinkButton({ url, title }: { url: string; title: string }) {
       setCopied(false)
     }
   }
-  const Icon = share ? Share2 : Link2
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex min-h-11 items-center gap-2 rounded-control border border-border px-3 text-small font-medium text-text hover:border-accent"
+      className="inline-flex min-h-11 items-center font-semibold text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
     >
-      <Icon aria-hidden="true" className="size-4" />
-      <span aria-live="polite">{copied ? 'Link copied' : 'Share'}</span>
+      {/* The word replaces the old share/link icon: native share sheet or copy. */}
+      <span aria-live="polite">{copied ? 'Link copied' : share ? 'Share' : 'Copy link'}</span>
     </button>
   )
 }
