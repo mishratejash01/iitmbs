@@ -48,6 +48,22 @@ describe('processMdx', () => {
     expect(result.report?.droppedAttributes).toContain('Callout.onClick')
   })
 
+  it('keeps block components out of paragraphs', async () => {
+    const shape = async (source: string) =>
+      (await processMdx(source)).tree.children
+        .filter((node) => node.type !== 'text')
+        .map((node) =>
+          node.type === 'element' ? node.tagName : 'name' in node ? String(node.name) : node.type,
+        )
+    expect(await shape('<Callout type="note">Check the handbook.</Callout>')).toEqual(['Callout'])
+    expect(await shape('Before <Callout>note</Callout> after, with <SiteName />.')).toEqual([
+      'p',
+      'Callout',
+      'p',
+    ])
+    expect(await shape('Made by <SiteName /> students.')).toEqual(['p'])
+  })
+
   it('falls back to markdown when MDX cannot be parsed', async () => {
     const result = await html('If x<5 then {broken\n\n## Still renders')
     expect(result.mode).toBe('markdown')
