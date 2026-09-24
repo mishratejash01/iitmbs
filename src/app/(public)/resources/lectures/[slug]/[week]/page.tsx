@@ -40,7 +40,7 @@ async function resolve(slug: string, segment: string) {
   const courses = await getLectureCourses()
   const course = courses.find((c) => c.slug === slug)
   if (!course || week === null || !course.weeks.some((w) => w.week === week)) return null
-  const lectures = (await getCourseLectures(course.id)).filter((l) => l.week === week)
+  const lectures = (await getCourseLectures(course.id, true)).filter((l) => l.week === week)
   return { course, week, lectures }
 }
 
