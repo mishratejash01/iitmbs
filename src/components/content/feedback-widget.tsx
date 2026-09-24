@@ -1,12 +1,10 @@
 'use client'
 
-import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useId, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { track } from '@/lib/analytics/client'
-import { cn } from '@/lib/utils/cn'
 
 type State = 'idle' | 'commenting' | 'sending' | 'done' | 'error'
 
@@ -46,47 +44,32 @@ export function FeedbackWidget({
 
   if (state === 'done') {
     return (
-      <p
-        role="status"
-        className="rounded-card border border-border bg-surface px-4 py-3 text-small text-text"
-      >
-        Thanks — your feedback helps us decide what to improve next.
+      <p role="status" className="rounded-card bg-surface px-5 py-4 text-small text-text">
+        Thanks, your feedback helps us decide what to improve next.
       </p>
     )
   }
 
   return (
-    <section
-      aria-label="Page feedback"
-      className="rounded-card border border-border bg-card px-4 py-4"
-      data-print="hide"
-    >
+    <section aria-label="Page feedback" className="rounded-card bg-surface p-5" data-print="hide">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="font-medium text-text">Was this page helpful?</p>
         <div className="flex gap-2">
-          {[true, false].map((value) => {
-            const Icon = value ? ThumbsUp : ThumbsDown
-            return (
-              <button
-                key={String(value)}
-                type="button"
-                aria-pressed={helpful === value}
-                onClick={() => {
-                  setHelpful(value)
-                  setState('commenting')
-                }}
-                className={cn(
-                  'inline-flex min-h-11 items-center gap-2 rounded-control border px-4 text-small font-medium',
-                  helpful === value
-                    ? 'border-accent bg-accent-soft text-accent-ink'
-                    : 'border-border text-text hover:border-accent',
-                )}
-              >
-                <Icon aria-hidden="true" className="size-4" />
-                {value ? 'Yes' : 'No'}
-              </button>
-            )
-          })}
+          {[true, false].map((value) => (
+            <Button
+              key={String(value)}
+              variant={helpful === value ? 'primary' : 'secondary'}
+              size="sm"
+              className="min-w-16"
+              aria-pressed={helpful === value}
+              onClick={() => {
+                setHelpful(value)
+                setState('commenting')
+              }}
+            >
+              {value ? 'Yes' : 'No'}
+            </Button>
+          ))}
         </div>
       </div>
       {state === 'commenting' || state === 'sending' || state === 'error' ? (
@@ -105,14 +88,14 @@ export function FeedbackWidget({
             value={comment}
             onChange={(event) => setComment(event.target.value.slice(0, 1000))}
             rows={3}
-            className="mt-1 w-full rounded-control border border-border-strong bg-card p-3 text-body text-text focus-visible:border-accent"
+            className="mt-1 w-full rounded-control border border-border-strong bg-card p-3 text-body text-text focus-visible:border-accent-strong"
           />
           <div className="mt-2 flex items-center gap-3">
             <Button type="submit" size="sm" disabled={state === 'sending'}>
               {state === 'sending' ? 'Sending…' : 'Send feedback'}
             </Button>
             {state === 'error' ? (
-              <span className="text-small text-danger">Couldn’t send — please try again.</span>
+              <span className="text-small text-danger">Couldn’t send. Please try again.</span>
             ) : null}
           </div>
         </form>
