@@ -74,6 +74,13 @@ export const pyqCoursePath = (slug: string) => `${PYQ_PATH}/${slug}`
 
 export const pyqExamPath = (slug: string, exam: PyqExam) => `${pyqCoursePath(slug)}/${exam}`
 
+export const LECTURES_PATH = '/resources/lectures'
+
+export const lectureCoursePath = (slug: string) => `${LECTURES_PATH}/${slug}`
+
+export const lectureWeekPath = (slug: string, week: number) =>
+  `${lectureCoursePath(slug)}/week-${week}`
+
 /** Parses a "week-3" route segment. */
 export function parseWeekSegment(segment: string): number | null {
   const match = WEEK_SEGMENT.exec(segment)
