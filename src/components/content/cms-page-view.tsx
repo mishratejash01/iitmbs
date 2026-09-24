@@ -45,7 +45,7 @@ export async function CmsPageView({
         {content ? <div className="prose-content">{content}</div> : null}
         {childPages.length > 0 ? (
           <section aria-labelledby="guides-list" className="mt-10">
-            <h2 id="guides-list" className="mb-3 text-h3 font-semibold">
+            <h2 id="guides-list" className="mb-3 text-h3 font-semibold text-text">
               All guides
             </h2>
             <LinkList items={childPages} label="Guides" />
