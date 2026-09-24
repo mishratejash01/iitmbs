@@ -7,8 +7,6 @@
  * base/typography styles.
  */
 
-@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
-
 @theme inline {
   /* Only design-token colours exist — the default Tailwind palette is removed. */
   --color-*: initial;
@@ -43,12 +41,12 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Type scale: size / line-height pairs from the design system. */
-  --text-display: 2.5rem;
-  --text-display--line-height: 3rem;
-  --text-h1: 2rem;
-  --text-h1--line-height: 2.5rem;
-  --text-h2: 1.5rem;
-  --text-h2--line-height: 2rem;
+  --text-display: 3.25rem;
+  --text-display--line-height: 3.875rem;
+  --text-h1: 2.25rem;
+  --text-h1--line-height: 2.875rem;
+  --text-h2: 1.625rem;
+  --text-h2--line-height: 2.25rem;
   --text-h3: 1.25rem;
   --text-h3--line-height: 1.75rem;
   --text-body: 1rem;
@@ -58,13 +56,15 @@
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.125rem;
 
-  --radius-card: 12px;
+  --radius-card: 16px;
   --radius-control: 10px;
+  /* Large colour panels (peach and teal blocks). */
+  --radius-panel: 28px;
 
   --container-reading: 45rem; /* ~720px reading measure */
   --container-page: 72rem;
 
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-card: 0 10px 30px -18px rgb(15 61 62 / 0.35);
 }
 
 @layer base {
@@ -79,6 +79,13 @@
     }
   }
 
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
   body {
     background-color: var(--bg);
     color: var(--text);
@@ -91,7 +98,7 @@
 
   ::selection {
     background-color: var(--accent-soft);
-    color: var(--text);
+    color: var(--accent-strong);
   }
 
   :focus-visible {
@@ -190,9 +197,7 @@
   }
   .prose-content blockquote {
     border-left: 3px solid var(--accent);
-    background: var(--surface);
-    padding: 0.75rem 1rem;
-    border-radius: 0 var(--radius-control) var(--radius-control) 0;
+    padding: 0.25rem 0 0.25rem 1.25rem;
     color: var(--text);
   }
   .prose-content :not(pre) > code {
@@ -255,23 +260,11 @@
     font-size: 1.05em;
   }
 
-  /* Shiki dual themes: colours are emitted as --shiki-light / --shiki-dark. */
+  /* Shiki emits --shiki-light colours; the site has only the light scheme. */
   .shiki,
   .shiki span {
     color: var(--shiki-light);
     background-color: var(--shiki-light-bg);
-  }
-  :root[data-theme='dark'] .shiki,
-  :root[data-theme='dark'] .shiki span {
-    color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) .shiki,
-    :root:not([data-theme='light']) .shiki span {
-      color: var(--shiki-dark);
-      background-color: var(--shiki-dark-bg);
-    }
   }
 }
 
