@@ -52,13 +52,12 @@ export default async function HomePage() {
   )
   const popular = settings.home.popular_paths.flatMap((path) => {
     const entry = linkIndex[path]
-    return entry ? [{ path, title: entry.title, summary: entry.summary }] : []
+    return entry ? [{ path, title: entry.title }] : []
   })
 
   const featuredPosts = posts.filter((post) => post.isFeatured).slice(0, 6)
 
   const heroTitle = settings.home.hero_title || settings.tagline || settings.site_name
-  const heroSubtitle = settings.home.hero_subtitle || settings.description
 
   return (
     <>
@@ -70,9 +69,6 @@ export default async function HomePage() {
           <h1 className="max-w-3xl text-[1.875rem] leading-[2.375rem] font-semibold tracking-tight text-text sm:text-display">
             {heroTitle}
           </h1>
-          {heroSubtitle ? (
-            <p className="mt-4 max-w-2xl text-muted sm:text-lg sm:leading-8">{heroSubtitle}</p>
-          ) : null}
 
           {settings.features.search ? (
             <form action="/search" role="search" className="mt-6 flex max-w-xl gap-2">
@@ -121,11 +117,7 @@ export default async function HomePage() {
       <div className="container-page space-y-14 py-12">
         {programPages.length > 0 ? (
           <section aria-labelledby="programmes">
-            <SectionHeading
-              id="programmes"
-              title="Choose your programme"
-              description="Every qualifier course, organised week by week."
-            />
+            <SectionHeading id="programmes" title="Choose your programme" />
             <div className="grid gap-4 md:grid-cols-2">
               {programPages.map((page) => (
                 <ProgramCard key={page.program.id} data={page} />
@@ -139,7 +131,6 @@ export default async function HomePage() {
             <SectionHeading
               id="from-the-blog"
               title="From the blog"
-              description="Plain answers about admissions, fees, exams, rules and careers."
               action={{ href: BLOG_PATH, label: `All ${posts.length} posts` }}
             />
             <PostGrid posts={featuredPosts} label="Featured blog posts" />
@@ -153,7 +144,6 @@ export default async function HomePage() {
                 <SectionHeading
                   id="guides"
                   title="Qualifier guides"
-                  description="Rules, cut-offs and dates — checked against the official pages."
                   action={{ href: '/qualifier', label: 'How the qualifier works' }}
                 />
                 <LinkList items={guides} label="Qualifier guides" />
