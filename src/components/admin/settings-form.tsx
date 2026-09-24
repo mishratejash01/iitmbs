@@ -74,7 +74,6 @@ const TEMPLATE_KEYS: Array<{ key: string; label: string; vars: string }> = [
 
 const FEATURE_LABELS: Record<keyof SiteSettings['features'], string> = {
   login: 'Google sign-in (shows “coming soon” while the provider is off)',
-  dark_mode: 'Dark mode',
   pwa: 'Installable app and offline notes',
   search: 'Site search',
   bookmarks: 'Bookmarks',
@@ -828,7 +827,7 @@ function ThemeEditor({
   theme: SiteSettings['theme']
   onChange: (theme: SiteSettings['theme']) => void
 }) {
-  const [scheme, setScheme] = useState<ColorScheme>('light')
+  const scheme: ColorScheme = 'light'
   const resolved = useMemo(() => resolveTokens(theme), [theme])
   const issues = useMemo(() => findContrastIssues(resolved[scheme]), [resolved, scheme])
   const tokens = resolved[scheme]
@@ -845,20 +844,6 @@ function ThemeEditor({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-2">
-        {(['light', 'dark'] as const).map((s) => (
-          <Button
-            key={s}
-            size="sm"
-            variant={scheme === s ? 'soft' : 'ghost'}
-            aria-pressed={scheme === s}
-            onClick={() => setScheme(s)}
-          >
-            {s === 'light' ? 'Light theme' : 'Dark theme'}
-          </Button>
-        ))}
-      </div>
-
       <div
         className="rounded-card border p-4"
         style={{ background: tokens.bg, borderColor: tokens.border }}
