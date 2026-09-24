@@ -4,6 +4,7 @@ import {
   assignmentPath,
   blogCategoryPath,
   blogPostPath,
+  noteCoursePath,
   examPrepPath,
   formulaSheetPath,
   notePath,
@@ -44,6 +45,8 @@ export async function publicPathFor(
       return blogPostPath(String(row.slug))
     case 'blog_categories':
       return blogCategoryPath(String(row.slug))
+    case 'note_courses':
+      return noteCoursePath(String(row.slug))
     case 'courses': {
       const { data } = await db
         .from('programs')
