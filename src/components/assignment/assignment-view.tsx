@@ -53,16 +53,13 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
       : null
 
   const related = [
-    ...(data.weekNote
-      ? [{ path: data.weekNote.path, title: data.weekNote.title, summary: data.weekNote.summary }]
-      : []),
-    ...data.topicNotes.map((n) => ({ path: n.path, title: n.title, summary: n.summary })),
+    ...(data.weekNote ? [{ path: data.weekNote.path, title: data.weekNote.title }] : []),
+    ...data.topicNotes.map((n) => ({ path: n.path, title: n.title })),
     ...(data.companion?.path
       ? [
           {
             path: data.companion.path,
             title: `Week ${week.number} ${KIND_LABEL[data.companion.type]}`,
-            summary: data.companion.summary,
           },
         ]
       : []),
@@ -71,12 +68,10 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
       .map((n) => ({
         path: n.path,
         title: `${course.shortName} formula sheet`,
-        summary: n.summary,
       })),
     {
       path: week.path,
       title: `Everything for ${course.shortName} week ${week.number}`,
-      summary: week.summary,
     },
   ]
 
@@ -93,9 +88,7 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
           { name: `Week ${week.number}`, path: week.path },
           { name: kindLabel, path },
         ]}
-        eyebrow={`${course.name}${course.code ? ` · ${course.code}` : ''}`}
         title={title}
-        description={assignment.summary ?? week.title}
         meta={
           <>
             <Badge tone="accent">{formatTerm(assignment.term)} term</Badge>
@@ -218,7 +211,6 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
                         {
                           path: a.path,
                           title: `${kindLabel} — ${formatTerm(a.term)}`,
-                          summary: a.summary,
                         },
                       ]
                     : [],
