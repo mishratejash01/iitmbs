@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils/cn'
 
 const initial: ActionState = { ok: false, message: null }
 const field =
-  'mt-1 min-h-11 w-full rounded-control border border-border-strong bg-card px-3 text-text focus-visible:border-accent'
+  'mt-1 min-h-11 w-full rounded-control border border-border-strong bg-card px-3 text-text focus-visible:border-accent-strong'
 
 function Message({ state }: { state: ActionState }) {
   if (!state.message) return null
@@ -114,7 +114,7 @@ export function ConsentForm({ detailed }: { detailed: boolean }) {
   const [state, action, pending] = useActionState(updateConsent, initial)
   return (
     <form action={action} className="space-y-3">
-      <label className="flex items-start gap-3 rounded-control border border-border px-4 py-3 has-[:checked]:border-accent">
+      <label className="flex cursor-pointer items-start gap-3 rounded-control border border-border bg-card px-4 py-3 has-[:checked]:border-accent-strong has-[:checked]:bg-accent-soft">
         <input
           type="radio"
           name="level"
@@ -129,7 +129,7 @@ export function ConsentForm({ detailed }: { detailed: boolean }) {
           </span>
         </span>
       </label>
-      <label className="flex items-start gap-3 rounded-control border border-border px-4 py-3 has-[:checked]:border-accent">
+      <label className="flex cursor-pointer items-start gap-3 rounded-control border border-border bg-card px-4 py-3 has-[:checked]:border-accent-strong has-[:checked]:bg-accent-soft">
         <input
           type="radio"
           name="level"
