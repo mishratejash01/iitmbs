@@ -181,3 +181,20 @@ no printed date were placed by question id, which IITM issues in increasing orde
 
 **Why.** Students search per course and per exam ("mlt quiz 2 pyq"), so each gets a page; a 180-page session paper is
 only useful with the page numbers of the course inside it.
+
+## 18. Lectures are embedded from IIT Madras's own playlists
+
+**Decision.** `/resources/lectures` lists the official lecture videos of each course (`/resources/lectures/<course>`),
+one page per week (`/resources/lectures/<course>/week-<n>`) with YouTube's privacy-enhanced player. `npm run
+lectures:sync` reads the two official channels (BS Degree Programme and BS in Electronic Systems) through the YouTube
+Data API; `scripts/lecture-playlists.json` maps each course to its playlists. Nothing is downloaded or re-hosted.
+
+**How the rows are built.** The week and lecture number come from the title (`W1_L5A`, `L1.1`, `W2_T3`, `15.`). A
+video without a week takes the week of the labelled videos around it when both sides agree. A course's first playlist
+is the course; later ones (a qualifier copy, a newer run) add only lectures the course lacks. Live sessions are left
+out, and so are private and non-embeddable videos. Unlisted videos are kept: the channels share many lectures that way
+through their public playlists. A course whose titles name the week on fewer than half its videos gets one ordered
+list instead of week pages.
+
+**Why.** Students look for a course's lectures by week ("maths 1 week 3 lectures"), and the channel's playlists run to
+a hundred videos or more with no way to jump to a week.
