@@ -7,6 +7,7 @@ import { PageHeader } from '@/components/layout/page-header'
 import { PaperList } from '@/components/pyq/paper-list'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Badge } from '@/components/ui/badge'
+import { TabNav } from '@/components/ui/tab-nav'
 import { getBlogPostIndex } from '@/lib/data/blog'
 import { getCourseHubPaths } from '@/lib/data/course-hubs'
 import { getPage } from '@/lib/data/pages'
@@ -111,20 +112,16 @@ export default async function PyqCoursePage({ params }: PageProps<'/pyq/[slug]'>
       />
       <div className="container-page py-8 sm:py-10">
         <div className="container-reading space-y-8">
-          <nav aria-label={`${course.shortName} papers by exam`} data-print="hide">
-            <ul className="flex flex-wrap gap-2">
-              {groups.map((group) => (
-                <li key={group.exam}>
-                  <Link
-                    href={pyqExamPath(course.slug, group.exam)}
-                    className="inline-flex min-h-10 items-center rounded-full border border-border bg-card px-3.5 text-small text-text hover:border-accent"
-                  >
-                    {PYQ_EXAM_LABEL[group.exam]} ({group.papers.length})
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <TabNav
+            label={`${course.shortName} papers by exam`}
+            items={[
+              { href: course.path, label: `All (${course.paperCount})`, current: true },
+              ...groups.map((group) => ({
+                href: pyqExamPath(course.slug, group.exam),
+                label: `${PYQ_EXAM_LABEL[group.exam]} (${group.papers.length})`,
+              })),
+            ]}
+          />
 
           {groups.map((group) => {
             const heading = `${course.shortName} ${PYQ_EXAM_LABEL[group.exam]} previous year papers`
