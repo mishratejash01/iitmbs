@@ -25,7 +25,8 @@ export async function getResourceGroups(): Promise<ResourceGroup[]> {
 
   const db = getPublicClient()
   const [resources, courses, programs] = await Promise.all([
-    db.from('resources').select(RESOURCE_COLUMNS).order('sort_order'),
+    // Student notes are listed under /notes, not here.
+    db.from('resources').select(RESOURCE_COLUMNS).is('note_course_id', null).order('sort_order'),
     db.from('courses').select('id, slug, name, program_id').order('sort_order'),
     getPrograms(),
   ])
