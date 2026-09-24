@@ -1,4 +1,3 @@
-import { ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -231,8 +230,7 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 font-medium text-accent-ink underline"
               >
-                {c.name} on study.iitm.ac.in{' '}
-                <ExternalLink aria-hidden="true" className="size-3.5" />
+                {c.name} on study.iitm.ac.in
               </a>
             </p>
           ) : null}
