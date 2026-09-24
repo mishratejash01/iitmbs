@@ -1,36 +1,48 @@
-import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
-import { LinkCard } from '@/components/ui/card'
 import type { ProgramPageData } from '@/lib/data/programs'
+import { cn } from '@/lib/utils/cn'
 
-export function ProgramCard({ data }: { data: ProgramPageData }) {
+function courseList(names: string[]): string {
+  return names.length > 1
+    ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`
+    : (names[0] ?? '')
+}
+
+/** A programme as a large colour panel: peach, or teal for the second of a pair. */
+export function ProgramCard({
+  data,
+  tone = 'peach',
+}: {
+  data: ProgramPageData
+  tone?: 'peach' | 'teal'
+}) {
   const { program, courses } = data
+  const teal = tone === 'teal'
   return (
-    <LinkCard
+    <Link
       href={program.path}
-      className="flex h-full flex-col p-5 sm:p-6"
+      className={cn(
+        'group flex h-full flex-col rounded-panel p-7 transition-shadow duration-150 hover:shadow-card sm:p-9',
+        teal ? 'bg-accent-strong text-on-accent' : 'bg-accent-soft text-accent-strong',
+      )}
       data-track-area="card"
     >
-      <h3 className="text-h3 font-semibold text-text">{program.shortName} qualifier</h3>
+      <h3 className="text-[1.625rem] leading-9 font-semibold">{program.shortName} qualifier</h3>
       {courses.length > 0 ? (
-        <ul className="mt-4 flex flex-wrap gap-2" aria-label="Qualifier courses">
-          {courses.map((course) => (
-            <li
-              key={course.id}
-              className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-text"
-            >
-              {course.shortName}
-            </li>
-          ))}
-        </ul>
+        <p className={cn('mt-3 text-body', teal ? 'text-on-accent/80' : 'text-text')}>
+          Week-by-week help for {courseList(courses.map((course) => course.shortName))}.
+        </p>
       ) : null}
-      <span className="mt-auto inline-flex items-center gap-1 pt-5 text-small font-medium text-accent-ink">
-        Open week-by-week help
-        <ArrowRight
-          aria-hidden="true"
-          className="size-4 transition-transform group-hover:translate-x-0.5"
-        />
+      <span
+        className={cn(
+          'mt-auto pt-8 text-small font-semibold underline underline-offset-4',
+          teal ? 'decoration-on-accent/40' : 'decoration-accent-strong/30',
+          'group-hover:decoration-current',
+        )}
+      >
+        Open {program.shortName}
       </span>
-    </LinkCard>
+    </Link>
   )
 }
