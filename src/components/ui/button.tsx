@@ -3,19 +3,21 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'reac
 
 import { cn } from '@/lib/utils/cn'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'soft' | 'ghost'
+export type ButtonVariant = 'primary' | 'secondary' | 'soft' | 'ghost' | 'inverse'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-control font-medium whitespace-nowrap ' +
+  'inline-flex items-center justify-center gap-2 rounded-control font-semibold whitespace-nowrap ' +
   'transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 select-none'
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-accent-strong text-on-accent hover:brightness-95 active:brightness-90',
+  primary: 'bg-accent-strong text-on-accent hover:bg-accent-hover',
   secondary:
-    'border border-border-strong bg-card text-text hover:border-accent hover:text-accent-ink',
-  soft: 'bg-accent-soft text-accent-ink hover:brightness-[0.97]',
-  ghost: 'text-text hover:bg-surface',
+    'border border-accent-strong/35 bg-card text-accent-ink hover:border-accent-strong hover:bg-surface',
+  soft: 'bg-accent-soft text-accent-strong hover:brightness-[0.96]',
+  ghost: 'text-accent-ink hover:bg-surface',
+  // For teal bands: a light outline on the brand colour.
+  inverse: 'border border-on-accent/45 text-on-accent hover:border-on-accent hover:bg-on-accent/10',
 }
 
 // Every size keeps a 44px minimum touch target on mobile.
