@@ -53,6 +53,27 @@ export const NOTES_PATH = '/notes'
 
 export const noteCoursePath = (slug: string) => `${NOTES_PATH}/${slug}`
 
+export const PYQ_PATH = '/pyq'
+
+export const PYQ_EXAMS = ['qualifier', 'quiz-1', 'quiz-2', 'end-term', 'oppe-1', 'oppe-2'] as const
+export type PyqExam = (typeof PYQ_EXAMS)[number]
+
+export const PYQ_EXAM_LABEL: Record<PyqExam, string> = {
+  qualifier: 'Qualifier',
+  'quiz-1': 'Quiz 1',
+  'quiz-2': 'Quiz 2',
+  'end-term': 'End Term',
+  'oppe-1': 'OPPE 1',
+  'oppe-2': 'OPPE 2',
+}
+
+export const isPyqExam = (value: string): value is PyqExam =>
+  (PYQ_EXAMS as readonly string[]).includes(value)
+
+export const pyqCoursePath = (slug: string) => `${PYQ_PATH}/${slug}`
+
+export const pyqExamPath = (slug: string, exam: PyqExam) => `${pyqCoursePath(slug)}/${exam}`
+
 /** Parses a "week-3" route segment. */
 export function parseWeekSegment(segment: string): number | null {
   const match = WEEK_SEGMENT.exec(segment)
