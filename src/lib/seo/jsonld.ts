@@ -190,13 +190,13 @@ export function blogPostingJsonLd(input: {
   }
 }
 
-/** A page that collects links to notes, e.g. every note for one course. */
+/** A page that collects links to notes or papers, e.g. every note for one course. */
 export function notesCollectionJsonLd(input: {
   name: string
   description: string
   path: string
   course?: { name: string; code: string } | null
-  items: Array<{ name: string; author?: string | null }>
+  items: Array<{ name: string; author?: string | null; url?: string }>
 }): WithContext<CollectionPage> {
   return {
     '@context': 'https://schema.org',
@@ -219,6 +219,7 @@ export function notesCollectionJsonLd(input: {
         item: {
           '@type': 'CreativeWork',
           name: item.name,
+          ...(item.url ? { url: item.url } : {}),
           ...(item.author ? { author: { '@type': 'Person', name: item.author } } : {}),
         },
       })),
