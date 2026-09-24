@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { TabNav } from '@/components/ui/tab-nav'
 import { getBlogPostIndex } from '@/lib/data/blog'
 import { getCourseHubPaths } from '@/lib/data/course-hubs'
+import { getLectureCourses } from '@/lib/data/lectures'
 import { getPage } from '@/lib/data/pages'
 import { getCoursePapers, getPyqCourses, type PyqCourse } from '@/lib/data/question-papers'
 import { redirectOrNotFound } from '@/lib/data/redirects'
@@ -76,12 +77,14 @@ export default async function PyqCoursePage({ params }: PageProps<'/pyq/[slug]'>
   const course = courses.find((c) => c.slug === slug)
   if (!course) return redirectOrNotFound(pyqCoursePath(slug))
 
-  const [papers, notes, posts, hubs] = await Promise.all([
+  const [papers, notes, posts, hubs, lectureCourses] = await Promise.all([
     getCoursePapers(course.id),
     getNoteCourses(),
     getBlogPostIndex(),
     getCourseHubPaths(),
+    getLectureCourses(),
   ])
+  const lectures = lectureCourses.find((l) => l.id === course.id)
   const groups = papersByExam(papers)
   const notesPage = notes.find((note) => note.id === course.id)
   const guide = course.blogPostId ? posts.find((post) => post.id === course.blogPostId) : undefined
@@ -140,8 +143,13 @@ export default async function PyqCoursePage({ params }: PageProps<'/pyq/[slug]'>
             )
           })}
 
-          {notesPage || hub || guide ? (
+          {notesPage || hub || guide || lectures ? (
             <p className="flex flex-wrap gap-x-5 gap-y-2 text-small">
+              {lectures ? (
+                <Link href={lectures.path} className="text-accent-ink underline underline-offset-2">
+                  IIT Madras {course.shortName} lectures
+                </Link>
+              ) : null}
               {notesPage ? (
                 <Link
                   href={notesPage.path}
