@@ -1,4 +1,3 @@
-import { Trash2 } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -37,14 +36,14 @@ export default async function BookmarksPage() {
           description="Tap “Bookmark” on any course, week or notes page."
         />
       ) : (
-        <ul className="mt-6 divide-y divide-border rounded-card border border-border bg-card">
+        <ul className="mt-6 border-t border-border">
           {bookmarks.map((bookmark) => (
-            <li key={bookmark.path} className="flex items-center gap-3 px-4 py-3">
-              <Link href={bookmark.path} className="min-w-0 flex-1">
-                <span className="block font-medium text-text hover:text-accent-ink">
+            <li key={bookmark.path} className="flex items-center gap-4 border-b border-border py-4">
+              <Link href={bookmark.path} className="group min-w-0 flex-1">
+                <span className="block font-medium text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
                   {bookmark.title}
                 </span>
-                <span className="block text-xs text-muted">
+                <span className="mt-0.5 block text-xs text-muted">
                   Saved {formatDate(bookmark.created_at)}
                 </span>
               </Link>
@@ -52,10 +51,10 @@ export default async function BookmarksPage() {
                 <input type="hidden" name="path" value={bookmark.path} />
                 <button
                   type="submit"
-                  className="flex size-11 items-center justify-center rounded-control text-muted hover:bg-surface hover:text-danger"
+                  className="inline-flex min-h-11 items-center px-1 text-small font-semibold text-muted underline decoration-border-strong underline-offset-4 hover:text-danger hover:decoration-danger"
                   aria-label={`Remove bookmark: ${bookmark.title}`}
                 >
-                  <Trash2 aria-hidden="true" className="size-4" />
+                  Remove
                 </button>
               </form>
             </li>
