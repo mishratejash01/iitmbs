@@ -33,6 +33,29 @@ export type NoteCourse = {
   seo: SeoFields
 }
 
+const PAGE_SIZE = 1000
+
+/** The course of every live note. The API returns at most 1000 rows a request, so this pages. */
+async function allNoteCourseIds(): Promise<string[]> {
+  const db = getPublicClient()
+  const ids: string[] = []
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await db
+      .from('resources')
+      .select('note_course_id')
+      .not('note_course_id', 'is', null)
+      .order('id')
+      .range(from, from + PAGE_SIZE - 1)
+    if (error) {
+      console.error('[data/student-notes] counts failed:', error.message)
+      break
+    }
+    for (const row of data) if (row.note_course_id) ids.push(row.note_course_id)
+    if (data.length < PAGE_SIZE) break
+  }
+  return ids
+}
+
 /**
  * Every live course that has at least one live note, in display order.
  * RLS hides unpublished notes, so the counts are what visitors can open.
@@ -51,19 +74,14 @@ export async function getNoteCourses(): Promise<NoteCourse[]> {
       )
       .order('sort_order')
       .order('name'),
-    db.from('resources').select('note_course_id').not('note_course_id', 'is', null),
+    allNoteCourseIds(),
   ])
   if (courses.error) {
     console.error('[data/student-notes] courses failed:', courses.error.message)
     return []
   }
-  if (notes.error) console.error('[data/student-notes] counts failed:', notes.error.message)
-
   const counts = new Map<string, number>()
-  for (const row of notes.data ?? []) {
-    if (row.note_course_id)
-      counts.set(row.note_course_id, (counts.get(row.note_course_id) ?? 0) + 1)
-  }
+  for (const id of notes) counts.set(id, (counts.get(id) ?? 0) + 1)
   return courses.data
     .map((row) => ({
       id: row.id,
