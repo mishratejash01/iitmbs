@@ -1,4 +1,3 @@
-import { ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import type { AnchorHTMLAttributes } from 'react'
 
@@ -23,7 +22,6 @@ export function SmartLink({
   return (
     <a href={safe} target="_blank" rel="noopener noreferrer" {...props}>
       {children}
-      <ExternalLink aria-hidden="true" className="ml-0.5 inline size-3.5 align-[-2px]" />
       <span className="sr-only"> (opens in a new tab)</span>
     </a>
   )
