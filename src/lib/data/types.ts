@@ -62,6 +62,8 @@ export type ResourceItem = {
   isExternal: boolean
   host: string | null
   downloadCount: number
+  /** Who wrote it (student notes); shown as credit. */
+  contributor: string | null
 }
 
 export type NoteKind = 'week' | 'topic' | 'formula_sheet' | 'exam_prep'
