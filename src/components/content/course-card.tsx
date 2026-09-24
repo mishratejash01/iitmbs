@@ -1,9 +1,8 @@
-import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
-import { Badge } from '@/components/ui/badge'
-import { LinkCard } from '@/components/ui/card'
 import type { CourseCard as CourseCardData } from '@/lib/data/programs'
 
+/** A course as a soft peach panel: code, name and length. */
 export function CourseCard({
   course,
   headingLevel = 'h3',
@@ -13,23 +12,23 @@ export function CourseCard({
 }) {
   const Heading = headingLevel
   return (
-    <LinkCard href={course.path} className="flex h-full flex-col" data-track-area="card">
-      <div className="flex items-start justify-between gap-3">
-        <Heading className="font-semibold text-text group-hover:text-accent-ink">
-          {course.name}
-        </Heading>
-        {course.code ? <Badge tone="accent">{course.code}</Badge> : null}
-      </div>
-      <div className="mt-auto flex items-center justify-between pt-4 text-small">
-        <span className="text-muted">
-          {course.shortName} · {course.weeksCount} weeks
-          {course.homeProgram ? ` · from ${course.homeProgram}` : ''}
+    <Link
+      href={course.path}
+      className="group flex h-full flex-col rounded-card bg-surface p-6 transition-colors duration-150 hover:bg-accent-soft sm:p-7"
+      data-track-area="card"
+    >
+      {course.code ? (
+        <span className="text-xs font-semibold tracking-wide text-accent-ink uppercase">
+          {course.code}
         </span>
-        <ArrowRight
-          aria-hidden="true"
-          className="size-4 text-accent-ink transition-transform group-hover:translate-x-0.5"
-        />
-      </div>
-    </LinkCard>
+      ) : null}
+      <Heading className="mt-1 text-h3 font-semibold text-text group-hover:underline">
+        {course.name}
+      </Heading>
+      <p className="mt-auto pt-6 text-small text-muted">
+        {course.shortName} · {course.weeksCount} weeks
+        {course.homeProgram ? ` · from ${course.homeProgram}` : ''}
+      </p>
+    </Link>
   )
 }
