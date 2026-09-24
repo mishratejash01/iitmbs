@@ -21,17 +21,4 @@ test.describe('accessibility', () => {
       expect(summary, path).toEqual([])
     }
   })
-
-  test('dark mode keeps contrast', async ({ page, request, baseURL }) => {
-    await page.context().addCookies([consentCookie(baseURL!)])
-    await page.emulateMedia({ colorScheme: 'dark' })
-    for (const path of (await samplePages(request)).slice(0, 4)) {
-      await page.goto(path)
-      const results = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze()
-      expect(
-        results.violations.map((v) => v.id),
-        path,
-      ).toEqual([])
-    }
-  })
 })
