@@ -22,6 +22,8 @@ export type SitemapSection = (typeof SITEMAP_SECTIONS)[number]
 
 export type SitemapEntry = { section: SitemapSection; path: string; lastModified: string }
 
+const PAGE_SIZE = 1000
+
 /**
  * Indexable URLs only: live, not noindex, and — for week hubs — with enough
  * content to be worth indexing (the same rule the pages use for robots).
@@ -45,10 +47,19 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
     tableTag('lecture_videos'),
   )
 
-  const { data, error } = await getPublicClient().rpc('get_sitemap_entries')
-  if (error) {
-    console.error('[data/sitemap] entries failed:', error.message)
-    return []
+  // The API returns at most 1000 rows a request, so this pages (in a stable order).
+  const data: Array<{ section: string; path: string; last_modified: string }> = []
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const page = await getPublicClient()
+      .rpc('get_sitemap_entries')
+      .order('path')
+      .range(from, from + PAGE_SIZE - 1)
+    if (page.error) {
+      console.error('[data/sitemap] entries failed:', page.error.message)
+      break
+    }
+    data.push(...page.data)
+    if (page.data.length < PAGE_SIZE) break
   }
   return data
     .filter((row): row is typeof row & { section: SitemapSection } =>
