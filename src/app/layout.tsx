@@ -10,7 +10,6 @@ import { ConsentBanner } from '@/components/consent/consent-banner'
 import { ClientEnhancements } from '@/components/enhancements/client-enhancements'
 import { SkipLink } from '@/components/layout/skip-link'
 import { ServiceWorkerRegister } from '@/components/pwa/service-worker'
-import { ThemeScript } from '@/components/theme/theme-script'
 import { env } from '@/env'
 import { getSiteSettings } from '@/lib/data/settings'
 import { buildThemeCss, resolveTokens } from '@/lib/theme/tokens'
@@ -59,13 +58,8 @@ export async function generateViewport(): Promise<Viewport> {
   return {
     width: 'device-width',
     initialScale: 1,
-    colorScheme: settings.features.dark_mode ? 'light dark' : 'light',
-    themeColor: settings.features.dark_mode
-      ? [
-          { media: '(prefers-color-scheme: light)', color: tokens.light.bg },
-          { media: '(prefers-color-scheme: dark)', color: tokens.dark.bg },
-        ]
-      : tokens.light.bg,
+    colorScheme: 'light',
+    themeColor: tokens.light.bg,
   }
 }
 
@@ -75,12 +69,11 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <head>
-        {settings.features.dark_mode ? <ThemeScript /> : null}
         <style
           id="theme-tokens"
           // Token values are validated hex colours (sanitizeThemeOverrides).
           dangerouslySetInnerHTML={{
-            __html: buildThemeCss(settings.theme, { dark: settings.features.dark_mode }),
+            __html: buildThemeCss(settings.theme),
           }}
         />
       </head>
