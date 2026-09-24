@@ -11,8 +11,8 @@ type GroupKey = { id: string; order: number; heading: (short: string) => string 
 
 /**
  * Sorts a note into a section by its title: single weeks get their own
- * section ("MLT week 3 notes"), then multi-week notes, exam revision, formula
- * sheets, books and the rest. The headings carry the words students search
+ * section ("MLT week 3 notes"), then multi-week notes, exam revision, OPPE and
+ * practice, formula and cheat sheets, books, videos and the rest. The headings carry the words students search
  * for, and each section is linkable (#week-3).
  */
 function groupFor(title: string): GroupKey {
@@ -24,14 +24,20 @@ function groupFor(title: string): GroupKey {
   if (/^weeks?\s+\d+\s*(?:to|-)\s*\d+/i.test(title)) {
     return { id: 'multi-week', order: 100, heading: (s) => `${s} full course and multi-week notes` }
   }
+  if (/oppe|nppe|mock|practice|pyq|previous year/i.test(title)) {
+    return { id: 'oppe-practice', order: 115, heading: (s) => `${s} OPPE and practice` }
+  }
   if (/quiz|end\s*term|exam/i.test(title)) {
     return { id: 'exam-revision', order: 110, heading: (s) => `${s} quiz and exam revision notes` }
   }
   if (/formula|cheat/i.test(title)) {
-    return { id: 'formula-sheets', order: 120, heading: (s) => `${s} formula sheets` }
+    return { id: 'formula-sheets', order: 120, heading: (s) => `${s} formula and cheat sheets` }
   }
   if (/book/i.test(title)) {
     return { id: 'books', order: 130, heading: (s) => `${s} books` }
+  }
+  if (/session|video|recording/i.test(title)) {
+    return { id: 'videos', order: 140, heading: (s) => `${s} videos` }
   }
   return { id: 'more-notes', order: 200, heading: (s) => `More ${s} notes` }
 }
