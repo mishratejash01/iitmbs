@@ -25,10 +25,12 @@ export type OgCard = {
   theme?: ThemeOverrides
 }
 
-/** The branded 1200×630 social card: calm white, one orange accent. */
+/** The branded 1200×630 social card: the brand teal band, peach and white. */
 export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
   const [semibold, regular] = await fonts
   const tokens = resolveTokens(card.theme).light
+  const teal = tokens['accent-strong']
+  const peach = tokens['accent-soft']
   const title = truncate(card.title, 90)
   const titleSize = title.length > 60 ? 56 : title.length > 36 ? 64 : 72
 
@@ -40,10 +42,9 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        background: tokens.bg,
+        background: teal,
         padding: '64px 72px',
         fontFamily: 'Poppins',
-        borderTop: `14px solid ${tokens.accent}`,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
@@ -51,25 +52,21 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
           style={{
             width: 56,
             height: 56,
-            borderRadius: 16,
-            background: tokens.accent,
+            borderRadius: 14,
+            background: peach,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
           <svg width="46" height="46" viewBox="0 0 32 32">
-            <path
-              d="M9.5 16.5l4.2 4.2L22.5 11.8"
-              fill="none"
-              stroke="#fff"
-              strokeWidth="3.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <circle cx="15.2" cy="15.2" r="7.4" fill="none" stroke={teal} strokeWidth="3.2" />
+            <path d="M19.6 19.6l5 5" stroke={teal} strokeWidth="3.2" strokeLinecap="round" />
           </svg>
         </div>
-        <div style={{ fontSize: 30, fontWeight: 600, color: tokens.text }}>{card.siteName}</div>
+        <div style={{ fontSize: 30, fontWeight: 600, color: tokens['on-accent'] }}>
+          {card.siteName}
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -77,7 +74,7 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
           style={{
             fontSize: 28,
             fontWeight: 600,
-            color: tokens['accent-ink'],
+            color: peach,
             textTransform: 'uppercase',
             letterSpacing: 2,
           }}
@@ -88,7 +85,7 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
           style={{
             fontSize: titleSize,
             fontWeight: 600,
-            color: tokens.text,
+            color: tokens['on-accent'],
             lineHeight: 1.15,
             letterSpacing: -1,
           }}
@@ -96,9 +93,7 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
           {title}
         </div>
         {card.subtitle ? (
-          <div
-            style={{ fontSize: 30, fontWeight: 400, color: tokens['text-muted'], lineHeight: 1.4 }}
-          >
+          <div style={{ fontSize: 30, fontWeight: 400, color: peach, lineHeight: 1.4 }}>
             {truncate(card.subtitle, 110)}
           </div>
         ) : null}
@@ -109,11 +104,11 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
           display: 'flex',
           justifyContent: 'space-between',
           fontSize: 24,
-          color: tokens['text-muted'],
+          color: peach,
         }}
       >
         <div>{card.host}</div>
-        <div style={{ color: tokens['accent-ink'] }}>IITM BS Qualifier</div>
+        <div>IITM BS Qualifier</div>
       </div>
     </div>,
     {
