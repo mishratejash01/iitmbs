@@ -155,9 +155,7 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
           { name: course.shortName, path: course.path },
           { name: `Week ${week.number}`, path: week.path },
         ]}
-        eyebrow={`${course.name} · Week ${week.number}`}
         title={title}
-        description={week.summary}
         actions={<BookmarkButton title={title} entityType="week" entityId={week.id} />}
       />
 
@@ -253,7 +251,6 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                   items={data.topicNotes.map((n) => ({
                     path: n.path,
                     title: n.title,
-                    summary: n.summary,
                   }))}
                   label="Topic notes"
                 />
@@ -281,7 +278,6 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                           {
                             path: a.path,
                             title: `${a.type === 'graded' ? 'Graded' : 'Practice'} assignment — ${formatTerm(a.term)}`,
-                            summary: a.summary,
                           },
                         ]
                       : [],
