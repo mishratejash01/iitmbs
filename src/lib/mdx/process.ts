@@ -3,8 +3,9 @@ import 'server-only'
 import rehypeShikiFromHighlighter from '@shikijs/rehype/core'
 import type { Element, ElementContent, Root as HastRoot } from 'hast'
 import { toString as hastToString } from 'hast-util-to-string'
-import type { Image, Root as MdastRoot } from 'mdast'
+import type { Image, Paragraph, PhrasingContent, Root as MdastRoot, RootContent } from 'mdast'
 import type {} from 'mdast-util-mdx'
+import type { MdxJsxFlowElement, MdxJsxTextElement } from 'mdast-util-mdx-jsx'
 import rehypeKatex, { type Options as KatexOptions } from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
@@ -16,6 +17,7 @@ import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 import { VFile } from 'vfile'
 
+import { BLOCK_ELEMENTS } from './allowed'
 import { CODE_THEMES, getHighlighter } from './highlighter'
 import { remarkSanitizeMdx, type SanitizeReport } from './sanitize'
 
@@ -65,6 +67,50 @@ function remarkImages() {
       }
     })
     file.data.imageIds = ids
+  }
+}
+
+const isBlockElement = (node: PhrasingContent): node is MdxJsxTextElement =>
+  node.type === 'mdxJsxTextElement' && BLOCK_ELEMENTS.has(node.name ?? '')
+
+/**
+ * A component written on one line with its text ("<Callout>Check the
+ * handbook.</Callout>") is parsed as part of a paragraph, which would put an
+ * <aside> or <figure> inside <p>: invalid HTML that browsers re-nest, breaking
+ * hydration. Lift such components out; text around them stays a paragraph.
+ */
+function remarkLiftBlocks() {
+  return (tree: MdastRoot) => {
+    visit(tree, 'paragraph', (node: Paragraph, index, parent) => {
+      if (!parent || index === undefined || !node.children.some(isBlockElement)) return
+      const lifted: RootContent[] = []
+      let run: PhrasingContent[] = []
+      const flush = () => {
+        if (run.some((child) => child.type !== 'text' || child.value.trim() !== '')) {
+          lifted.push({ type: 'paragraph', children: run })
+        }
+        run = []
+      }
+      for (const child of node.children) {
+        if (!isBlockElement(child)) {
+          run.push(child)
+          continue
+        }
+        flush()
+        const block: MdxJsxFlowElement = {
+          type: 'mdxJsxFlowElement',
+          name: child.name,
+          attributes: child.attributes,
+          // Phrasing content is valid inside these components' block wrappers.
+          children: child.children as unknown as MdxJsxFlowElement['children'],
+          position: child.position,
+        }
+        lifted.push(block)
+      }
+      flush()
+      parent.children.splice(index, 1, ...(lifted as typeof parent.children))
+      return index + lifted.length
+    })
   }
 }
 
@@ -128,7 +174,7 @@ async function build(mode: 'mdx' | 'markdown', options: ProcessOptions) {
     .use(mode === 'mdx' ? [remarkMdx] : [])
     .use(remarkGfm)
     .use(remarkMath)
-    .use(mode === 'mdx' ? [remarkSanitizeMdx] : [])
+    .use(mode === 'mdx' ? [remarkSanitizeMdx, remarkLiftBlocks] : [])
     .use(remarkImages)
     .use(remarkRehype, { passThrough: [...MDX_NODE_TYPES] })
     .use(rehypeHeadingOffset(options.headingOffset ?? 0))
