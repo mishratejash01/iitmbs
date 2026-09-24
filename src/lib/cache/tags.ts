@@ -20,6 +20,7 @@ export const CONTENT_TABLES = [
   'blog_categories',
   'blog_posts',
   'note_courses',
+  'question_papers',
   'authors',
   'media',
   'site_settings',
