@@ -39,7 +39,7 @@ type GoogleIdentity = {
     parent: HTMLElement,
     options: {
       type: 'standard'
-      theme: 'outline' | 'filled_black'
+      theme: 'outline'
       size: 'large'
       text: 'continue_with'
       shape: 'rectangular'
@@ -61,13 +61,6 @@ const trackClick = () =>
 async function sha256Hex(value: string): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')
-}
-
-function prefersDark(): boolean {
-  const theme = document.documentElement.dataset.theme
-  return (
-    theme === 'dark' || (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)
-  )
 }
 
 /**
@@ -120,7 +113,7 @@ function GoogleButton({
       })
       google.renderButton(parent, {
         type: 'standard',
-        theme: prefersDark() ? 'filled_black' : 'outline',
+        theme: 'outline',
         size: 'large',
         text: 'continue_with',
         shape: 'rectangular',
