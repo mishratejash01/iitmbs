@@ -1,12 +1,10 @@
 'use client'
 
-import { CheckCircle2, Circle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { track } from '@/lib/analytics/client'
 import { DISPLAY_COOKIE } from '@/lib/auth/display-cookie'
 import { useCookie } from '@/lib/hooks/browser-state'
-import { cn } from '@/lib/utils/cn'
 
 type Item = { id: string; type: 'week' | 'assignment' | 'note'; label: string }
 
@@ -53,14 +51,13 @@ export function ProgressChecklist({ items }: { items: Item[] }) {
   }
 
   return (
-    <section aria-labelledby="progress" className="rounded-card border border-border bg-card p-4">
+    <section aria-labelledby="progress" className="rounded-card bg-surface p-5">
       <h2 id="progress" className="font-semibold text-text">
         Your progress
       </h2>
-      <ul className="mt-2">
+      <ul className="mt-2 divide-y divide-border">
         {items.map((item) => {
           const checked = done.has(item.id)
-          const Icon = checked ? CheckCircle2 : Circle
           return (
             <li key={item.id}>
               <button
@@ -68,14 +65,21 @@ export function ProgressChecklist({ items }: { items: Item[] }) {
                 role="checkbox"
                 aria-checked={checked}
                 onClick={() => toggle(item)}
-                className="flex min-h-11 w-full items-center gap-2 rounded-control px-2 text-left text-small hover:bg-surface"
+                className="group flex min-h-12 w-full items-center justify-between gap-3 py-2 text-left text-small"
               >
-                <Icon
-                  aria-hidden="true"
-                  className={cn('size-5', checked ? 'text-success' : 'text-muted')}
-                />
                 <span className={checked ? 'text-muted line-through' : 'text-text'}>
                   {item.label}
+                </span>
+                {/* The state as a word; aria-checked already tells screen readers. */}
+                <span
+                  aria-hidden="true"
+                  className={
+                    checked
+                      ? 'shrink-0 text-xs font-semibold text-accent-ink'
+                      : 'shrink-0 text-xs font-semibold text-muted group-hover:text-accent-ink group-hover:underline'
+                  }
+                >
+                  {checked ? 'Done' : 'Mark done'}
                 </span>
               </button>
             </li>
