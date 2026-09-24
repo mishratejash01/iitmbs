@@ -38,6 +38,7 @@
 
   --font-sans:
     var(--font-poppins), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: var(--font-source-serif), Georgia, 'Times New Roman', serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Type scale: size / line-height pairs from the design system. */
@@ -258,6 +259,115 @@
   }
   .prose-content .katex {
     font-size: 1.05em;
+  }
+
+  /*
+   * Long-form articles (blog posts): a book face for the text, the brand sans
+   * for headings, tables and captions, generous measure and spacing.
+   */
+  .prose-article {
+    font-family: var(--font-serif);
+    font-size: 1.1875rem;
+    line-height: 1.78;
+    color: var(--text);
+    font-optical-sizing: auto;
+  }
+  .prose-article > * + * {
+    margin-top: 1.4em;
+  }
+  .prose-article > p:first-of-type {
+    font-size: 1.3125rem;
+    line-height: 1.66;
+  }
+  .prose-article h2,
+  .prose-article h3,
+  .prose-article h4 {
+    font-family: var(--font-sans);
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .prose-article h2 {
+    margin-top: 3.25rem;
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+  .prose-article h3 {
+    margin-top: 2.5rem;
+    font-size: 1.3125rem;
+    line-height: 1.875rem;
+  }
+  .prose-article h2 + *,
+  .prose-article h3 + *,
+  .prose-article h4 + * {
+    margin-top: 0.85rem;
+  }
+  .prose-article strong {
+    font-weight: 600;
+  }
+  .prose-article a:not(.heading-anchor) {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .prose-article ul,
+  .prose-article ol {
+    padding-left: 1.4rem;
+  }
+  .prose-article li + li {
+    margin-top: 0.55em;
+  }
+  .prose-article li::marker {
+    color: var(--accent-ink);
+  }
+  .prose-article ol li::marker {
+    font-family: var(--font-sans);
+    font-size: 0.875em;
+    font-weight: 600;
+  }
+  .prose-article blockquote {
+    border-left: 2px solid var(--accent-strong);
+    padding: 0 0 0 1.5rem;
+    font-style: italic;
+    font-size: 1.3125rem;
+    line-height: 1.6;
+  }
+  .prose-article hr {
+    width: 4rem;
+    margin: 3rem auto;
+    border-top: 1px solid var(--border-strong);
+  }
+  /* Tables read like a printed report: rules only, small caps headers. */
+  .prose-article .table-scroll {
+    border: 0;
+    border-radius: 0;
+    border-top: 1px solid var(--accent-strong);
+  }
+  .prose-article table {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .prose-article th {
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-strong);
+    padding: 0.85rem 1rem 0.65rem 0;
+  }
+  .prose-article td {
+    padding: 0.85rem 1rem 0.85rem 0;
+  }
+  .prose-article tr:last-child td {
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .prose-article :not(pre) > code {
+    font-size: 0.8em;
+  }
+  .prose-article img {
+    border-radius: 6px;
   }
 
   /* Shiki emits --shiki-light colours; the site has only the light scheme. */
