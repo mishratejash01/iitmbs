@@ -37,6 +37,7 @@ const SEARCHABLE = new Set([
   'resources',
   'blog_posts',
   'blog_categories',
+  'note_courses',
 ])
 
 async function staff(adminOnly = false): Promise<Profile | null> {
