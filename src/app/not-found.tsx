@@ -19,7 +19,7 @@ export default async function NotFound() {
   const [settings, linkIndex] = await Promise.all([getSiteSettings(), getLinkIndex()])
   const popular = settings.home.popular_paths.flatMap((path) => {
     const entry = linkIndex[path]
-    return entry ? [{ path, title: entry.title, summary: entry.summary }] : []
+    return entry ? [{ path, title: entry.title }] : []
   })
 
   return (
