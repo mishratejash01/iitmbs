@@ -8,13 +8,13 @@ export function generateStaticParams() {
   return Object.keys(SIZES).map((size) => ({ size }))
 }
 
-/** PNG app icons for the web manifest and iOS, drawn from the brand mark. */
+/** PNG app icons for the web manifest and iOS: the "Q" monogram on the brand teal. */
 export async function GET(_request: Request, { params }: RouteContext<'/pwa-icon/[size]'>) {
   const { size: key } = await params
   const size = SIZES[key as keyof typeof SIZES]
   if (!size) return new Response('Not found', { status: 404 })
 
-  const accent = resolveTokens().light.accent
+  const accent = resolveTokens().light['accent-strong']
   const maskable = key === 'maskable-512'
   // Maskable icons keep the mark inside the central 80% safe zone.
   const inner = maskable ? size * 0.62 : size
@@ -33,14 +33,8 @@ export async function GET(_request: Request, { params }: RouteContext<'/pwa-icon
       }}
     >
       <svg width={inner} height={inner} viewBox="0 0 32 32">
-        <path
-          d="M9.5 16.5l4.2 4.2L22.5 11.8"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <circle cx="15.2" cy="15.2" r="7.4" fill="none" stroke="#fff" strokeWidth="3.2" />
+        <path d="M19.6 19.6l5 5" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" />
       </svg>
     </div>,
     {
