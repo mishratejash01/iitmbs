@@ -9,7 +9,7 @@ export type CalculatorProgram = { slug: string; name: string; courses: string[] 
 
 export const fieldClasses =
   'w-full rounded-control border border-border-strong bg-card px-3 text-body text-text ' +
-  'placeholder:text-muted focus-visible:border-accent min-h-11'
+  'placeholder:text-muted focus-visible:border-accent-strong min-h-11'
 
 export function Select({
   label,
@@ -44,7 +44,7 @@ export function Select({
   )
 }
 
-/** 0–100 score input that keeps an empty string while typing. */
+/** 0 to 100 score input that keeps an empty string while typing. */
 export function ScoreInput({
   label,
   value,
@@ -90,7 +90,7 @@ export function Verdict({ ok, children }: { ok: boolean; children: React.ReactNo
       role="status"
       aria-live="polite"
       className={cn(
-        'mt-4 rounded-control px-4 py-3 text-small font-medium',
+        'mt-5 rounded-control px-4 py-3 text-small font-medium',
         ok ? 'bg-success-soft text-success' : 'bg-warning-soft text-warning',
       )}
     >
