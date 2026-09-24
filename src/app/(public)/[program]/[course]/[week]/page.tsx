@@ -1,6 +1,6 @@
-import { BookOpen, CalendarClock, ClipboardCheck, ExternalLink, PenLine } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { BookmarkButton } from '@/components/content/bookmark-button'
@@ -13,7 +13,7 @@ import { ShareButtons } from '@/components/content/share-buttons'
 import { PageHeader } from '@/components/layout/page-header'
 import { renderMdx } from '@/components/mdx/render'
 import { JsonLd } from '@/components/seo/json-ld'
-import { Badge } from '@/components/ui/badge'
+import { Badge, metaRowClasses } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
@@ -64,44 +64,44 @@ export async function generateMetadata({
   })
 }
 
-function AssignmentCard({
-  assignment,
+/** One row of "Study this week": what it is, its title and its state. */
+function StudyRow({
+  href,
   label,
-  icon: Icon,
+  title,
+  children,
 }: {
-  assignment: AssignmentSummary
+  href: string
   label: string
-  icon: typeof ClipboardCheck
+  title: string
+  children?: ReactNode
 }) {
   return (
-    <Link
-      href={assignment.path ?? '#'}
-      className="group flex h-full flex-col rounded-card border border-border bg-card p-4 hover:border-accent sm:p-5"
-    >
-      <span className="flex items-center gap-2 text-small font-medium text-accent-ink">
-        <Icon aria-hidden="true" className="size-4" /> {label}
-      </span>
-      <span className="mt-1 font-semibold text-text group-hover:text-accent-ink">
-        {assignment.title}
-      </span>
-      {assignment.summary ? (
-        <span className="mt-1 text-small text-muted">{assignment.summary}</span>
+    <li className="border-b border-border">
+      <Link href={href} className="group grid gap-x-8 gap-y-1 py-5 sm:grid-cols-[10rem_1fr]">
+        <span className="text-small font-semibold text-accent-ink">{label}</span>
+        <span className="min-w-0">
+          <span className="block text-h3 font-semibold text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
+            {title}
+          </span>
+          {children ? <span className={`mt-2 ${metaRowClasses}`}>{children}</span> : null}
+        </span>
+      </Link>
+    </li>
+  )
+}
+
+function AssignmentRow({ assignment, label }: { assignment: AssignmentSummary; label: string }) {
+  return (
+    <StudyRow href={assignment.path ?? '#'} label={label} title={assignment.title}>
+      <Badge tone="accent">{formatTerm(assignment.term)}</Badge>
+      {assignment.dueAt ? <Badge>Due {formatDateTime(assignment.dueAt)}</Badge> : null}
+      {assignment.type === 'graded' ? (
+        <Badge tone={assignment.released ? 'success' : 'neutral'}>
+          {assignment.released ? 'Solutions released' : 'Hints now, solutions after the deadline'}
+        </Badge>
       ) : null}
-      <span className="mt-auto flex flex-wrap gap-2 pt-3">
-        <Badge tone="accent">{formatTerm(assignment.term)}</Badge>
-        {assignment.dueAt ? (
-          <Badge>
-            <CalendarClock aria-hidden="true" className="size-3.5" /> Due{' '}
-            {formatDateTime(assignment.dueAt)}
-          </Badge>
-        ) : null}
-        {assignment.type === 'graded' ? (
-          <Badge tone={assignment.released ? 'success' : 'warning'}>
-            {assignment.released ? 'Solutions released' : 'Hints now, solutions after deadline'}
-          </Badge>
-        ) : null}
-      </span>
-    </Link>
+    </StudyRow>
   )
 }
 
@@ -167,14 +167,9 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                 <h2 id="topics" className="text-h3 font-semibold">
                   Topics this week
                 </h2>
-                <ul className="mt-3 flex flex-wrap gap-2">
+                <ul className="mt-3 grid list-disc gap-x-10 gap-y-1.5 pl-5 text-body text-text marker:text-accent-ink sm:grid-cols-2">
                   {week.topics.map((topic) => (
-                    <li
-                      key={topic}
-                      className="rounded-full border border-border bg-surface px-3 py-1 text-small text-text"
-                    >
-                      {topic}
-                    </li>
+                    <li key={topic}>{topic}</li>
                   ))}
                 </ul>
               </section>
@@ -189,42 +184,22 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                 <h2 id="this-week" className="mb-4 text-h3 font-semibold sm:text-h2">
                   Study this week
                 </h2>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <ul className="border-t border-border">
                   {data.weekNote ? (
-                    <Link
-                      href={data.weekNote.path}
-                      className="group flex flex-col rounded-card border border-border bg-card p-4 hover:border-accent sm:p-5"
-                    >
-                      <span className="flex items-center gap-2 text-small font-medium text-accent-ink">
-                        <BookOpen aria-hidden="true" className="size-4" /> Notes
-                      </span>
-                      <span className="mt-1 font-semibold text-text group-hover:text-accent-ink">
-                        {data.weekNote.title}
-                      </span>
-                      <span className="mt-1 text-small text-muted">
-                        {data.weekNote.readingTimeMinutes} min read
-                      </span>
-                    </Link>
+                    <StudyRow href={data.weekNote.path} label="Notes" title={data.weekNote.title}>
+                      <Badge>{data.weekNote.readingTimeMinutes} min read</Badge>
+                    </StudyRow>
                   ) : null}
                   {data.graded?.path ? (
-                    <AssignmentCard
-                      assignment={data.graded}
-                      label="Graded assignment"
-                      icon={ClipboardCheck}
-                    />
+                    <AssignmentRow assignment={data.graded} label="Graded assignment" />
                   ) : null}
                   {data.practice?.path ? (
-                    <AssignmentCard
-                      assignment={data.practice}
-                      label="Practice assignment"
-                      icon={PenLine}
-                    />
+                    <AssignmentRow assignment={data.practice} label="Practice assignment" />
                   ) : null}
-                </div>
+                </ul>
               </section>
             ) : (
               <EmptyState
-                icon={<BookOpen className="size-5" />}
                 title={`Week ${week.number} study material is on the way`}
                 description="Notes and graded assignment help for this week are being written. The topics above are what the week covers."
                 action={
@@ -233,9 +208,9 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                       href={course.officialUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-small font-medium text-accent-ink underline"
+                      className="text-small font-semibold text-accent-ink underline underline-offset-4"
                     >
-                      Official course page <ExternalLink aria-hidden="true" className="size-3.5" />
+                      Official course page
                     </a>
                   ) : undefined
                 }
@@ -277,7 +252,7 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                       ? [
                           {
                             path: a.path,
-                            title: `${a.type === 'graded' ? 'Graded' : 'Practice'} assignment — ${formatTerm(a.term)}`,
+                            title: `${a.type === 'graded' ? 'Graded' : 'Practice'} assignment, ${formatTerm(a.term)}`,
                           },
                         ]
                       : [],
@@ -316,10 +291,7 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
           <aside className="mt-10 space-y-6 lg:mt-0">
             <ProgressChecklist items={progressItems} />
             {data.otherCourses.length > 0 ? (
-              <section
-                aria-labelledby="other-courses"
-                className="rounded-card border border-border bg-card p-4"
-              >
+              <section aria-labelledby="other-courses" className="rounded-card bg-surface p-5">
                 <h2 id="other-courses" className="font-semibold text-text">
                   Other courses this week
                 </h2>
@@ -339,7 +311,7 @@ export default async function WeekPage({ params }: PageProps<'/[program]/[course
                   href={`${course.program.path}/week-${week.number}`}
                   className="mt-1 block text-xs text-muted hover:text-text"
                 >
-                  All {course.program.shortName} courses, week {week.number} →
+                  All {course.program.shortName} courses, week {week.number}
                 </Link>
               </section>
             ) : null}
