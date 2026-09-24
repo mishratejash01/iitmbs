@@ -4,6 +4,7 @@ import { Poppins } from 'next/font/google'
 import './globals.css'
 
 import { Analytics } from '@/components/analytics/analytics'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import { ConsentBanner } from '@/components/consent/consent-banner'
 import { ClientEnhancements } from '@/components/enhancements/client-enhancements'
 import { SkipLink } from '@/components/layout/skip-link'
@@ -86,6 +87,7 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
         <SkipLink />
         {children}
         <Analytics heartbeatSeconds={settings.analytics.heartbeat_seconds} />
+        <VercelAnalytics />
         <ConsentBanner />
         <ClientEnhancements />
         {settings.features.pwa ? <ServiceWorkerRegister /> : null}

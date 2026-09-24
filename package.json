@@ -29,6 +29,7 @@
     "@shikijs/rehype": "4.4.3",
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.117.1",
+    "@vercel/analytics": "^2.0.1",
     "hast-util-to-html": "9.0.5",
     "hast-util-to-jsx-runtime": "2.3.6",
     "hast-util-to-string": "3.0.1",
