@@ -20,6 +20,7 @@ import { getProgramPage, getPrograms } from '@/lib/data/programs'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { getNoteCourses } from '@/lib/data/student-notes'
 import { getProgramWeek } from '@/lib/data/weeks'
 import { parseWeekSegment } from '@/lib/routes'
 import { courseJsonLd } from '@/lib/seo/jsonld'
@@ -102,10 +103,11 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
     return <ProgramWeekView data={data} />
   }
 
-  const data = await getCoursePage(program, course)
+  const [data, noteCourses] = await Promise.all([getCoursePage(program, course), getNoteCourses()])
   if (!data) return redirectOrNotFound(`/${program}/${course}`)
   const { course: c } = data
   const intro = await renderMdx(c.introMdx)
+  const studentNotes = noteCourses.find((n) => n.courseId === c.id)
   const title = `IITM ${c.shortName}: ${c.name}`
   const formulaSheet = data.notes.find((n) => n.kind === 'formula_sheet')
   const examPrep = data.notes.find((n) => n.kind === 'exam_prep')
@@ -166,6 +168,21 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
                     ]
                   : []),
                 ...topicNotes.map((n) => ({ path: n.path, title: n.title })),
+              ]}
+            />
+          </section>
+        ) : null}
+
+        {studentNotes ? (
+          <section aria-labelledby="student-notes" className="container-reading">
+            <SectionHeading id="student-notes" title="Student notes" />
+            <LinkList
+              label="Student notes"
+              items={[
+                {
+                  path: studentNotes.path,
+                  title: `${studentNotes.noteCount} ${c.shortName} notes shared by students`,
+                },
               ]}
             />
           </section>
