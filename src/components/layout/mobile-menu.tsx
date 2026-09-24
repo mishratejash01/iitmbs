@@ -1,22 +1,13 @@
-import { Menu, Search, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 
-import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Disclosure } from '@/components/ui/disclosure'
 import type { NavItem } from '@/lib/data/navigation'
 import type { ProgramRef } from '@/lib/data/types'
 
-export function MobileMenu({
-  items,
-  programs,
-  themeToggle = false,
-}: {
-  items: NavItem[]
-  programs: ProgramRef[]
-  themeToggle?: boolean
-}) {
+export function MobileMenu({ items, programs }: { items: NavItem[]; programs: ProgramRef[] }) {
   const linkClass =
-    'flex min-h-12 items-center rounded-control px-3 text-body font-medium text-text hover:bg-surface'
+    'flex min-h-12 items-center border-b border-border px-1 text-body font-medium text-text hover:text-accent-ink'
   return (
     <Disclosure
       className="lg:hidden"
@@ -28,10 +19,10 @@ export function MobileMenu({
           <X aria-hidden="true" className="hidden size-6 group-open:block" />
         </>
       }
-      panelClassName="fixed inset-x-0 top-16 z-50 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-border bg-bg px-4 pb-6 pt-2 shadow-card"
+      panelClassName="fixed inset-x-0 top-[4.5rem] z-50 max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-b border-border bg-bg px-4 pb-8 pt-2 shadow-card"
     >
       <nav aria-label="Mobile">
-        <p className="px-3 pt-3 pb-1 text-xs font-semibold tracking-wide text-muted uppercase">
+        <p className="px-1 pt-4 pb-1 text-xs font-semibold tracking-wide text-accent-ink uppercase">
           Programmes
         </p>
         <ul>
@@ -48,7 +39,7 @@ export function MobileMenu({
             </li>
           ))}
         </ul>
-        <p className="px-3 pt-4 pb-1 text-xs font-semibold tracking-wide text-muted uppercase">
+        <p className="px-1 pt-6 pb-1 text-xs font-semibold tracking-wide text-accent-ink uppercase">
           Explore
         </p>
         <ul>
@@ -73,17 +64,10 @@ export function MobileMenu({
               data-track="nav_click"
               data-track-label="mobile:search"
             >
-              <Search aria-hidden="true" className="mr-2 size-5 text-muted" />
               Search
             </Link>
           </li>
         </ul>
-        {themeToggle ? (
-          <div className="mt-4 flex items-center justify-between rounded-control border border-border px-3 py-1 sm:hidden">
-            <span className="text-body font-medium text-text">Appearance</span>
-            <ThemeToggle />
-          </div>
-        ) : null}
       </nav>
     </Disclosure>
   )
