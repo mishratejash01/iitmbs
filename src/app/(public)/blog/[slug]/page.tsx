@@ -2,16 +2,15 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { PageContext } from '@/components/analytics/page-context'
-import { ArticleShell } from '@/components/content/article-shell'
-import { Byline } from '@/components/content/byline'
+import { PostGrid } from '@/components/blog/post-card'
 import { FeedbackWidget } from '@/components/content/feedback-widget'
-import { LinkList } from '@/components/content/link-list'
 import { ShareButtons } from '@/components/content/share-buttons'
 import { SourcesList } from '@/components/content/sources-list'
-import { PageHeader } from '@/components/layout/page-header'
+import { MobileToc, Toc } from '@/components/content/toc'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { renderMdx } from '@/components/mdx/render'
 import { JsonLd } from '@/components/seo/json-ld'
-import { Badge } from '@/components/ui/badge'
+import { metaRowClasses } from '@/components/ui/badge'
 import { faqsFromBody, relatedPosts } from '@/lib/blog/helpers'
 import { getBlogPost, getBlogPostIndex } from '@/lib/data/blog'
 import { getPage } from '@/lib/data/pages'
@@ -23,6 +22,7 @@ import { getNoteCourses } from '@/lib/data/student-notes'
 import { BLOG_PATH } from '@/lib/routes'
 import { blogPostingJsonLd, faqJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
+import { formatDate } from '@/lib/utils/dates'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
 export async function generateStaticParams() {
@@ -73,74 +73,133 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
   const studentNotes = noteCourses.find((n) => n.blogPostId === post.id)
   const papers = pyqCourses.find((p) => p.blogPostId === post.id)
 
+  const reviewed = post.lastReviewedAt ?? post.updatedAt
+  const showToc = toc.length >= 3
+  // The article and its contents list are centred together; the title and
+  // closing sections share the article's column.
+  const columns = 'lg:grid lg:grid-cols-[minmax(0,44rem)_15rem] lg:justify-center lg:gap-x-16'
+  const sectionLabel = 'text-xs font-semibold tracking-[0.08em] text-muted uppercase'
+
   return (
     <>
       <PageContext type="blog_post" entityId={post.id} />
-      <PageHeader
-        crumbs={[
-          { name: blogName, path: BLOG_PATH },
-          { name: post.category.name, path: post.category.path },
-          { name: post.title, path: post.path },
-        ]}
-        title={post.title}
-        meta={
-          <>
-            <Byline
-              author={post.author}
-              reviewer={post.reviewer}
-              reviewedAt={post.lastReviewedAt}
-              updatedAt={post.updatedAt}
+      <article className="container-page pt-10 pb-20 sm:pt-16">
+        <div className={columns}>
+          <header>
+            <Breadcrumbs
+              items={[
+                { name: blogName, path: BLOG_PATH },
+                { name: post.category.name, path: post.category.path },
+                { name: post.title, path: post.path },
+              ]}
+              hideCurrent
             />
-            <Badge>{post.readingMinutes} min read</Badge>
-            {post.program ? <Badge tone="accent">{post.program.shortName}</Badge> : null}
-          </>
-        }
-      />
-      <ArticleShell toc={toc.length >= 3 ? toc : []}>
-        {content ? <div className="prose-content">{content}</div> : null}
-        {papers || studentNotes ? (
-          <p className="mt-8 flex flex-col gap-2 text-small">
-            {papers ? (
-              <Link
-                href={papers.path}
-                className="font-medium text-accent-ink underline underline-offset-2"
+            <h1 className="text-[2.125rem] leading-[2.625rem] font-semibold tracking-[-0.02em] text-text sm:text-[3rem] sm:leading-[3.625rem]">
+              {post.title}
+            </h1>
+            <div className="mt-8 border-y border-border py-4">
+              <p className={`text-small text-muted ${metaRowClasses}`}>
+                {post.author ? (
+                  <span>
+                    By <span className="font-medium text-text">{post.author.name}</span>
+                  </span>
+                ) : null}
+                {post.reviewer ? (
+                  <span>
+                    Reviewed by <span className="font-medium text-text">{post.reviewer.name}</span>
+                  </span>
+                ) : null}
+                {reviewed ? (
+                  <span>
+                    {post.lastReviewedAt ? 'Reviewed' : 'Updated'}{' '}
+                    <time dateTime={reviewed}>{formatDate(reviewed)}</time>
+                  </span>
+                ) : null}
+                <span>{post.readingMinutes} min read</span>
+              </p>
+            </div>
+            {/* On phones the contents toggle shares the byline's bottom rule. */}
+            <MobileToc items={showToc ? toc : []} className="mb-0 border-t-0" />
+          </header>
+        </div>
+
+        <div className={`${columns} mt-10 sm:mt-12`}>
+          <div className="min-w-0">
+            {content ? <div className="prose-content prose-article">{content}</div> : null}
+
+            {papers || studentNotes ? (
+              <section
+                aria-labelledby="for-this-course"
+                className="mt-16 border-t border-border pt-6"
               >
-                {papers.paperCount} {papers.shortName} previous year question papers with answers
-              </Link>
+                <h2 id="for-this-course" className={sectionLabel}>
+                  For this course
+                </h2>
+                <ul className="mt-3 space-y-2">
+                  {papers ? (
+                    <li>
+                      <Link
+                        href={papers.path}
+                        className="font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+                      >
+                        {papers.paperCount} {papers.shortName} previous year question papers with
+                        answers
+                      </Link>
+                    </li>
+                  ) : null}
+                  {studentNotes ? (
+                    <li>
+                      <Link
+                        href={studentNotes.path}
+                        className="font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+                      >
+                        {studentNotes.noteCount} {studentNotes.shortName} handwritten and PDF notes
+                        by students
+                      </Link>
+                    </li>
+                  ) : null}
+                </ul>
+              </section>
             ) : null}
-            {studentNotes ? (
-              <Link
-                href={studentNotes.path}
-                className="font-medium text-accent-ink underline underline-offset-2"
-              >
-                {studentNotes.noteCount} {studentNotes.shortName} handwritten and PDF notes by
-                students
-              </Link>
-            ) : null}
-          </p>
-        ) : null}
-        <SourcesList sources={post.sources} />
-        {related.length > 0 ? (
-          <section aria-labelledby="read-next" className="mt-10" data-print="hide">
-            <h2 id="read-next" className="mb-3 text-h3 font-semibold">
-              Read next
-            </h2>
-            <LinkList items={related} label="Related posts" />
-            <p className="mt-3 text-small">
+
+            <SourcesList sources={post.sources} />
+
+            <div className="mt-16 space-y-6 border-t border-border pt-8" data-print="hide">
+              <FeedbackWidget pageType="blog_post" entityId={post.id} />
+              <ShareButtons path={post.path} title={post.title} />
+            </div>
+          </div>
+
+          {showToc ? (
+            <aside className="hidden lg:block" data-print="hide">
+              <div className="sticky top-28">
+                <Toc items={toc} />
+              </div>
+            </aside>
+          ) : null}
+        </div>
+      </article>
+
+      {related.length > 0 ? (
+        // Runs straight into the footer band.
+        <section aria-labelledby="keep-reading" className="-mb-20 bg-surface" data-print="hide">
+          <div className="container-page py-14 sm:py-16">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+              <h2 id="keep-reading" className="text-h2 font-semibold text-text">
+                Keep reading
+              </h2>
               <Link
                 href={post.category.path}
-                className="text-accent-ink underline underline-offset-2"
+                className="text-small font-semibold text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
               >
-                All posts in {post.category.name}
+                More in {post.category.name}
               </Link>
-            </p>
-          </section>
-        ) : null}
-        <div className="mt-10 space-y-6">
-          <FeedbackWidget pageType="blog_post" entityId={post.id} />
-          <ShareButtons path={post.path} title={post.title} />
-        </div>
-      </ArticleShell>
+            </div>
+            <PostGrid posts={related} label="Related posts" />
+          </div>
+        </section>
+      ) : null}
+
       <JsonLd
         data={[
           blogPostingJsonLd({
