@@ -19,6 +19,7 @@ export const CONTENT_TABLES = [
   'pages',
   'blog_categories',
   'blog_posts',
+  'note_courses',
   'authors',
   'media',
   'site_settings',
