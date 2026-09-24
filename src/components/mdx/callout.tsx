@@ -1,28 +1,14 @@
-import { AlertTriangle, Info, Lightbulb, StickyNote } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-import { cn } from '@/lib/utils/cn'
-
+// No icons: a soft peach panel or a left teal rule, with a small uppercase label.
 const styles = {
-  info: {
-    icon: Info,
-    box: 'border-border bg-surface',
-    iconClass: 'text-accent-ink',
-    label: 'Note',
-  },
-  tip: {
-    icon: Lightbulb,
-    box: 'border-accent/40 bg-accent-soft',
-    iconClass: 'text-accent-ink',
-    label: 'Tip',
-  },
+  info: { box: 'rounded-card bg-surface px-5 py-4', label: 'Note' },
+  tip: { box: 'rounded-card bg-accent-soft px-5 py-4', label: 'Tip' },
   warning: {
-    icon: AlertTriangle,
-    box: 'border-warning/30 bg-warning-soft',
-    iconClass: 'text-warning',
+    box: 'rounded-r-card border-l-4 border-accent-strong bg-accent-soft px-5 py-4',
     label: 'Heads up',
   },
-  note: { icon: StickyNote, box: 'border-border bg-card', iconClass: 'text-muted', label: 'Note' },
+  note: { box: 'border-l-2 border-accent-strong py-1 pl-5', label: 'Note' },
 } as const
 
 export function Callout({
@@ -35,11 +21,16 @@ export function Callout({
   children?: ReactNode
 }) {
   const style = styles[(type in styles ? type : 'info') as keyof typeof styles]
-  const Icon = style.icon
   return (
-    <aside className={cn('flex gap-3 rounded-card border px-4 py-3', style.box)}>
-      <Icon aria-hidden="true" className={cn('mt-1 size-5 shrink-0', style.iconClass)} />
-      <div className="min-w-0 flex-1 [&>*+*]:mt-2">
+    <aside className={style.box}>
+      {/* Visual label; screen readers get the sr-only one inside the body. */}
+      <p
+        aria-hidden="true"
+        className="text-xs font-semibold tracking-wide text-accent-ink uppercase"
+      >
+        {style.label}
+      </p>
+      <div className="mt-1.5 min-w-0 [&>*+*]:mt-2">
         <p className="sr-only">{style.label}:</p>
         {title ? <p className="font-semibold text-text">{title}</p> : null}
         {children}
