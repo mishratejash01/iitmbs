@@ -16,11 +16,11 @@ export async function SyllabusOverview({ program }: { program?: string }) {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {courses.map(({ course, core }) =>
         core ? (
           <section key={course.id} aria-labelledby={`syllabus-${course.slug}`}>
-            <h3 id={`syllabus-${course.slug}`} className="!mt-0 text-h3 font-semibold">
+            <h3 id={`syllabus-${course.slug}`} className="!mt-0 text-h3 font-semibold text-text">
               <Link href={course.path}>
                 {course.name}
                 {course.code ? (
@@ -28,9 +28,9 @@ export async function SyllabusOverview({ program }: { program?: string }) {
                 ) : null}
               </Link>
             </h3>
-            <ol className="mt-3 !list-none space-y-3 !pl-0">
+            <ol className="mt-3 !list-none border-t border-border !pl-0">
               {core.weeks.map((week) => (
-                <li key={week.id} className="rounded-control border border-border px-4 py-3">
+                <li key={week.id} className="!mt-0 border-b border-border py-4">
                   <Link href={week.path} className="font-medium">
                     Week {week.number}: {week.title}
                   </Link>
