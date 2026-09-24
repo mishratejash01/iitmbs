@@ -161,3 +161,19 @@ production with Lighthouse before and after large front-end changes.
 The team's existing site and YouTube channel already target past-paper and one-shot queries. Decide which property
 owns those keyword clusters (record it in **Admin → Keyword notes**) so the two sites do not compete for the same
 results.
+
+## 17. Previous year papers link out, with the pages that matter
+
+**Decision.** `/pyq` lists IIT Madras exam papers by course (`/pyq/<course>`) and exam (`/pyq/<course>/<exam>`), one
+row per course per sitting in `question_papers`. Rows link to the paper where students shared it; the site hosts no
+copies. IITM prints one paper per exam session with every course sat in it, so a row stores the page range that holds
+its course.
+
+**How the rows were built.** Every paper's text was read: the `QUESTION PAPER FOR THE SUBJECT` line (or the section
+title in 2021–22 papers) names the course and its first page. The date printed on the paper gives the term and exam;
+the sheets the links came from label terms one term late in places, so their labels were not used. Copies of one
+paper (different session sets, improvement papers) were merged when their scored questions' text matched. Papers with
+no printed date were placed by question id, which IITM issues in increasing order over time.
+
+**Why.** Students search per course and per exam ("mlt quiz 2 pyq"), so each gets a page; a 180-page session paper is
+only useful with the page numbers of the course inside it.
