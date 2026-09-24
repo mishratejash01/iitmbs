@@ -35,7 +35,6 @@ export function ProgrammeSwitcher({
               data-track-label={`programme:${program.slug}`}
             >
               <span className="block text-small font-semibold text-text">{program.shortName}</span>
-              <span className="block text-xs text-muted">{program.name}</span>
             </Link>
           </li>
         ))}
