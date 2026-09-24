@@ -19,6 +19,7 @@ export type AdminTable =
   | 'pages'
   | 'blog_posts'
   | 'blog_categories'
+  | 'note_courses'
   | 'authors'
   | 'media'
   | 'nav_items'
@@ -506,6 +507,14 @@ export const RESOURCES: ResourceConfig[] = [
       },
       { name: 'course_id', label: 'Course', type: 'reference', reference: 'courses' },
       { name: 'week_id', label: 'Week', type: 'reference', reference: 'weeks' },
+      {
+        name: 'note_course_id',
+        label: 'Student notes course',
+        type: 'reference',
+        reference: 'noteCourses',
+        help: 'Set this for student notes; they are listed on /notes, not on the resources page.',
+      },
+      { name: 'contributor', label: 'Contributor (credited by name)', type: 'text', max: 120 },
       { name: 'url', label: 'Link URL', type: 'url', help: 'For links and hosted videos.' },
       {
         name: 'cloudinary_public_id',
@@ -529,6 +538,59 @@ export const RESOURCES: ResourceConfig[] = [
       { name: 'sort_order', label: 'Sort order', type: 'number', default: 0 },
       ...provenance,
       ...publishing,
+    ],
+  },
+  {
+    key: 'note-courses',
+    table: 'note_courses',
+    label: 'Notes courses',
+    singular: 'Notes course',
+    group: 'Library',
+    titleColumn: 'name',
+    listColumns: ['name', 'code', 'level', 'status', 'updated_at'],
+    searchColumns: ['name', 'code', 'short_name'],
+    orderBy: { column: 'sort_order', ascending: true },
+    publishable: true,
+    softDelete: true,
+    fields: [
+      { name: 'name', label: 'Course name', type: 'text', required: true, max: 160 },
+      { name: 'short_name', label: 'Short name (e.g. MLT)', type: 'text', required: true, max: 40 },
+      { name: 'code', label: 'Course code (e.g. BSCS2007)', type: 'text', required: true, max: 12 },
+      {
+        name: 'slug',
+        label: 'URL slug',
+        type: 'slug',
+        required: true,
+        help: 'The page lives at /notes/<slug>.',
+      },
+      {
+        name: 'level',
+        label: 'Level',
+        type: 'select',
+        required: true,
+        options: [
+          { value: 'foundation', label: 'Foundation' },
+          { value: 'diploma', label: 'Diploma' },
+          { value: 'degree', label: 'Degree' },
+        ],
+      },
+      {
+        name: 'program_id',
+        label: 'Programme',
+        type: 'reference',
+        reference: 'programs',
+        required: true,
+      },
+      {
+        name: 'course_id',
+        label: 'Qualifier course page',
+        type: 'reference',
+        reference: 'courses',
+        help: 'Only for qualifier courses; links the two pages.',
+      },
+      { name: 'sort_order', label: 'Sort order', type: 'number', default: 0 },
+      ...publishing,
+      ...seo,
     ],
   },
   {
