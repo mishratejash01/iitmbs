@@ -76,7 +76,6 @@ export const siteSettingsSchema = section({
   }),
   features: section({
     login: flag(true),
-    dark_mode: flag(true),
     pwa: flag(true),
     search: flag(true),
     bookmarks: flag(true),
