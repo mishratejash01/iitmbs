@@ -24,6 +24,23 @@ export const ALLOWED_COMPONENTS: Record<string, readonly string[]> = {
   Definition: ['term'],
 }
 
+/**
+ * Components and elements that render block HTML (<aside>, <figure>, <div>,
+ * <details>). They may not sit inside a paragraph; see remarkLiftBlocks.
+ */
+export const BLOCK_ELEMENTS: ReadonlySet<string> = new Set([
+  'Callout',
+  'SyllabusOverview',
+  'EligibilityCalculator',
+  'ScoreCalculator',
+  'Figure',
+  'YouTube',
+  'KeyIdea',
+  'Steps',
+  'Definition',
+  'details',
+])
+
 /** Plain HTML elements authors may use inline, with their allowed attributes. */
 export const ALLOWED_HTML: Record<string, readonly string[]> = {
   sup: [],
