@@ -23,6 +23,7 @@
     "db:push": "dotenv -e .env.local -- supabase db push",
     "db:seed": "dotenv -e .env.local -- node scripts/db-seed.mjs",
     "test:db": "dotenv -e .env.local -- node scripts/test-db.mjs",
+    "lectures:sync": "dotenv -e .env.local -- node scripts/sync-lectures.mts",
     "db:types": "dotenv -e .env.local -- sh -c 'supabase gen types typescript --project-id \"$SUPABASE_PROJECT_REF\" --schema public > src/lib/supabase/database.types.ts'"
   },
   "dependencies": {
