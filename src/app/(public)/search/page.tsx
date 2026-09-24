@@ -1,4 +1,3 @@
-import { ArrowRight, Search } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { after } from 'next/server'
@@ -28,7 +27,7 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
   if (query.length < 2) {
     return (
       <p className="text-muted">
-        Type at least two characters — for example “maths 1 week 2” or “eligibility”.
+        Type at least two characters, for example “maths 1 week 2” or “eligibility”.
       </p>
     )
   }
@@ -57,14 +56,13 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
       {response.directHit ? (
         <Link
           href={response.directHit.path}
-          className="flex items-center justify-between gap-3 rounded-card border border-accent/40 bg-accent-soft px-4 py-3 font-medium text-accent-ink"
+          className="block rounded-card bg-accent-soft px-5 py-4 font-semibold text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
           data-track="search_result_click"
           data-track-search-id={searchId}
           data-track-position="0"
           data-track-target={response.directHit.path}
         >
           Go to {response.directHit.label}
-          <ArrowRight aria-hidden="true" className="size-4" />
         </Link>
       ) : null}
       {response.alternatives.length ? (
@@ -75,7 +73,7 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
               {index > 0 ? ', ' : null}
               <Link
                 href={hit.path}
-                className="font-medium text-accent-ink underline"
+                className="font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
                 data-track="search_result_click"
                 data-track-search-id={searchId}
                 data-track-position={String(index + 1)}
@@ -96,23 +94,24 @@ async function Results({ searchParams }: Pick<PageProps<'/search'>, 'searchParam
 
       {response.results.length === 0 ? (
         <EmptyState
-          icon={<Search className="size-5" />}
           title="Nothing matched"
           description="Try the course name with a week number (“stats 1 week 3”) or a topic (“quartiles”)."
         />
       ) : (
-        <ol className="divide-y divide-border rounded-card border border-border bg-card">
+        <ol className="border-t border-border">
           {response.results.map((result, index) => (
-            <li key={result.path}>
+            <li key={result.path} className="border-b border-border">
               <Link
                 href={result.path}
-                className="block px-4 py-4 hover:bg-surface"
+                className="group block py-4"
                 data-track="search_result_click"
                 data-track-search-id={searchId}
                 data-track-position={index + 1}
                 data-track-target={result.path}
               >
-                <span className="block font-medium text-text">{result.title}</span>
+                <span className="block font-medium text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
+                  {result.title}
+                </span>
                 {result.subtitle ? (
                   <span className="block text-xs text-muted">{result.subtitle}</span>
                 ) : null}
@@ -145,7 +144,7 @@ async function SearchBox({ searchParams }: Pick<PageProps<'/search'>, 'searchPar
         defaultValue={query}
         enterKeyHint="search"
         placeholder="Search courses, weeks and topics"
-        className="min-h-12 flex-1 rounded-control border border-border-strong bg-card px-3 text-text placeholder:text-muted focus-visible:border-accent"
+        className="min-h-12 flex-1 rounded-control border border-border-strong bg-card px-3 text-text placeholder:text-muted focus-visible:border-accent-strong"
       />
       <Button type="submit" size="lg">
         Search
