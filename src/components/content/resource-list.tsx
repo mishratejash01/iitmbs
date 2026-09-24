@@ -1,9 +1,5 @@
-import { Download, ExternalLink, FileText, Lock, PlayCircle, Sheet } from 'lucide-react'
-
 import type { ResourceItem } from '@/lib/data/types'
 import { formatBytes } from '@/lib/utils/format'
-
-const ICONS = { pdf: FileText, sheet: Sheet, link: ExternalLink, video: PlayCircle }
 
 /**
  * Every resource goes through /api/download/<id> so downloads and outbound
@@ -18,27 +14,22 @@ export function ResourceList({
 }) {
   if (items.length === 0) return null
   return (
-    <ul
-      aria-label={label}
-      className="divide-y divide-border rounded-card border border-border bg-card"
-    >
+    <ul aria-label={label} className="border-t border-border">
       {items.map((item) => {
-        const Icon = ICONS[item.kind]
         const size = formatBytes(item.fileBytes)
         return (
-          <li key={item.id}>
+          <li key={item.id} className="border-b border-border">
             <a
               href={`/api/download/${item.id}`}
-              className="group flex items-start gap-3 px-4 py-3.5 hover:bg-surface"
+              className="group flex items-baseline justify-between gap-4 py-4"
               data-track="download_click"
               data-track-resource-id={item.id}
               data-track-kind={item.kind}
               target={item.isExternal ? '_blank' : undefined}
               rel={item.isExternal ? 'noopener noreferrer' : 'nofollow'}
             >
-              <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent-ink" />
               <span className="min-w-0 flex-1">
-                <span className="block font-medium text-text group-hover:text-accent-ink">
+                <span className="block font-medium text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
                   {item.title}
                 </span>
                 {item.description ? (
@@ -49,18 +40,12 @@ export function ResourceList({
                   {item.isExternal && item.host ? <span>{item.host}</span> : null}
                   {item.fileFormat ? <span className="uppercase">{item.fileFormat}</span> : null}
                   {size ? <span>{size}</span> : null}
-                  {item.requiresLogin ? (
-                    <span className="inline-flex items-center gap-1">
-                      <Lock aria-hidden="true" className="size-3" /> Sign-in required
-                    </span>
-                  ) : null}
+                  {item.requiresLogin ? <span>Sign-in required</span> : null}
                 </span>
               </span>
-              {item.isExternal ? (
-                <ExternalLink aria-hidden="true" className="mt-1 size-4 shrink-0 text-muted" />
-              ) : (
-                <Download aria-hidden="true" className="mt-1 size-4 shrink-0 text-muted" />
-              )}
+              <span className="shrink-0 text-small font-semibold text-accent-ink">
+                {item.isExternal ? 'Open' : 'Download'}
+              </span>
               {item.isExternal ? <span className="sr-only">(opens in a new tab)</span> : null}
             </a>
           </li>
