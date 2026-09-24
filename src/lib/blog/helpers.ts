@@ -73,3 +73,16 @@ export function topPosts(posts: BlogPostSummary[], limit: number): BlogPostSumma
     )
     .slice(0, limit)
 }
+
+/**
+ * The language a post body is written in: "hi" for a Hindi explainer,
+ * otherwise "en". Hindi posts keep English terms ("IIT Madras", "qualifier")
+ * in Latin script, so a quarter of Devanagari letters is enough; English posts
+ * have none. Link targets are ignored, since they are Latin in every post.
+ */
+export function postLanguage(bodyMdx: string): 'hi' | 'en' {
+  const text = bodyMdx.replace(/\]\([^)]*\)/g, ']').replace(/https?:\/\/\S+/g, '')
+  const devanagari = text.match(/[\u0900-\u097F]/g)?.length ?? 0
+  const latin = text.match(/[A-Za-z]/g)?.length ?? 0
+  return devanagari * 3 >= latin && devanagari > 0 ? 'hi' : 'en'
+}
