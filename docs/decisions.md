@@ -133,11 +133,14 @@ publishing.
 
 ## 13. Colours are tokens, and contrast is checked
 
-**Decision.** Every colour is a CSS variable generated from `site_settings.theme` (light and dark). The theme editor
-flags any required pair that fails WCAG AA. Chart colours (for example the funnel ramp) were validated separately
-against both surfaces.
+**Decision.** Every colour is a CSS variable generated from `site_settings.theme`. The theme editor flags any
+required pair that fails WCAG AA. Chart colours (for example the funnel ramp) were validated separately.
 
 **Why.** Rebranding should be a settings change, and a rebrand must not silently break accessibility.
+
+**Update.** The site is light only and uses three colours: deep teal (text, buttons, the hero and footer bands), soft
+peach (panels and page headers) and warm white. Dark mode was removed. Decorative icons were removed too: the only
+icons left are controls (search, menu, close, dropdown carets, video play).
 
 ## 14. Hosting next to the database
 
