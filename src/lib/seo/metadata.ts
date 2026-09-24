@@ -20,6 +20,8 @@ export type PageSeoInput = {
   /** Used when there is no template or it cannot be filled. */
   fallbackTitle: string
   fallbackDescription: string
+  /** Used when the entity has no keywords of its own. */
+  keywords?: string[]
   /** Per-entity SEO fields from the database (take precedence). */
   seo?: SeoFields | null
   /** Admin override for this exact path (applied last). */
@@ -74,7 +76,11 @@ export function buildMetadata(input: PageSeoInput): Metadata {
   const description = resolveDescription(input)
   const url = canonicalFor(input)
   const noindex = Boolean(input.override?.noindex ?? (input.noindex || input.seo?.noindex))
-  const keywords = input.seo?.keywords?.length ? input.seo.keywords : undefined
+  const keywords = input.seo?.keywords?.length
+    ? input.seo.keywords
+    : input.keywords?.length
+      ? input.keywords
+      : undefined
   // An admin-chosen Cloudinary image wins; otherwise the generated card.
   const customImage = input.override?.ogImagePublicId ?? input.seo?.ogImagePublicId
   const image = {
