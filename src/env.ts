@@ -96,4 +96,6 @@ export const features = {
     env.cloudinary.apiSecret !== null,
   indexNow: env.indexNowKey !== null,
   revalidateWebhook: env.revalidateSecret !== null,
+  // Vercel serves /_vercel/insights only on its own deployments.
+  vercelAnalytics: process.env.VERCEL === '1',
 } as const
