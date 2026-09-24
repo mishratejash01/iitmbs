@@ -26,9 +26,10 @@ const redirectAllTo = originOf(process.env.REDIRECT_ALL_TO)
 const contentSecurityPolicy = [
   "default-src 'self'",
   // accounts.google.com/gsi: Google's sign-in button on /login.
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://accounts.google.com/gsi/client`,
+  // googletagmanager.com and google-analytics.com: Google Analytics.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://accounts.google.com/gsi/client https://www.googletagmanager.com`,
   "style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style",
-  "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://i.ytimg.com",
+  "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://i.ytimg.com https://*.google-analytics.com https://*.googletagmanager.com",
   "font-src 'self' data:",
   [
     "connect-src 'self'",
@@ -36,6 +37,9 @@ const contentSecurityPolicy = [
     supabaseOrigin?.replace(/^http/, 'ws'),
     'https://api.cloudinary.com',
     'https://accounts.google.com/gsi/',
+    'https://*.google-analytics.com',
+    'https://*.analytics.google.com',
+    'https://*.googletagmanager.com',
   ]
     .filter(Boolean)
     .join(' '),
