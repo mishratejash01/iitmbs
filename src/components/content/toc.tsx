@@ -15,7 +15,7 @@ export function Toc({
   return (
     <nav aria-label="On this page" className={className}>
       {heading ? (
-        <p className="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">
+        <p className="mb-3 text-xs font-semibold tracking-wide text-accent-ink uppercase">
           On this page
         </p>
       ) : null}
@@ -25,7 +25,7 @@ export function Toc({
             <a
               href={`#${item.id}`}
               className={cn(
-                '-ml-px block border-l border-transparent py-1 text-small text-muted hover:border-accent hover:text-text',
+                '-ml-px block border-l-2 border-transparent py-1 text-small text-muted hover:border-accent-strong hover:text-accent-ink',
                 item.depth === 3 ? 'pl-6' : 'pl-3',
               )}
               data-track="toc_click"
@@ -45,11 +45,23 @@ export function Toc({
 export function MobileToc({ items }: { items: TocItem[] }) {
   if (items.length < 2) return null
   return (
-    <details className="mb-6 rounded-card border border-border bg-card lg:hidden">
-      <summary className="flex min-h-12 cursor-pointer items-center px-4 font-medium text-text">
+    <details className="group mb-6 rounded-card bg-surface lg:hidden">
+      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 px-5 font-semibold text-text [&::-webkit-details-marker]:hidden">
         On this page
+        <span
+          aria-hidden="true"
+          className="text-h3 leading-none font-normal text-accent-ink group-open:hidden"
+        >
+          +
+        </span>
+        <span
+          aria-hidden="true"
+          className="hidden text-h3 leading-none font-normal text-accent-ink group-open:inline"
+        >
+          −
+        </span>
       </summary>
-      <Toc items={items} heading={false} className="px-4 pb-4" />
+      <Toc items={items} heading={false} className="px-5 pb-5" />
     </details>
   )
 }
