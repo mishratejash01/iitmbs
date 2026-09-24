@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
-export type LinkListItem = { path: string; title: string; summary?: string | null }
+export type LinkListItem = { path: string; title: string }
 
 export function LinkList({ items, label }: { items: LinkListItem[]; label: string }) {
   if (items.length === 0) return null
@@ -21,11 +21,6 @@ export function LinkList({ items, label }: { items: LinkListItem[]; label: strin
               <span className="block font-medium text-text group-hover:text-accent-ink">
                 {item.title}
               </span>
-              {item.summary ? (
-                <span className="mt-0.5 line-clamp-2 block text-small text-muted">
-                  {item.summary}
-                </span>
-              ) : null}
             </span>
             <ArrowRight
               aria-hidden="true"
