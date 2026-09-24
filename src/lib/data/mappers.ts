@@ -74,7 +74,7 @@ export function toAuthor(row: {
 }
 
 export const RESOURCE_COLUMNS =
-  'id, kind, title, description, url, cloudinary_public_id, file_format, file_bytes, requires_login, download_count, course_id, week_id, sort_order'
+  'id, kind, title, description, url, cloudinary_public_id, file_format, file_bytes, requires_login, download_count, course_id, week_id, sort_order, contributor'
 
 export function toResource(row: {
   id: string
@@ -87,6 +87,7 @@ export function toResource(row: {
   file_bytes: number | null
   requires_login: boolean
   download_count: number
+  contributor: string | null
 }): ResourceItem {
   let host: string | null = null
   if (row.url) {
@@ -108,5 +109,6 @@ export function toResource(row: {
     isExternal: !row.cloudinary_public_id && row.url !== null,
     host,
     downloadCount: Number(row.download_count ?? 0),
+    contributor: row.contributor,
   }
 }
