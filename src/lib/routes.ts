@@ -49,6 +49,10 @@ export const blogPostPath = (slug: string) => `${BLOG_PATH}/${slug}`
 
 export const blogCategoryPath = (slug: string) => `${BLOG_PATH}/category/${slug}`
 
+export const NOTES_PATH = '/notes'
+
+export const noteCoursePath = (slug: string) => `${NOTES_PATH}/${slug}`
+
 /** Parses a "week-3" route segment. */
 export function parseWeekSegment(segment: string): number | null {
   const match = WEEK_SEGMENT.exec(segment)
