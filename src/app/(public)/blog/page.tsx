@@ -6,6 +6,7 @@ import { PostGrid } from '@/components/blog/post-card'
 import { cmsMetadata } from '@/components/content/cms-route'
 import { LinkList } from '@/components/content/link-list'
 import { PageHeader } from '@/components/layout/page-header'
+import { metaRowClasses } from '@/components/ui/badge'
 import { SectionHeading } from '@/components/ui/section-heading'
 import { postsInCategory } from '@/lib/blog/helpers'
 import { getBlogCategories, getBlogPostIndex } from '@/lib/data/blog'
@@ -57,15 +58,17 @@ export default async function BlogIndexPage() {
       <div className="container-page py-8 sm:py-10">
         {sections.length > 1 ? (
           <nav aria-label="Blog topics" className="mb-10" data-print="hide">
-            <ul className="flex flex-wrap gap-2">
+            <ul className={`text-small ${metaRowClasses}`}>
               {sections.map(({ category, posts: inCategory }) => (
                 <li key={category.id}>
                   <Link
                     href={`#${category.slug}`}
-                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-small text-text hover:border-accent"
+                    className="group inline-flex min-h-11 items-center gap-1.5 font-medium text-accent-ink"
                   >
-                    {category.name}
-                    <span className="text-xs text-muted">{inCategory.length}</span>
+                    <span className="underline decoration-accent-ink/30 underline-offset-4 group-hover:decoration-accent-ink">
+                      {category.name}
+                    </span>
+                    <span className="text-xs font-normal text-muted">{inCategory.length}</span>
                   </Link>
                 </li>
               ))}
