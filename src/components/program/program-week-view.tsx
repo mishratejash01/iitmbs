@@ -50,9 +50,7 @@ export function ProgramWeekView({ data }: { data: ProgramWeekData }) {
           { name: data.programShortName, path: `/${data.programSlug}` },
           { name: `Week ${data.weekNumber}`, path: `/${data.programSlug}/week-${data.weekNumber}` },
         ]}
-        eyebrow={data.programName}
         title={title}
-        description={`Week ${data.weekNumber} of every ${data.programShortName} qualifier course in one place — notes, graded assignment hints and practice.`}
         meta={
           <nav aria-label="Other weeks" className="flex flex-wrap gap-2">
             {data.weeks.map((n) => (
