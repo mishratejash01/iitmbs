@@ -11,7 +11,7 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
 
 /**
  * A whole-card link. The accessible name comes from the heading inside; the
- * hover state is a quiet border change rather than a shadow.
+ * hover state is a quiet border change and a soft lift.
  */
 export function LinkCard({
   href,
@@ -27,7 +27,7 @@ export function LinkCard({
       href={href}
       className={cn(
         cardClasses,
-        'group block p-4 transition-colors duration-150 hover:border-accent sm:p-5',
+        'group block p-5 transition-[border-color,box-shadow] duration-150 hover:border-accent-strong/40 hover:shadow-card sm:p-6',
         className,
       )}
       {...props}
