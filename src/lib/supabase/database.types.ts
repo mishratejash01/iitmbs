@@ -1806,6 +1806,92 @@ export type Database = {
           },
         ]
       }
+      question_papers: {
+        Row: {
+          contributor: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          exam: string
+          exam_date: string | null
+          file_name: string | null
+          has_answers: boolean
+          id: string
+          is_published: boolean
+          note: string | null
+          note_course_id: string
+          page_from: number | null
+          page_to: number | null
+          published_at: string | null
+          question_count: number | null
+          session: string | null
+          sort_order: number
+          term: string
+          updated_at: string
+          updated_by: string | null
+          url: string
+          variant: number
+        }
+        Insert: {
+          contributor?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          exam: string
+          exam_date?: string | null
+          file_name?: string | null
+          has_answers?: boolean
+          id?: string
+          is_published?: boolean
+          note?: string | null
+          note_course_id: string
+          page_from?: number | null
+          page_to?: number | null
+          published_at?: string | null
+          question_count?: number | null
+          session?: string | null
+          sort_order?: number
+          term: string
+          updated_at?: string
+          updated_by?: string | null
+          url: string
+          variant?: number
+        }
+        Update: {
+          contributor?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          exam?: string
+          exam_date?: string | null
+          file_name?: string | null
+          has_answers?: boolean
+          id?: string
+          is_published?: boolean
+          note?: string | null
+          note_course_id?: string
+          page_from?: number | null
+          page_to?: number | null
+          published_at?: string | null
+          question_count?: number | null
+          session?: string | null
+          sort_order?: number
+          term?: string
+          updated_at?: string
+          updated_by?: string | null
+          url?: string
+          variant?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_papers_note_course_id_fkey"
+            columns: ["note_course_id"]
+            isOneToOne: false
+            referencedRelation: "note_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       questions: {
         Row: {
           answer_key: Json | null
