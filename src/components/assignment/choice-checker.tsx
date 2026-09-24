@@ -1,8 +1,8 @@
 'use client'
 
-import { CheckCircle2, XCircle } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils/cn'
 
 type Option = { id: string; letter: string; label: ReactNode }
@@ -58,7 +58,7 @@ export function ChoiceChecker({
                   'flex cursor-pointer items-start gap-3 rounded-control border px-3 py-2.5',
                   state === 'right' && 'border-success bg-success-soft',
                   state === 'wrong' && 'border-danger bg-danger-soft',
-                  state === 'chosen' && 'border-accent bg-accent-soft',
+                  state === 'chosen' && 'border-accent-strong bg-accent-soft',
                   state === 'idle' && 'border-border hover:border-border-strong',
                 )}
               >
@@ -69,7 +69,7 @@ export function ChoiceChecker({
                   onChange={() => toggle(option.id)}
                   className="mt-1.5 size-4 accent-[var(--accent-strong)]"
                 />
-                <span className="font-semibold text-muted">{option.letter}.</span>
+                <span className="font-semibold text-accent-ink">{option.letter}.</span>
                 <span className="min-w-0 flex-1 [&_p]:m-0">{option.label}</span>
               </label>
             </li>
@@ -77,28 +77,20 @@ export function ChoiceChecker({
         })}
       </ul>
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          size="sm"
           disabled={selected.length === 0}
           onClick={() => setChecked(true)}
-          className="min-h-11 rounded-control border border-border-strong px-4 text-small font-medium text-text hover:border-accent disabled:opacity-50"
         >
           Check my answer
-        </button>
+        </Button>
         {checked ? (
           <p
             role="status"
-            className={cn(
-              'inline-flex items-center gap-1.5 text-small font-medium',
-              isRight ? 'text-success' : 'text-danger',
-            )}
+            className={cn('text-small font-medium', isRight ? 'text-success' : 'text-danger')}
           >
-            {isRight ? (
-              <CheckCircle2 aria-hidden="true" className="size-4" />
-            ) : (
-              <XCircle aria-hidden="true" className="size-4" />
-            )}
-            {isRight ? 'Correct!' : 'Not quite — compare with the walkthrough below.'}
+            {isRight ? 'Correct!' : 'Not quite. Compare with the walkthrough below.'}
           </p>
         ) : null}
       </div>
