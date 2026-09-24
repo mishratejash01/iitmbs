@@ -1,6 +1,5 @@
 'use client'
 
-import { CalendarClock } from 'lucide-react'
 import Link from 'next/link'
 import type { Deadline } from '@/lib/data/upcoming'
 import { useNow } from '@/lib/hooks/browser-state'
@@ -25,31 +24,27 @@ export function DeadlineWidget({
   if (visible.length === 0) return null
 
   return (
-    <section
-      aria-labelledby="deadlines"
-      className="rounded-card border border-border bg-card p-4 sm:p-5"
-    >
-      <h2 id="deadlines" className="flex items-center gap-2 font-semibold text-text">
-        <CalendarClock aria-hidden="true" className="size-5 text-accent-ink" />
+    <section aria-labelledby="deadlines" className="rounded-panel bg-accent-soft p-6 sm:p-7">
+      <h2 id="deadlines" className="text-h3 font-semibold text-accent-strong">
         Upcoming graded assignments
       </h2>
-      <ul className="mt-3 divide-y divide-border">
+      <ul className="mt-3 divide-y divide-accent-strong/10">
         {visible.map((deadline) => (
           <li key={deadline.id}>
             <Link
               href={deadline.path}
-              className="flex items-center justify-between gap-3 py-3 hover:text-accent-ink"
+              className="group flex items-baseline justify-between gap-3 py-3"
             >
               <span className="min-w-0">
-                <span className="block text-small font-medium text-text">
+                <span className="block text-small font-semibold text-text group-hover:underline">
                   {deadline.courseShortName} · Week {deadline.weekNumber}
                 </span>
-                <span className="block text-xs text-muted">
+                <span className="block text-xs text-text/75">
                   Due {formatDateTime(deadline.dueAt)}
                 </span>
               </span>
               <span
-                className="shrink-0 rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent-ink"
+                className="shrink-0 text-xs font-semibold text-accent-strong"
                 suppressHydrationWarning
               >
                 {now === null
