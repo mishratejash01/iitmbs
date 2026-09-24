@@ -1,4 +1,3 @@
-import { CheckCircle2, CircleDashed } from 'lucide-react'
 import Link from 'next/link'
 
 import { PageContext } from '@/components/analytics/page-context'
@@ -16,26 +15,18 @@ function Row({
   label: string
   available: boolean
 }) {
-  const Icon = available ? CheckCircle2 : CircleDashed
-  const content = (
-    <>
-      <Icon
-        aria-hidden="true"
-        className={cn('size-4 shrink-0', available ? 'text-success' : 'text-muted')}
-      />
-      <span>{label}</span>
-      {!available ? <span className="text-xs text-muted">(coming soon)</span> : null}
-    </>
-  )
   return href && available ? (
     <Link
       href={href}
-      className="flex min-h-10 items-center gap-2 text-small font-medium text-accent-ink hover:underline"
+      className="inline-flex min-h-11 items-center text-small font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
     >
-      {content}
+      {label}
     </Link>
   ) : (
-    <span className="flex min-h-10 items-center gap-2 text-small text-muted">{content}</span>
+    <span className="inline-flex min-h-11 items-center gap-1.5 text-small text-muted">
+      <span>{label}</span>
+      {!available ? <span className="text-xs">(coming soon)</span> : null}
+    </span>
   )
 }
 
@@ -52,17 +43,17 @@ export function ProgramWeekView({ data }: { data: ProgramWeekData }) {
         ]}
         title={title}
         meta={
-          <nav aria-label="Other weeks" className="flex flex-wrap gap-2">
+          <nav aria-label="Other weeks" className="flex flex-wrap gap-x-5">
             {data.weeks.map((n) => (
               <Link
                 key={n}
                 href={`/${data.programSlug}/week-${n}`}
                 aria-current={n === data.weekNumber ? 'page' : undefined}
                 className={cn(
-                  'inline-flex min-h-10 items-center rounded-full border px-4 text-small font-medium',
+                  'inline-flex min-h-11 items-center text-small underline-offset-8',
                   n === data.weekNumber
-                    ? 'border-accent bg-accent-soft text-accent-ink'
-                    : 'border-border bg-card text-text hover:border-accent',
+                    ? 'font-semibold text-text underline decoration-accent-strong decoration-2'
+                    : 'font-medium text-accent-ink decoration-accent-ink/40 hover:underline',
                 )}
               >
                 Week {n}
@@ -78,23 +69,23 @@ export function ProgramWeekView({ data }: { data: ProgramWeekData }) {
             description="Course pages will appear here once they are published."
           />
         ) : (
-          <ul className="grid gap-4 md:grid-cols-2">
+          <ul className="border-t border-border">
             {data.courses.map((course) => (
-              <li
-                key={course.coursePath}
-                className="rounded-card border border-border bg-card p-4 sm:p-5"
-              >
-                <p className="text-small font-medium text-accent-ink">{course.name}</p>
-                <h2 className="mt-0.5 font-semibold text-text">
+              <li key={course.coursePath} className="border-b border-border py-5">
+                <p className="text-small font-semibold text-accent-ink">{course.name}</p>
+                <h2 className="mt-1 text-h3 font-semibold text-text">
                   {course.week ? (
-                    <Link href={course.week.path} className="hover:text-accent-ink">
+                    <Link
+                      href={course.week.path}
+                      className="decoration-accent-ink/40 underline-offset-4 hover:text-accent-ink hover:underline"
+                    >
                       {course.shortName} Week {data.weekNumber}: {course.week.title}
                     </Link>
                   ) : (
                     `${course.shortName} Week ${data.weekNumber}`
                   )}
                 </h2>
-                <div className="mt-3 divide-y divide-border">
+                <div className="mt-1 flex flex-wrap gap-x-6">
                   <Row
                     href={course.graded?.path ?? null}
                     label="Graded assignment"
