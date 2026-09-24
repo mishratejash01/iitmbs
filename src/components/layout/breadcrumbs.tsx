@@ -3,16 +3,27 @@ import Link from 'next/link'
 import { JsonLd } from '@/components/seo/json-ld'
 import { breadcrumbJsonLd, type Crumb } from '@/lib/seo/jsonld'
 
-/** Visible breadcrumbs plus matching BreadcrumbList structured data. */
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
+/**
+ * Visible breadcrumbs plus matching BreadcrumbList structured data. With
+ * `hideCurrent`, the page itself is left out of the visible trail (articles
+ * show their title right below) but stays in the structured data.
+ */
+export function Breadcrumbs({
+  items,
+  hideCurrent = false,
+}: {
+  items: Crumb[]
+  hideCurrent?: boolean
+}) {
   const crumbs: Crumb[] = [{ name: 'Home', path: '/' }, ...items]
+  const visible = hideCurrent ? crumbs.slice(0, -1) : crumbs
   return (
     <>
       <nav aria-label="Breadcrumb" className="mb-5" data-print="hide">
         {/* Earlier crumbs keep their width; the current page shortens with an ellipsis. */}
         <ol className="flex min-w-0 items-center gap-1 text-small whitespace-nowrap text-muted">
-          {crumbs.map((crumb, index) => {
-            const last = index === crumbs.length - 1
+          {visible.map((crumb, index) => {
+            const last = !hideCurrent && index === crumbs.length - 1
             return (
               <li
                 key={crumb.path}
