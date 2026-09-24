@@ -45,6 +45,7 @@ export function ResourceList({
                   <span className="mt-0.5 block text-small text-muted">{item.description}</span>
                 ) : null}
                 <span className="mt-1 flex flex-wrap gap-x-3 text-xs text-muted">
+                  {item.contributor ? <span>by {item.contributor}</span> : null}
                   {item.isExternal && item.host ? <span>{item.host}</span> : null}
                   {item.fileFormat ? <span className="uppercase">{item.fileFormat}</span> : null}
                   {size ? <span>{size}</span> : null}
