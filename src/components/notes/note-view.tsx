@@ -47,16 +47,14 @@ export async function NoteView({
   const { note, core, week } = data
   const { content, toc } = await renderMdx(note.bodyMdx, { toc: true })
 
-  const related = data.related.map((n) => ({ path: n.path, title: n.title, summary: n.summary }))
+  const related = data.related.map((n) => ({ path: n.path, title: n.title }))
 
   return (
     <>
       <PageContext type={PAGE_TYPE[note.kind]} entityId={note.id} />
       <PageHeader
         crumbs={crumbs}
-        eyebrow={`${core.course.name}${core.course.code ? ` · ${core.course.code}` : ''}`}
         title={title}
-        description={note.summary}
         meta={
           <>
             {note.readingTimeMinutes ? (
