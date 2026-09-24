@@ -1,4 +1,3 @@
-import { Clock } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -42,11 +41,8 @@ export default async function LoginPage({ searchParams }: PageProps<'/login'>) {
         {availability.enabled ? (
           <GoogleSignIn next={next} />
         ) : (
-          <div className="rounded-card border border-border bg-surface p-4" role="status">
-            <p className="flex items-center gap-2 font-medium text-text">
-              <Clock aria-hidden="true" className="size-4 text-accent-ink" />
-              Login coming soon
-            </p>
+          <div className="rounded-card bg-surface p-5" role="status">
+            <p className="font-semibold text-text">Login coming soon</p>
             <p className="mt-1 text-small text-muted">
               Sign-in with Google is being set up. You can keep using every page in the meantime.
             </p>
@@ -61,11 +57,17 @@ export default async function LoginPage({ searchParams }: PageProps<'/login'>) {
 
       <p className="mt-8 text-xs text-muted">
         By continuing you agree to the{' '}
-        <Link href="/terms" className="underline">
+        <Link
+          href="/terms"
+          className="text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+        >
           terms
         </Link>{' '}
         and{' '}
-        <Link href="/privacy" className="underline">
+        <Link
+          href="/privacy"
+          className="text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+        >
           privacy policy
         </Link>
         . Under 18? Please sign in only with a parent or guardian’s consent.
