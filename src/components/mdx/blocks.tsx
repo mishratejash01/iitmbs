@@ -10,19 +10,19 @@ export function KeyIdea({
 }) {
   return (
     <section
-      className="rounded-card border-l-4 border-accent bg-surface px-4 py-3"
+      className="rounded-r-card border-l-4 border-accent-strong bg-surface px-5 py-4"
       aria-label={title}
     >
-      <p className="text-small font-semibold tracking-wide text-accent-ink uppercase">{title}</p>
-      <div className="mt-1 [&>*+*]:mt-2">{children}</div>
+      <p className="text-xs font-semibold tracking-wide text-accent-ink uppercase">{title}</p>
+      <div className="mt-1.5 [&>*+*]:mt-2">{children}</div>
     </section>
   )
 }
 
-/** Numbered steps: wrap an ordered list to get step styling. */
+/** Numbered steps: wrap an ordered list to get step styling (plain teal numbers between hairlines). */
 export function Steps({ children }: { children?: ReactNode }) {
   return (
-    <div className="rounded-card border border-border px-4 py-3 [&_ol]:list-none [&_ol]:pl-0 [&_ol]:[counter-reset:step] [&_ol>li]:relative [&_ol>li]:pl-9 [&_ol>li]:[counter-increment:step] [&_ol>li]:before:absolute [&_ol>li]:before:left-0 [&_ol>li]:before:flex [&_ol>li]:before:size-6 [&_ol>li]:before:items-center [&_ol>li]:before:justify-center [&_ol>li]:before:rounded-full [&_ol>li]:before:bg-accent-soft [&_ol>li]:before:text-xs [&_ol>li]:before:font-semibold [&_ol>li]:before:text-accent-ink [&_ol>li]:before:content-[counter(step)]">
+    <div className="[&_ol]:list-none [&_ol]:border-t [&_ol]:border-border [&_ol]:pl-0 [&_ol]:[counter-reset:step] [&_ol>li]:relative [&_ol>li]:border-b [&_ol>li]:border-border [&_ol>li]:py-3 [&_ol>li]:pl-9 [&_ol>li]:[counter-increment:step] [&_ol>li]:before:absolute [&_ol>li]:before:top-3 [&_ol>li]:before:left-0 [&_ol>li]:before:font-semibold [&_ol>li]:before:text-accent-ink [&_ol>li]:before:tabular-nums [&_ol>li]:before:content-[counter(step)] [&_ol>li+li]:mt-0">
       {children}
     </div>
   )
@@ -31,7 +31,7 @@ export function Steps({ children }: { children?: ReactNode }) {
 /** A term and its definition. */
 export function Definition({ term, children }: { term?: string; children?: ReactNode }) {
   return (
-    <dl className="rounded-card border border-border px-4 py-3">
+    <dl className="rounded-card bg-surface px-5 py-4">
       {term ? <dt className="font-semibold text-text">{term}</dt> : null}
       <dd className="mt-1 [&>*+*]:mt-2">{children}</dd>
     </dl>
