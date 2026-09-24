@@ -101,7 +101,8 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
               href={studentNotes.path}
               className="font-medium text-accent-ink underline underline-offset-2"
             >
-              {studentNotes.noteCount} {studentNotes.shortName} notes shared by students
+              {studentNotes.noteCount} {studentNotes.shortName} handwritten and PDF notes by
+              students
             </Link>
           </p>
         ) : null}
