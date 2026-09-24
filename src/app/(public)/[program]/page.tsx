@@ -67,9 +67,7 @@ export default async function ProgramPage({ params }: PageProps<'/[program]'>) {
       <PageContext type="program" entityId={data.program.id} />
       <PageHeader
         crumbs={[{ name: data.program.shortName, path: data.program.path }]}
-        eyebrow={data.program.name}
         title={`IITM BS ${data.program.shortName} Qualifier`}
-        description={data.program.description}
       />
       <div className="container-page space-y-12 py-8 sm:py-10">
         {intro.content ? (
@@ -77,11 +75,7 @@ export default async function ProgramPage({ params }: PageProps<'/[program]'>) {
         ) : null}
 
         <section aria-labelledby="courses">
-          <SectionHeading
-            id="courses"
-            title="Qualifier courses"
-            description="Weeks 1–4 of each course are part of the qualifier."
-          />
+          <SectionHeading id="courses" title="Qualifier courses" />
           {data.courses.length > 0 ? (
             <ul className="grid gap-4 md:grid-cols-2">
               {data.courses.map((course) => (
@@ -97,11 +91,7 @@ export default async function ProgramPage({ params }: PageProps<'/[program]'>) {
 
         {data.weeks.length > 0 ? (
           <section aria-labelledby="by-week">
-            <SectionHeading
-              id="by-week"
-              title="Browse by week"
-              description="Every course's notes and graded assignment for the same week."
-            />
+            <SectionHeading id="by-week" title="Browse by week" />
             <ul className="flex flex-wrap gap-2">
               {data.weeks.map((week) => (
                 <li key={week.number}>
