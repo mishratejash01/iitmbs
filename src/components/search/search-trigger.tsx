@@ -38,7 +38,7 @@ export function SearchTrigger() {
           setOpen(true)
         }}
         onPointerEnter={() => setLoaded(true)}
-        className="flex min-h-11 items-center gap-2 rounded-control text-muted transition-colors hover:text-text max-md:size-11 max-md:justify-center md:w-56 md:border md:border-border md:bg-surface md:px-3 md:hover:border-border-strong"
+        className="flex min-h-11 items-center gap-2 rounded-control text-muted transition-colors hover:text-text max-md:size-11 max-md:justify-center md:w-56 md:border md:border-border md:bg-card md:px-3 md:hover:border-accent-strong/40"
         aria-label="Search"
         aria-keyshortcuts="Control+K Meta+K"
       >
