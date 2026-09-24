@@ -13,7 +13,7 @@ export function ProgrammeSwitcher({
   return (
     <Disclosure
       label="Choose a programme"
-      summaryClassName="flex min-h-11 cursor-pointer items-center gap-1 rounded-control px-3 text-small font-medium text-text hover:bg-surface"
+      summaryClassName="flex min-h-11 cursor-pointer items-center gap-1 px-3 text-small font-medium text-text hover:text-accent-ink"
       summary={
         <>
           Programmes
@@ -23,14 +23,14 @@ export function ProgrammeSwitcher({
           />
         </>
       }
-      panelClassName="absolute left-0 top-full z-50 mt-2 w-80 rounded-card border border-border bg-card p-2 shadow-card"
+      panelClassName="absolute left-0 top-full z-50 mt-2 w-72 rounded-card border border-border bg-card p-2 shadow-card"
     >
       <ul>
         {programs.map((program) => (
           <li key={program.id}>
             <Link
               href={program.path}
-              className="block rounded-control px-3 py-2.5 hover:bg-surface"
+              className="block rounded-control px-3 py-3 hover:bg-surface"
               data-track="nav_click"
               data-track-label={`programme:${program.slug}`}
             >
