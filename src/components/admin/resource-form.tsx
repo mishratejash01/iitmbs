@@ -574,7 +574,7 @@ function SerpPreview({
       <p className="text-xs font-medium text-muted">Search result preview</p>
       <div className="mt-2 max-w-[600px] font-[arial,sans-serif]">
         <p className="truncate text-xs text-text">{url.replace(/^https?:\/\//, '')}</p>
-        <p className="truncate text-[1.2rem] leading-7 text-[#1a0dab] dark:text-[#8ab4f8]">
+        <p className="truncate text-[1.2rem] leading-7 text-[#1a0dab]">
           {snapshot.title || 'Page title'}
         </p>
         <p className="line-clamp-2 text-small text-text">
