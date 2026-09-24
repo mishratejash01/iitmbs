@@ -1197,6 +1197,109 @@ export type Database = {
           },
         ]
       }
+      note_courses: {
+        Row: {
+          blog_post_id: string | null
+          canonical_path: string | null
+          code: string
+          course_id: string | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          id: string
+          is_published: boolean
+          keywords: string[]
+          level: string
+          name: string
+          noindex: boolean
+          og_image_public_id: string | null
+          program_id: string
+          published_at: string | null
+          schema_overrides: Json
+          seo_description: string | null
+          seo_title: string | null
+          short_name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          blog_post_id?: string | null
+          canonical_path?: string | null
+          code: string
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          is_published?: boolean
+          keywords?: string[]
+          level: string
+          name: string
+          noindex?: boolean
+          og_image_public_id?: string | null
+          program_id: string
+          published_at?: string | null
+          schema_overrides?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          short_name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          blog_post_id?: string | null
+          canonical_path?: string | null
+          code?: string
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          is_published?: boolean
+          keywords?: string[]
+          level?: string
+          name?: string
+          noindex?: boolean
+          og_image_public_id?: string | null
+          program_id?: string
+          published_at?: string | null
+          schema_overrides?: Json
+          seo_description?: string | null
+          seo_title?: string | null
+          short_name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "note_courses_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "note_courses_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "note_courses_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notes: {
         Row: {
           author_id: string | null
@@ -1867,6 +1970,7 @@ export type Database = {
         Row: {
           cloudinary_public_id: string | null
           cloudinary_resource_type: string | null
+          contributor: string | null
           course_id: string | null
           created_at: string
           created_by: string | null
@@ -1878,6 +1982,7 @@ export type Database = {
           id: string
           is_published: boolean
           kind: Database["public"]["Enums"]["resource_kind"]
+          note_course_id: string | null
           published_at: string | null
           requires_login: boolean
           sort_order: number
@@ -1892,6 +1997,7 @@ export type Database = {
         Insert: {
           cloudinary_public_id?: string | null
           cloudinary_resource_type?: string | null
+          contributor?: string | null
           course_id?: string | null
           created_at?: string
           created_by?: string | null
@@ -1903,6 +2009,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           kind: Database["public"]["Enums"]["resource_kind"]
+          note_course_id?: string | null
           published_at?: string | null
           requires_login?: boolean
           sort_order?: number
@@ -1917,6 +2024,7 @@ export type Database = {
         Update: {
           cloudinary_public_id?: string | null
           cloudinary_resource_type?: string | null
+          contributor?: string | null
           course_id?: string | null
           created_at?: string
           created_by?: string | null
@@ -1928,6 +2036,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           kind?: Database["public"]["Enums"]["resource_kind"]
+          note_course_id?: string | null
           published_at?: string | null
           requires_login?: boolean
           sort_order?: number
@@ -1945,6 +2054,13 @@ export type Database = {
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_note_course_id_fkey"
+            columns: ["note_course_id"]
+            isOneToOne: false
+            referencedRelation: "note_courses"
             referencedColumns: ["id"]
           },
           {
