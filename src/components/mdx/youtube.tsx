@@ -21,7 +21,7 @@ export function YouTube({
   const startParam = start && /^\d+$/.test(start) ? `&start=${start}` : ''
 
   return (
-    <div className="relative my-6 aspect-video overflow-hidden rounded-card border border-border bg-surface">
+    <div className="relative my-6 aspect-video overflow-hidden rounded-card bg-surface">
       {active ? (
         <iframe
           className="absolute inset-0 size-full"
@@ -45,7 +45,7 @@ export function YouTube({
             decoding="async"
             className="absolute inset-0 size-full object-cover"
           />
-          <span className="relative flex size-16 items-center justify-center rounded-full bg-accent-strong text-on-accent shadow-card transition-transform group-hover:scale-105">
+          <span className="relative flex size-16 items-center justify-center rounded-full bg-accent-strong text-on-accent transition-colors group-hover:bg-accent-hover">
             <Play aria-hidden="true" className="ml-1 size-7" />
           </span>
         </button>
