@@ -92,14 +92,17 @@ export default async function ProgramPage({ params }: PageProps<'/[program]'>) {
         {data.weeks.length > 0 ? (
           <section aria-labelledby="by-week">
             <SectionHeading id="by-week" title="Browse by week" />
-            <ul className="flex flex-wrap gap-2">
+            <ul className="flex flex-wrap pt-px pl-px">
               {data.weeks.map((week) => (
-                <li key={week.number}>
+                <li key={week.number} className="-mt-px -ml-px w-24 border border-border sm:w-28">
                   <Link
                     href={week.path}
-                    className="inline-flex min-h-11 items-center rounded-full border border-border bg-card px-5 font-medium text-text hover:border-accent hover:text-accent-ink"
+                    className="group flex min-h-20 flex-col justify-center px-4 py-3 hover:bg-surface"
                   >
-                    Week {week.number}
+                    <span className="text-xs font-medium text-muted">Week</span>
+                    <span className="text-h2 font-semibold text-accent-strong group-hover:underline">
+                      {week.number}
+                    </span>
                   </Link>
                 </li>
               ))}
