@@ -53,7 +53,7 @@ export async function generateMetadata({
     template: 'lecture_course',
     vars: { course: course.name, short: course.shortName, code: course.code },
     fallbackTitle: `${lectureCourseTitle(course)} (${course.code}), Week by Week | ${settings.site_name}`,
-    fallbackDescription: `${course.videoCount} official IIT Madras lecture videos for ${course.name} (${course.shortName}, ${course.code}), sorted into ${course.weeks.length} weeks, with a player on every page.`,
+    fallbackDescription: `${course.videoCount} official IIT Madras lecture videos for ${course.name} (${course.shortName}, ${course.code}), ${course.weeks.length > 0 ? `sorted into ${course.weeks.length} weeks` : 'in teaching order'}, with a player on every page.`,
     keywords: [
       `${short} lectures`,
       `${short} lecture videos`,
@@ -76,7 +76,7 @@ export default async function LectureCoursePage({
   if (!course) return redirectOrNotFound(lectureCoursePath(slug))
 
   const [lectures, notes, pyqs, hubs] = await Promise.all([
-    getCourseLectures(course.id),
+    getCourseLectures(course.id, course.weeks.length > 0),
     getNoteCourses(),
     getPyqCourses(),
     getCourseHubPaths(),
@@ -86,6 +86,8 @@ export default async function LectureCoursePage({
   const papers = pyqs.find((p) => p.id === course.id)
   const hub = course.courseId ? hubs.get(course.courseId) : undefined
   const title = lectureCourseTitle(course)
+  // Videos outside the week pages: the whole course when it has none.
+  const extrasTitle = course.weeks.length > 0 ? 'More lectures' : 'All lectures'
 
   return (
     <>
@@ -103,44 +105,49 @@ export default async function LectureCoursePage({
             <Badge>
               {course.videoCount} {course.videoCount === 1 ? 'lecture' : 'lectures'}
             </Badge>
-            <Badge>
-              {course.weeks.length} {course.weeks.length === 1 ? 'week' : 'weeks'}
-            </Badge>
+            {course.weeks.length > 0 ? (
+              <Badge>
+                {course.weeks.length} {course.weeks.length === 1 ? 'week' : 'weeks'}
+              </Badge>
+            ) : null}
           </>
         }
       />
       <div className="container-page space-y-14 py-8 sm:py-10">
-        <section aria-labelledby="weeks">
-          <SectionHeading id="weeks" title="Weeks" />
-          <ol className="border-t border-border">
-            {course.weeks.map(({ week, count }) => {
-              const inWeek = lectures.filter((l) => l.week === week)
-              return (
-                <li key={week} className="border-b border-border">
-                  <Link
-                    href={lectureWeekPath(course.slug, week)}
-                    className="group grid gap-x-8 gap-y-1 py-5 sm:grid-cols-[6.5rem_1fr]"
-                  >
-                    <span className="text-small font-semibold text-accent-ink">Week {week}</span>
-                    <span className="min-w-0">
-                      <span className="block text-h3 font-semibold text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
-                        {count} {count === 1 ? 'lecture' : 'lectures'}
+        {course.weeks.length > 0 ? (
+          <section aria-labelledby="weeks">
+            <SectionHeading id="weeks" title="Weeks" />
+            <ol className="border-t border-border">
+              {course.weeks.map(({ week, count }) => {
+                const inWeek = lectures.filter((l) => l.week === week)
+                return (
+                  <li key={week} className="border-b border-border">
+                    <Link
+                      href={lectureWeekPath(course.slug, week)}
+                      className="group grid gap-x-8 gap-y-1 py-5 sm:grid-cols-[6.5rem_1fr]"
+                    >
+                      <span className="text-small font-semibold text-accent-ink">Week {week}</span>
+                      <span className="min-w-0">
+                        <span className="block text-h3 font-semibold text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
+                          {count} {count === 1 ? 'lecture' : 'lectures'}
+                        </span>
+                        <span className="mt-1 line-clamp-2 block text-small text-muted">
+                          {inWeek.map((l) => l.title).join(' · ')}
+                        </span>
                       </span>
-                      <span className="mt-1 line-clamp-2 block text-small text-muted">
-                        {inWeek.map((l) => l.title).join(' · ')}
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ol>
-        </section>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ol>
+          </section>
+        ) : null}
 
         {extras.length > 0 ? (
-          <section aria-labelledby="introduction">
-            <SectionHeading id="introduction" title="Course introduction and extras" />
+          <section aria-labelledby="lectures">
+            <SectionHeading id="lectures" title={extrasTitle} />
             <LecturePlayer
+              listLabel={extrasTitle}
               lectures={extras.map((l) => ({
                 youtubeId: l.youtubeId,
                 title: l.title,
