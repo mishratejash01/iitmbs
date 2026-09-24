@@ -30,6 +30,7 @@ export const publicEnvInput = {
   NEXT_PUBLIC_SUPABASE_URL: blank(process.env.NEXT_PUBLIC_SUPABASE_URL),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: blank(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: blank(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME),
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: blank(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID),
 } as const
 
 export const clientEnv = {
@@ -37,6 +38,9 @@ export const clientEnv = {
   supabaseUrl: toOrigin(publicEnvInput.NEXT_PUBLIC_SUPABASE_URL) ?? '',
   supabaseAnonKey: publicEnvInput.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
   cloudinaryCloudName: publicEnvInput.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? null,
+  // Google sign-in button on the login page. Without it, sign-in falls back to
+  // the redirect flow, where Google names the Supabase domain.
+  googleClientId: publicEnvInput.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? null,
 } as const
 
 export type ClientEnv = typeof clientEnv
