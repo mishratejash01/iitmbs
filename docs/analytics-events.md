@@ -97,7 +97,7 @@ heartbeats add engaged time to the page view) or daily totals.
 | `feedback_helpful` | Answered "Was this helpful?".              | `helpful`, `has_comment`       | yes | browser |
 | `progress_toggle`  | A progress checkbox was ticked or cleared. | `done`, `item_id`, `item_type` | yes | browser |
 | `share_click`      | A share button was used.                   | `channel`                      | yes | browser |
-| `theme_toggle`     | Light/dark mode was changed.               | `theme`                        | yes | browser |
+| `theme_toggle`     | Retired: the site no longer has dark mode. | `theme`                        | yes | browser |
 
 ### Search
 
