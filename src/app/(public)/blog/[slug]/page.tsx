@@ -18,6 +18,7 @@ import { getPage } from '@/lib/data/pages'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { getPyqCourses } from '@/lib/data/question-papers'
 import { getNoteCourses } from '@/lib/data/student-notes'
 import { BLOG_PATH } from '@/lib/routes'
 import { blogPostingJsonLd, faqJsonLd } from '@/lib/seo/jsonld'
@@ -57,11 +58,12 @@ export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): P
 
 export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>) {
   const { slug } = await params
-  const [post, all, blogPage, noteCourses] = await Promise.all([
+  const [post, all, blogPage, noteCourses, pyqCourses] = await Promise.all([
     getBlogPost(slug),
     getBlogPostIndex(),
     getPage('blog'),
     getNoteCourses(),
+    getPyqCourses(),
   ])
   if (!post) return redirectOrNotFound(`${BLOG_PATH}/${slug}`)
 
@@ -69,6 +71,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
   const related = relatedPosts(post, all)
   const blogName = blogPage?.title.split(':')[0] ?? 'Blog'
   const studentNotes = noteCourses.find((n) => n.blogPostId === post.id)
+  const papers = pyqCourses.find((p) => p.blogPostId === post.id)
 
   return (
     <>
@@ -95,15 +98,25 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
       />
       <ArticleShell toc={toc.length >= 3 ? toc : []}>
         {content ? <div className="prose-content">{content}</div> : null}
-        {studentNotes ? (
-          <p className="mt-8 text-small">
-            <Link
-              href={studentNotes.path}
-              className="font-medium text-accent-ink underline underline-offset-2"
-            >
-              {studentNotes.noteCount} {studentNotes.shortName} handwritten and PDF notes by
-              students
-            </Link>
+        {papers || studentNotes ? (
+          <p className="mt-8 flex flex-col gap-2 text-small">
+            {papers ? (
+              <Link
+                href={papers.path}
+                className="font-medium text-accent-ink underline underline-offset-2"
+              >
+                {papers.paperCount} {papers.shortName} previous year question papers with answers
+              </Link>
+            ) : null}
+            {studentNotes ? (
+              <Link
+                href={studentNotes.path}
+                className="font-medium text-accent-ink underline underline-offset-2"
+              >
+                {studentNotes.noteCount} {studentNotes.shortName} handwritten and PDF notes by
+                students
+              </Link>
+            ) : null}
           </p>
         ) : null}
         <SourcesList sources={post.sources} />
