@@ -45,33 +45,14 @@
 }
 
 /*
- * Funnel steps: one orange hue, strongest first. Both ramps were validated as
- * ordinal ramps (monotone lightness, ≥ 0.06 steps, end step ≥ 2:1 on the card
- * surface) — light against #FFFFFF, dark against #201B18.
+ * Funnel steps: one teal hue, strongest first (monotone lightness, end step
+ * ≥ 2:1 on the #FFFFFF card surface).
  */
 :root {
-  --funnel-1: #753000;
-  --funnel-2: #964101;
-  --funnel-3: #b85207;
-  --funnel-4: #d36b2d;
-  --funnel-5: #ef8448;
-  --funnel-6: #ff9f6d;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --funnel-1: #fec29e;
-    --funnel-2: #ffa064;
-    --funnel-3: #e8894a;
-    --funnel-4: #d07333;
-    --funnel-5: #b95e17;
-    --funnel-6: #9e4c03;
-  }
-}
-:root[data-theme='dark'] {
-  --funnel-1: #fec29e;
-  --funnel-2: #ffa064;
-  --funnel-3: #e8894a;
-  --funnel-4: #d07333;
-  --funnel-5: #b95e17;
-  --funnel-6: #9e4c03;
+  --funnel-1: #0f3d3e;
+  --funnel-2: #1c5557;
+  --funnel-3: #2c6c6e;
+  --funnel-4: #438486;
+  --funnel-5: #5f9c9d;
+  --funnel-6: #7fb2b2;
 }
