@@ -20,9 +20,10 @@ import { getProgramPage, getPrograms } from '@/lib/data/programs'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { getPyqCourses } from '@/lib/data/question-papers'
 import { getNoteCourses } from '@/lib/data/student-notes'
 import { getProgramWeek } from '@/lib/data/weeks'
-import { parseWeekSegment } from '@/lib/routes'
+import { parseWeekSegment, pyqExamPath } from '@/lib/routes'
 import { courseJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { courseVars } from '@/lib/seo/vars'
@@ -103,11 +104,43 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
     return <ProgramWeekView data={data} />
   }
 
-  const [data, noteCourses] = await Promise.all([getCoursePage(program, course), getNoteCourses()])
+  const [data, noteCourses, pyqCourses] = await Promise.all([
+    getCoursePage(program, course),
+    getNoteCourses(),
+    getPyqCourses(),
+  ])
   if (!data) return redirectOrNotFound(`/${program}/${course}`)
   const { course: c } = data
   const intro = await renderMdx(c.introMdx)
   const studentNotes = noteCourses.find((n) => n.courseId === c.id)
+  const papers = pyqCourses.find((p) => p.courseId === c.id)
+  const qualifierPapers = papers?.examCounts.qualifier ?? 0
+  const studyLinks = [
+    ...(papers && qualifierPapers
+      ? [
+          {
+            path: pyqExamPath(papers.slug, 'qualifier'),
+            title: `${qualifierPapers} ${c.shortName} qualifier exam papers with answers`,
+          },
+        ]
+      : []),
+    ...(papers
+      ? [
+          {
+            path: papers.path,
+            title: `${papers.paperCount} ${c.shortName} previous year question papers with answers`,
+          },
+        ]
+      : []),
+    ...(studentNotes
+      ? [
+          {
+            path: studentNotes.path,
+            title: `${studentNotes.noteCount} ${c.shortName} handwritten and PDF notes by students`,
+          },
+        ]
+      : []),
+  ]
   const title = `IITM ${c.shortName}: ${c.name}`
   const formulaSheet = data.notes.find((n) => n.kind === 'formula_sheet')
   const examPrep = data.notes.find((n) => n.kind === 'exam_prep')
@@ -173,18 +206,10 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
           </section>
         ) : null}
 
-        {studentNotes ? (
-          <section aria-labelledby="student-notes" className="container-reading">
-            <SectionHeading id="student-notes" title="Student notes" />
-            <LinkList
-              label="Student notes"
-              items={[
-                {
-                  path: studentNotes.path,
-                  title: `${studentNotes.noteCount} ${c.shortName} handwritten and PDF notes by students`,
-                },
-              ]}
-            />
+        {studyLinks.length > 0 ? (
+          <section aria-labelledby="papers-and-notes" className="container-reading">
+            <SectionHeading id="papers-and-notes" title="Previous year papers and notes" />
+            <LinkList label="Previous year papers and notes" items={studyLinks} />
           </section>
         ) : null}
 
