@@ -107,9 +107,6 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
   const { course: c } = data
   const intro = await renderMdx(c.introMdx)
   const title = `IITM ${c.shortName}: ${c.name}`
-  const aliases = c.aliases
-    .filter((a) => !/^[a-z]{2,4}\d{4}$/i.test(a) && a.toLowerCase() !== c.shortName.toLowerCase())
-    .slice(0, 4)
   const formulaSheet = data.notes.find((n) => n.kind === 'formula_sheet')
   const examPrep = data.notes.find((n) => n.kind === 'exam_prep')
   const topicNotes = data.notes.filter((n) => n.kind === 'topic')
@@ -123,18 +120,7 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
           { name: c.program.shortName, path: c.program.path },
           { name: c.shortName, path: c.path },
         ]}
-        eyebrow={`IITM BS ${c.program.shortName} qualifier${c.code ? ` · ${c.code}` : ''}`}
         title={title}
-        description={
-          <>
-            {c.description}
-            {aliases.length > 0 ? (
-              <span className="mt-2 block text-small">
-                Also searched as {aliases.map((a) => `“${a}”`).join(', ')}.
-              </span>
-            ) : null}
-          </>
-        }
         meta={
           <>
             <Badge tone="accent">{c.weeksCount} qualifier weeks</Badge>
@@ -153,11 +139,7 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
         ) : null}
 
         <section aria-labelledby="weeks">
-          <SectionHeading
-            id="weeks"
-            title="Week by week"
-            description="Notes, graded assignment help and practice for each qualifier week."
-          />
+          <SectionHeading id="weeks" title="Week by week" />
           <WeekGrid weeks={data.weeks} />
         </section>
 
@@ -172,7 +154,6 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
                       {
                         path: formulaSheet.path,
                         title: `${c.shortName} formula sheet`,
-                        summary: formulaSheet.summary,
                       },
                     ]
                   : []),
@@ -181,11 +162,10 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
                       {
                         path: examPrep.path,
                         title: `${c.shortName} qualifier exam preparation`,
-                        summary: examPrep.summary,
                       },
                     ]
                   : []),
-                ...topicNotes.map((n) => ({ path: n.path, title: n.title, summary: n.summary })),
+                ...topicNotes.map((n) => ({ path: n.path, title: n.title })),
               ]}
             />
           </section>
