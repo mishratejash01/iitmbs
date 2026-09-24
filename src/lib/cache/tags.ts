@@ -21,6 +21,7 @@ export const CONTENT_TABLES = [
   'blog_posts',
   'note_courses',
   'question_papers',
+  'lecture_videos',
   'authors',
   'media',
   'site_settings',
