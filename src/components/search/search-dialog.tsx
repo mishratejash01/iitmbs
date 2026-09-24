@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, CornerDownLeft, FileText, Search, X } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 
@@ -162,7 +162,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
         if (event.target === dialogRef.current) onClose()
       }}
       aria-label="Search the site"
-      className="m-0 mx-auto mt-[8vh] w-[calc(100%-2rem)] max-w-xl rounded-card border border-border bg-card p-0 text-text shadow-card backdrop:bg-black/40 backdrop:backdrop-blur-[2px]"
+      className="m-0 mx-auto mt-[8vh] w-[calc(100%-2rem)] max-w-xl rounded-card border border-border bg-card p-0 text-text backdrop:bg-black/40 backdrop:backdrop-blur-[2px]"
     >
       <div className="flex items-center gap-2 border-b border-border px-3">
         <Search aria-hidden="true" className="size-5 shrink-0 text-muted" />
@@ -204,9 +204,8 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                       <button
                         type="button"
                         onClick={() => setQuery(q)}
-                        className="flex min-h-11 w-full items-center gap-2 rounded-control px-2 text-left text-small hover:bg-surface"
+                        className="flex min-h-11 w-full items-center rounded-control px-2 text-left text-small text-text hover:bg-surface"
                       >
-                        <Search aria-hidden="true" className="size-4 text-muted" />
                         {q}
                       </button>
                     </li>
@@ -215,7 +214,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
               </>
             ) : (
               <p className="px-1 text-small text-muted">
-                Search by course, week or topic — for example “stats 1 week 3”, “ct notes” or
+                Search by course, week or topic. For example “stats 1 week 3”, “ct notes” or
                 “eligibility”.
               </p>
             )}
@@ -231,20 +230,19 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                 onMouseEnter={() => setActive(index)}
                 onClick={() => go(item.path, index + 1)}
                 className={cn(
-                  'flex cursor-pointer gap-3 rounded-control px-3 py-2.5',
+                  'flex cursor-pointer items-baseline gap-3 rounded-control px-3 py-2.5',
                   index === active ? 'bg-surface' : '',
                 )}
               >
-                {item.kind === 'direct' ? (
-                  <ArrowRight
-                    aria-hidden="true"
-                    className="mt-0.5 size-4 shrink-0 text-accent-ink"
-                  />
-                ) : (
-                  <FileText aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted" />
-                )}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-small font-medium text-text">
+                  <p
+                    className={cn(
+                      'truncate text-small',
+                      item.kind === 'direct'
+                        ? 'font-semibold text-accent-ink'
+                        : 'font-medium text-text',
+                    )}
+                  >
                     {item.kind === 'direct' ? `Go to ${item.label}` : item.label}
                   </p>
                   {item.subtitle ? (
@@ -257,10 +255,9 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
                   ) : null}
                 </div>
                 {index === active ? (
-                  <CornerDownLeft
-                    aria-hidden="true"
-                    className="mt-0.5 size-4 shrink-0 text-muted"
-                  />
+                  <span aria-hidden="true" className="shrink-0 text-xs font-medium text-muted">
+                    Enter
+                  </span>
                 ) : null}
               </li>
             ))}
@@ -282,7 +279,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
               onClose()
               router.push(`/search?q=${encodeURIComponent(query.trim())}`)
             }}
-            className="text-small font-medium text-accent-ink hover:underline"
+            className="text-small font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
           >
             See all results
           </a>
