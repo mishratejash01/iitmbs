@@ -18,6 +18,7 @@ import { getPage } from '@/lib/data/pages'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { getNoteCourses } from '@/lib/data/student-notes'
 import { BLOG_PATH } from '@/lib/routes'
 import { blogPostingJsonLd, faqJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
@@ -56,16 +57,18 @@ export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): P
 
 export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>) {
   const { slug } = await params
-  const [post, all, blogPage] = await Promise.all([
+  const [post, all, blogPage, noteCourses] = await Promise.all([
     getBlogPost(slug),
     getBlogPostIndex(),
     getPage('blog'),
+    getNoteCourses(),
   ])
   if (!post) return redirectOrNotFound(`${BLOG_PATH}/${slug}`)
 
   const { content, toc } = await renderMdx(post.bodyMdx, { toc: true })
   const related = relatedPosts(post, all)
   const blogName = blogPage?.title.split(':')[0] ?? 'Blog'
+  const studentNotes = noteCourses.find((n) => n.blogPostId === post.id)
 
   return (
     <>
@@ -92,6 +95,16 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
       />
       <ArticleShell toc={toc.length >= 3 ? toc : []}>
         {content ? <div className="prose-content">{content}</div> : null}
+        {studentNotes ? (
+          <p className="mt-8 text-small">
+            <Link
+              href={studentNotes.path}
+              className="font-medium text-accent-ink underline underline-offset-2"
+            >
+              {studentNotes.noteCount} {studentNotes.shortName} notes shared by students
+            </Link>
+          </p>
+        ) : null}
         <SourcesList sources={post.sources} />
         {related.length > 0 ? (
           <section aria-labelledby="read-next" className="mt-10" data-print="hide">
