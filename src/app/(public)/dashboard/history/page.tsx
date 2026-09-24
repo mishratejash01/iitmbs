@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
+import { metaRowClasses } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { getSiteSettings } from '@/lib/data/settings'
@@ -47,7 +48,10 @@ export default async function HistoryPage() {
           description={
             <>
               History is recorded only when detailed analytics are on.{' '}
-              <Link href="/dashboard/settings" className="text-accent-ink underline">
+              <Link
+                href="/dashboard/settings"
+                className="text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+              >
                 Change in settings
               </Link>
               .
@@ -55,14 +59,18 @@ export default async function HistoryPage() {
           }
         />
       ) : (
-        <ul className="mt-6 divide-y divide-border rounded-card border border-border bg-card">
+        <ul className="mt-6 border-t border-border">
           {history.map((item) => (
-            <li key={item.path}>
-              <Link href={item.path} className="block px-4 py-3 hover:bg-surface">
-                <span className="block font-medium text-text">{item.title}</span>
-                <span className="block text-xs text-muted">
-                  {formatDateTime(item.last_visited_at)} · {item.visit_count} visit
-                  {item.visit_count === 1 ? '' : 's'}
+            <li key={item.path} className="border-b border-border">
+              <Link href={item.path} className="group block py-4">
+                <span className="block font-medium text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
+                  {item.title}
+                </span>
+                <span className={`mt-0.5 text-xs text-muted ${metaRowClasses}`}>
+                  <span>{formatDateTime(item.last_visited_at)}</span>
+                  <span>
+                    {item.visit_count} visit{item.visit_count === 1 ? '' : 's'}
+                  </span>
                 </span>
               </Link>
             </li>
