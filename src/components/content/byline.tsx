@@ -1,7 +1,7 @@
 import type { AuthorRef } from '@/lib/data/types'
 import { formatDate } from '@/lib/utils/dates'
 
-/** Author, reviewer and freshness — visible E-E-A-T signals. */
+/** Author, reviewer and freshness: visible E-E-A-T signals. */
 export function Byline({
   author,
   reviewer,
@@ -41,12 +41,12 @@ export function Byline({
   }
   if (parts.length === 0) return null
   return (
-    <p className="flex flex-col gap-y-1 text-small text-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2">
+    <p className="flex flex-col gap-y-1 text-small text-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2.5">
       {parts.map((part, index) => (
-        <span key={index} className="flex items-center gap-2">
+        <span key={index} className="flex items-center gap-2.5">
           {/* On phones each part gets its own line, so no separator starts a line. */}
           {index > 0 ? (
-            <span aria-hidden="true" className="hidden sm:inline">
+            <span aria-hidden="true" className="hidden text-border-strong sm:inline">
               ·
             </span>
           ) : null}
