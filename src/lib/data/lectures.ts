@@ -3,7 +3,7 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 
 import { tableTag } from '@/lib/cache/tags'
-import { lectureSortKey } from '@/lib/lectures/videos'
+import { orderLectures } from '@/lib/lectures/videos'
 import { lectureCoursePath } from '@/lib/routes'
 import { getPublicClient } from '@/lib/supabase/public'
 
@@ -18,9 +18,15 @@ export type LectureCourse = {
   name: string
   shortName: string
   level: NoteLevel
+  /** The programme's slug, e.g. "data-science". */
+  program: string
   courseId: string | null
   videoCount: number
-  /** Weeks with at least one lecture, in order, with how many each has. */
+  /**
+   * Weeks with at least one lecture, in order, with how many each has. Empty
+   * when fewer than half the lectures name their week: those courses show one
+   * list instead of week pages (private.live_lecture_courses uses the same rule).
+   */
   weeks: Array<{ week: number; count: number }>
   updatedAt: string
 }
@@ -66,7 +72,7 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
   const [courses, lectures] = await Promise.all([
     getPublicClient()
       .from('note_courses')
-      .select('id, code, slug, name, short_name, level, course_id, updated_at')
+      .select('id, code, slug, name, short_name, level, course_id, updated_at, programs(slug)')
       .order('sort_order')
       .order('name'),
     allLectureRows(),
@@ -93,6 +99,7 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
   return courses.data.flatMap((row) => {
     const entry = stats.get(row.id)
     if (!entry) return []
+    const weekly = [...entry.weeks.values()].reduce((sum, count) => sum + count, 0)
     return [
       {
         id: row.id,
@@ -102,19 +109,26 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
         name: row.name,
         shortName: row.short_name,
         level: row.level as NoteLevel,
+        program: row.programs?.slug ?? '',
         courseId: row.course_id,
         videoCount: entry.count,
-        weeks: [...entry.weeks.entries()]
-          .sort(([a], [b]) => a - b)
-          .map(([week, count]) => ({ week, count })),
+        weeks:
+          weekly * 2 >= entry.count
+            ? [...entry.weeks.entries()]
+                .sort(([a], [b]) => a - b)
+                .map(([week, count]) => ({ week, count }))
+            : [],
         updatedAt: entry.updated > row.updated_at ? entry.updated : row.updated_at,
       },
     ]
   })
 }
 
-/** One course's lectures in teaching order: by week, then lecture number. */
-export async function getCourseLectures(noteCourseId: string): Promise<Lecture[]> {
+/**
+ * One course's lectures in teaching order (see orderLectures). For a course
+ * without week pages the weeks are dropped, so the lectures form one list.
+ */
+export async function getCourseLectures(noteCourseId: string, weekly: boolean): Promise<Lecture[]> {
   'use cache'
   cacheLife(await contentCacheProfile())
   cacheTag(tableTag('lecture_videos'))
@@ -130,21 +144,13 @@ export async function getCourseLectures(noteCourseId: string): Promise<Lecture[]
     console.error('[data/lectures] course lectures failed:', error.message)
     return []
   }
-  return data
-    .sort(
-      (a, b) =>
-        (a.week ?? 99) - (b.week ?? 99) ||
-        lectureSortKey(a.lecture) - lectureSortKey(b.lecture) ||
-        a.sort_order - b.sort_order ||
-        a.position - b.position,
-    )
-    .map((row) => ({
-      id: row.id,
-      youtubeId: row.youtube_id,
-      title: row.title,
-      week: row.week,
-      lecture: row.lecture,
-      durationSeconds: row.duration_seconds,
-      uploadedAt: row.uploaded_at,
-    }))
+  return orderLectures(data.map((row) => (weekly ? row : { ...row, week: null }))).map((row) => ({
+    id: row.id,
+    youtubeId: row.youtube_id,
+    title: row.title,
+    week: row.week,
+    lecture: row.lecture,
+    durationSeconds: row.duration_seconds,
+    uploadedAt: row.uploaded_at,
+  }))
 }
