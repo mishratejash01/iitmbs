@@ -6,7 +6,6 @@ import { PostGrid } from '@/components/blog/post-card'
 import { cmsMetadata } from '@/components/content/cms-route'
 import { LinkList } from '@/components/content/link-list'
 import { PageHeader } from '@/components/layout/page-header'
-import { renderMdx } from '@/components/mdx/render'
 import { SectionHeading } from '@/components/ui/section-heading'
 import { postsInCategory } from '@/lib/blog/helpers'
 import { getBlogCategories, getBlogPostIndex } from '@/lib/data/blog'
@@ -43,7 +42,6 @@ export default async function BlogIndexPage() {
   ])
   if (!page) return redirectOrNotFound(BLOG_PATH)
 
-  const { content } = await renderMdx(page.bodyMdx)
   const featured = posts.filter((post) => post.isFeatured).slice(0, FEATURED_LIMIT)
   const sections = categories
     .map((category) => ({ category, posts: postsInCategory(posts, category.id) }))
@@ -55,11 +53,8 @@ export default async function BlogIndexPage() {
       <PageHeader
         crumbs={[{ name: page.title.split(':')[0] ?? page.title, path: BLOG_PATH }]}
         title={page.title}
-        description={page.summary}
       />
       <div className="container-page py-8 sm:py-10">
-        {content ? <div className="prose-content container-reading mb-8">{content}</div> : null}
-
         {sections.length > 1 ? (
           <nav aria-label="Blog topics" className="mb-10" data-print="hide">
             <ul className="flex flex-wrap gap-2">
@@ -96,7 +91,6 @@ export default async function BlogIndexPage() {
               <SectionHeading
                 id={`${category.slug}-heading`}
                 title={category.name}
-                description={category.description}
                 action={{ href: category.path, label: `View all ${inCategory.length}` }}
               />
               <LinkList
