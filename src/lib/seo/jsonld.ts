@@ -1,5 +1,6 @@
 import type {
   BlogPosting,
+  CollectionPage,
   BreadcrumbList,
   Course,
   FAQPage,
@@ -186,6 +187,42 @@ export function blogPostingJsonLd(input: {
     publisher: { '@id': orgId() } as Organization,
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
     ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+  }
+}
+
+/** A page that collects links to notes, e.g. every note for one course. */
+export function notesCollectionJsonLd(input: {
+  name: string
+  description: string
+  path: string
+  course?: { name: string; code: string } | null
+  items: Array<{ name: string; author?: string | null }>
+}): WithContext<CollectionPage> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: input.name,
+    description: truncate(input.description, 300),
+    url: url(input.path),
+    inLanguage: 'en-IN',
+    isAccessibleForFree: true,
+    publisher: { '@id': orgId() } as Organization,
+    ...(input.course
+      ? { about: { '@type': 'Course', name: input.course.name, courseCode: input.course.code } }
+      : {}),
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: input.items.length,
+      itemListElement: input.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'CreativeWork',
+          name: item.name,
+          ...(item.author ? { author: { '@type': 'Person', name: item.author } } : {}),
+        },
+      })),
+    },
   }
 }
 
