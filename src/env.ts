@@ -39,6 +39,9 @@ const schema = z.object({
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: optional(
     z.string().regex(/^[\w-]+\.apps\.googleusercontent\.com$/, 'must be a Google OAuth client ID'),
   ),
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: optional(
+    z.string().regex(/^G-[A-Z0-9]{4,20}$/, 'must be a GA4 measurement ID (G-…)'),
+  ),
 
   // Server-only
   SUPABASE_SERVICE_ROLE_KEY: optional(z.string().min(20, 'looks truncated')),
