@@ -4,7 +4,6 @@ import { PageContext } from '@/components/analytics/page-context'
 import { PostGrid } from '@/components/blog/post-card'
 import { LinkList } from '@/components/content/link-list'
 import { PageHeader } from '@/components/layout/page-header'
-import { renderMdx } from '@/components/mdx/render'
 import { postsInCategory } from '@/lib/blog/helpers'
 import { getBlogCategories, getBlogPostIndex } from '@/lib/data/blog'
 import { getPage } from '@/lib/data/pages'
@@ -61,10 +60,9 @@ export default async function BlogCategoryPage({ params }: PageProps<'/blog/cate
   if (!category) return redirectOrNotFound(blogCategoryPath(slug))
 
   const posts = postsInCategory(all, category.id)
-  const { content } = await renderMdx(category.introMdx)
   const others = categories
     .filter((c) => c.id !== category.id && all.some((post) => post.category.id === c.id))
-    .map((c) => ({ path: c.path, title: c.name, summary: c.description }))
+    .map((c) => ({ path: c.path, title: c.name }))
   const blogName = blogPage?.title.split(':')[0] ?? 'Blog'
 
   return (
@@ -76,7 +74,6 @@ export default async function BlogCategoryPage({ params }: PageProps<'/blog/cate
           { name: category.name, path: category.path },
         ]}
         title={category.name}
-        description={category.description}
         meta={
           <p className="text-small text-muted">
             {posts.length} {posts.length === 1 ? 'post' : 'posts'}
@@ -84,8 +81,7 @@ export default async function BlogCategoryPage({ params }: PageProps<'/blog/cate
         }
       />
       <div className="container-page py-8 sm:py-10">
-        {content ? <div className="prose-content container-reading mb-8">{content}</div> : null}
-        <PostGrid posts={posts} label={`Posts in ${category.name}`} showCategory={false} />
+        <PostGrid posts={posts} label={`Posts in ${category.name}`} />
         {others.length > 0 ? (
           <section aria-labelledby="other-topics" className="container-reading mt-12">
             <h2 id="other-topics" className="mb-3 text-h3 font-semibold">
