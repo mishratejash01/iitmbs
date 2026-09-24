@@ -10,7 +10,7 @@ import { ConsentBanner } from '@/components/consent/consent-banner'
 import { ClientEnhancements } from '@/components/enhancements/client-enhancements'
 import { SkipLink } from '@/components/layout/skip-link'
 import { ServiceWorkerRegister } from '@/components/pwa/service-worker'
-import { env } from '@/env'
+import { env, features } from '@/env'
 import { getSiteSettings } from '@/lib/data/settings'
 import { buildThemeCss, resolveTokens } from '@/lib/theme/tokens'
 
@@ -81,7 +81,7 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
         <SkipLink />
         {children}
         <Analytics heartbeatSeconds={settings.analytics.heartbeat_seconds} />
-        <VercelAnalytics />
+        {features.vercelAnalytics ? <VercelAnalytics /> : null}
         <GoogleAnalytics />
         <ConsentBanner />
         <ClientEnhancements />
