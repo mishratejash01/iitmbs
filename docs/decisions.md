@@ -140,7 +140,8 @@ required pair that fails WCAG AA. Chart colours (for example the funnel ramp) we
 
 **Update.** The site is light only and uses three colours: deep teal (text, buttons, the hero and footer bands), soft
 peach (panels and page headers) and warm white. Dark mode was removed. Decorative icons were removed too: the only
-icons left are controls (search, menu, close, dropdown carets, video play).
+icons left are controls (search, menu, close, dropdown carets, video play). Blog articles set their text in Source
+Serif 4 (loaded only where used) with Poppins headings, for a book-like read.
 
 ## 14. Hosting next to the database
 
