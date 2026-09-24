@@ -181,7 +181,7 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
               items={[
                 {
                   path: studentNotes.path,
-                  title: `${studentNotes.noteCount} ${c.shortName} notes shared by students`,
+                  title: `${studentNotes.noteCount} ${c.shortName} handwritten and PDF notes by students`,
                 },
               ]}
             />
