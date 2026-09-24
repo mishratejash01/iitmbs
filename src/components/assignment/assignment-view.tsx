@@ -1,4 +1,3 @@
-import { BookOpen, CalendarClock, Clock, FileText, ListChecks } from 'lucide-react'
 import Link from 'next/link'
 
 import { PageContext } from '@/components/analytics/page-context'
@@ -12,7 +11,7 @@ import { ShareButtons } from '@/components/content/share-buttons'
 import { PageHeader } from '@/components/layout/page-header'
 import { renderMdx } from '@/components/mdx/render'
 import { JsonLd } from '@/components/seo/json-ld'
-import { Badge } from '@/components/ui/badge'
+import { Badge, metaRowClasses } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import type { AssignmentPageData } from '@/lib/data/assignments'
 import { assignmentPath, formatTerm, weekNotesPath } from '@/lib/routes'
@@ -92,26 +91,12 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
         meta={
           <>
             <Badge tone="accent">{formatTerm(assignment.term)} term</Badge>
-            {assignment.dueAt ? (
-              <Badge>
-                <CalendarClock aria-hidden="true" className="size-3.5" />
-                Due {formatDateTime(assignment.dueAt)}
-              </Badge>
-            ) : null}
-            <Badge tone={released ? 'success' : 'warning'}>
+            {assignment.dueAt ? <Badge>Due {formatDateTime(assignment.dueAt)}</Badge> : null}
+            <Badge tone={released ? 'success' : 'neutral'}>
               {released ? 'Walkthroughs released' : 'Hints only until the deadline'}
             </Badge>
-            {questions.length > 0 ? (
-              <Badge>
-                <ListChecks aria-hidden="true" className="size-3.5" />
-                {questions.length} questions
-              </Badge>
-            ) : null}
-            {assignment.estimatedMinutes ? (
-              <Badge>
-                <Clock aria-hidden="true" className="size-3.5" />~{assignment.estimatedMinutes} min
-              </Badge>
-            ) : null}
+            {questions.length > 0 ? <Badge>{questions.length} questions</Badge> : null}
+            {assignment.estimatedMinutes ? <Badge>~{assignment.estimatedMinutes} min</Badge> : null}
           </>
         }
         actions={<BookmarkButton title={title} entityType="assignment" entityId={assignment.id} />}
@@ -137,13 +122,9 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
               <h2 id="concepts" className="text-h3 font-semibold">
                 Concepts tested
               </h2>
-              <ul className="mt-3 flex flex-wrap gap-2">
+              <ul className={`mt-3 text-body text-text ${metaRowClasses}`}>
                 {assignment.concepts.map((concept) => (
-                  <li key={concept}>
-                    <Badge tone="accent" className="text-small">
-                      {concept}
-                    </Badge>
-                  </li>
+                  <li key={concept}>{concept}</li>
                 ))}
               </ul>
               {data.weekNote ? (
@@ -151,7 +132,7 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
                   Revise them in the{' '}
                   <Link
                     href={weekNotesPath(course.program.slug, course.slug, week.number)}
-                    className="font-medium text-accent-ink underline"
+                    className="font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
                   >
                     week {week.number} notes
                   </Link>
@@ -174,9 +155,8 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
             ) : (
               <EmptyState
                 className="mt-4"
-                icon={<FileText className="size-5" />}
                 title="Questions are being added"
-                description="Check back soon — meanwhile the notes for this week cover every concept tested."
+                description="Check back soon. Meanwhile the notes for this week cover every concept tested."
               />
             )}
           </section>
@@ -192,8 +172,8 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
 
           {related.length > 0 ? (
             <section aria-labelledby="related">
-              <h2 id="related" className="mb-3 flex items-center gap-2 text-h3 font-semibold">
-                <BookOpen aria-hidden="true" className="size-5 text-accent-ink" /> Study with
+              <h2 id="related" className="mb-3 text-h3 font-semibold">
+                Study with
               </h2>
               <LinkList items={related} label="Related study material" />
             </section>
@@ -210,7 +190,7 @@ export async function AssignmentView({ data }: { data: AssignmentPageData }) {
                     ? [
                         {
                           path: a.path,
-                          title: `${kindLabel} — ${formatTerm(a.term)}`,
+                          title: `${kindLabel}, ${formatTerm(a.term)}`,
                         },
                       ]
                     : [],
