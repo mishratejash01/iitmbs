@@ -19,6 +19,7 @@ import { getProgramPage, getPrograms } from '@/lib/data/programs'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { getLectureCourses } from '@/lib/data/lectures'
 import { getPyqCourses } from '@/lib/data/question-papers'
 import { getNoteCourses } from '@/lib/data/student-notes'
 import { getProgramWeek } from '@/lib/data/weeks'
@@ -103,16 +104,18 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
     return <ProgramWeekView data={data} />
   }
 
-  const [data, noteCourses, pyqCourses] = await Promise.all([
+  const [data, noteCourses, pyqCourses, lectureCourses] = await Promise.all([
     getCoursePage(program, course),
     getNoteCourses(),
     getPyqCourses(),
+    getLectureCourses(),
   ])
   if (!data) return redirectOrNotFound(`/${program}/${course}`)
   const { course: c } = data
   const intro = await renderMdx(c.introMdx)
   const studentNotes = noteCourses.find((n) => n.courseId === c.id)
   const papers = pyqCourses.find((p) => p.courseId === c.id)
+  const lectures = lectureCourses.find((l) => l.courseId === c.id)
   const qualifierPapers = papers?.examCounts.qualifier ?? 0
   const studyLinks = [
     ...(papers && qualifierPapers
@@ -128,6 +131,14 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
           {
             path: papers.path,
             title: `${papers.paperCount} ${c.shortName} previous year question papers with answers`,
+          },
+        ]
+      : []),
+    ...(lectures
+      ? [
+          {
+            path: lectures.path,
+            title: `${lectures.videoCount} IIT Madras ${c.shortName} lecture videos, week by week`,
           },
         ]
       : []),
@@ -207,8 +218,8 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
 
         {studyLinks.length > 0 ? (
           <section aria-labelledby="papers-and-notes" className="container-reading">
-            <SectionHeading id="papers-and-notes" title="Previous year papers and notes" />
-            <LinkList label="Previous year papers and notes" items={studyLinks} />
+            <SectionHeading id="papers-and-notes" title="Lectures, papers and notes" />
+            <LinkList label="Lectures, papers and notes" items={studyLinks} />
           </section>
         ) : null}
 
