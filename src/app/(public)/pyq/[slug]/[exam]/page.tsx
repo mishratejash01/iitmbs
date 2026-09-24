@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/layout/page-header'
 import { PaperList } from '@/components/pyq/paper-list'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Badge } from '@/components/ui/badge'
+import { TabNav } from '@/components/ui/tab-nav'
 import { getPage } from '@/lib/data/pages'
 import { getCoursePapers, getPyqCourses, type PyqCourse } from '@/lib/data/question-papers'
 import { redirectOrNotFound } from '@/lib/data/redirects'
@@ -103,8 +104,6 @@ export default async function PyqExamPage({ params }: PageProps<'/pyq/[slug]/[ex
   const span = paperSpan(papers)
   const title = pageTitle(course, found.exam)
   const notesPage = notes.find((note) => note.id === course.id)
-  const chip =
-    'inline-flex min-h-10 items-center rounded-full border px-3.5 text-small hover:border-accent'
 
   return (
     <>
@@ -128,33 +127,17 @@ export default async function PyqExamPage({ params }: PageProps<'/pyq/[slug]/[ex
       />
       <div className="container-page py-8 sm:py-10">
         <div className="container-reading space-y-8">
-          <nav aria-label={`${course.shortName} papers by exam`} data-print="hide">
-            <ul className="flex flex-wrap gap-2">
-              <li>
-                <Link
-                  href={pyqCoursePath(course.slug)}
-                  className={`${chip} border-border bg-card text-text`}
-                >
-                  All {course.shortName} papers ({course.paperCount})
-                </Link>
-              </li>
-              {course.exams.map((other) => (
-                <li key={other}>
-                  <Link
-                    href={pyqExamPath(course.slug, other)}
-                    aria-current={other === found.exam ? 'page' : undefined}
-                    className={`${chip} ${
-                      other === found.exam
-                        ? 'border-accent bg-accent-soft text-accent-ink'
-                        : 'border-border bg-card text-text'
-                    }`}
-                  >
-                    {PYQ_EXAM_LABEL[other]}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <TabNav
+            label={`${course.shortName} papers by exam`}
+            items={[
+              { href: pyqCoursePath(course.slug), label: `All (${course.paperCount})` },
+              ...course.exams.map((other) => ({
+                href: pyqExamPath(course.slug, other),
+                label: `${PYQ_EXAM_LABEL[other]} (${course.examCounts[other] ?? 0})`,
+                current: other === found.exam,
+              })),
+            ]}
+          />
 
           <PaperList
             papers={papers}
