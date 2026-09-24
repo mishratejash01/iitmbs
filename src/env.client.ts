@@ -31,6 +31,7 @@ export const publicEnvInput = {
   NEXT_PUBLIC_SUPABASE_ANON_KEY: blank(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: blank(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME),
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: blank(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID),
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: blank(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),
 } as const
 
 export const clientEnv = {
@@ -41,6 +42,9 @@ export const clientEnv = {
   // Google sign-in button on the login page. Without it, sign-in falls back to
   // the redirect flow, where Google names the Supabase domain.
   googleClientId: publicEnvInput.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? null,
+  // Google Analytics 4 (G-…). Unset outside production so tests and previews
+  // stay out of the reports.
+  gaMeasurementId: publicEnvInput.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? null,
 } as const
 
 export type ClientEnv = typeof clientEnv
