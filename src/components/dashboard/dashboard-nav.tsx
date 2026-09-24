@@ -27,7 +27,7 @@ export function DashboardNav() {
                 className={cn(
                   '-mb-px flex min-h-11 items-center border-b-2 px-3 text-small font-medium whitespace-nowrap',
                   active
-                    ? 'border-accent text-text'
+                    ? 'border-accent-strong text-text'
                     : 'border-transparent text-muted hover:text-text',
                 )}
               >
