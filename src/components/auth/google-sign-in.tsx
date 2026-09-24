@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import Script from 'next/script'
+import { useEffect, useRef, useState } from 'react'
 
+import { clientEnv } from '@/env.client'
 import { track } from '@/lib/analytics/client'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 
@@ -25,15 +27,149 @@ function GoogleMark() {
   )
 }
 
-/** Starts the Google OAuth (PKCE) flow; Supabase returns to /auth/callback. */
+type GoogleIdentity = {
+  initialize(config: {
+    client_id: string
+    nonce: string
+    ux_mode: 'popup'
+    context: 'signin'
+    callback: (response: { credential: string }) => void
+  }): void
+  renderButton(
+    parent: HTMLElement,
+    options: {
+      type: 'standard'
+      theme: 'outline' | 'filled_black'
+      size: 'large'
+      text: 'continue_with'
+      shape: 'rectangular'
+      logo_alignment: 'center'
+      width: number
+      click_listener: () => void
+    },
+  ): void
+}
+
+type WindowWithGoogle = Window & { google?: { accounts: { id: GoogleIdentity } } }
+
+/** How long Google's button may take to appear before the redirect flow takes over. */
+const BUTTON_TIMEOUT_MS = 5000
+
+const trackClick = () =>
+  track('login_click', { provider: 'google', source: 'login_page' }, { immediate: true })
+
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+function prefersDark(): boolean {
+  const theme = document.documentElement.dataset.theme
+  return (
+    theme === 'dark' || (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)
+  )
+}
+
+/**
+ * Google sign-in. With a client ID this shows Google's own button, so Google
+ * names this site (not the Supabase domain) when asking which account to use.
+ * If Google's script or button does not load, it falls back to the redirect
+ * flow.
+ */
 export function GoogleSignIn({ next }: { next: string }) {
+  const clientId = clientEnv.googleClientId
+  const [unavailable, setUnavailable] = useState(false)
+  if (!clientId || unavailable) return <RedirectSignIn next={next} />
+  return <GoogleButton clientId={clientId} next={next} onUnavailable={() => setUnavailable(true)} />
+}
+
+/**
+ * Renders Google's button. The ID token it returns is posted with its nonce
+ * to /auth/google, which starts the Supabase session. Google gets only the
+ * nonce's SHA-256, so a stolen token cannot be replayed without it.
+ */
+function GoogleButton({
+  clientId,
+  next,
+  onUnavailable,
+}: {
+  clientId: string
+  next: string
+  onUnavailable: () => void
+}) {
+  const slot = useRef<HTMLDivElement>(null)
+  const form = useRef<HTMLFormElement>(null)
+  const [signIn, setSignIn] = useState<{ credential: string; nonce: string } | null>(null)
+
+  useEffect(() => {
+    if (signIn) form.current?.submit()
+  }, [signIn])
+
+  const render = async () => {
+    const google = (window as WindowWithGoogle).google?.accounts.id
+    const parent = slot.current
+    if (!google || !parent) return onUnavailable()
+    try {
+      const nonce = crypto.randomUUID()
+      google.initialize({
+        client_id: clientId,
+        nonce: await sha256Hex(nonce),
+        ux_mode: 'popup',
+        context: 'signin',
+        callback: ({ credential }) => setSignIn({ credential, nonce }),
+      })
+      google.renderButton(parent, {
+        type: 'standard',
+        theme: prefersDark() ? 'filled_black' : 'outline',
+        size: 'large',
+        text: 'continue_with',
+        shape: 'rectangular',
+        logo_alignment: 'center',
+        width: Math.min(400, Math.round(parent.clientWidth)),
+        click_listener: trackClick,
+      })
+      // When this origin is not allowed for the client, Google draws an empty
+      // 0×0 frame and reports it only in the console.
+      window.setTimeout(() => {
+        if (!parent.querySelector('iframe')?.offsetHeight) onUnavailable()
+      }, BUTTON_TIMEOUT_MS)
+    } catch (error) {
+      console.error('[auth] Google button failed:', error)
+      onUnavailable()
+    }
+  }
+
+  return (
+    <div>
+      <Script
+        src="https://accounts.google.com/gsi/client"
+        onReady={() => void render()}
+        onError={onUnavailable}
+      />
+      <div ref={slot} className="flex min-h-11 justify-center" />
+      {signIn ? (
+        <p role="status" className="mt-3 text-center text-muted">
+          Signing you in…
+        </p>
+      ) : null}
+      <form ref={form} method="post" action="/auth/google" hidden>
+        <input type="hidden" name="credential" value={signIn?.credential ?? ''} />
+        <input type="hidden" name="nonce" value={signIn?.nonce ?? ''} />
+        <input type="hidden" name="next" value={next} />
+      </form>
+    </div>
+  )
+}
+
+/** Redirect (PKCE) flow; Supabase returns to /auth/callback. */
+function RedirectSignIn({ next }: { next: string }) {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const signIn = async () => {
     setPending(true)
     setError(null)
-    track('login_click', { provider: 'google', source: 'login_page' }, { immediate: true })
+    trackClick()
     const { error: oauthError } = await getSupabaseBrowserClient().auth.signInWithOAuth({
       provider: 'google',
       options: {
