@@ -141,7 +141,17 @@ against both surfaces.
 **Why.** Every dynamic request talks to Postgres; putting the function next to it saves 150–250 ms per round trip.
 Static pages come from the global edge regardless.
 
-## 15. Open question: overlap with the team's other site
+## 15. A calibrated performance budget in CI
+
+**Decision.** CI fails when the median mobile Lighthouse performance score of 5 runs drops below 0.85. Blocking time
+and LCP stay as warnings.
+
+**Why.** GitHub's Linux runners report 3 to 4 times more main-thread work than other machines for the same build. On
+24 September 2026 the same commit scored 0.83 to 0.93 in CI, 0.96 to 0.97 locally in the same Playwright Chromium, and
+0.99 on production. A 0.9 bar failed on pages that had not changed. 0.85 still catches real regressions; check
+production with Lighthouse before and after large front-end changes.
+
+## 16. Open question: overlap with the team's other site
 
 The team's existing site and YouTube channel already target past-paper and one-shot queries. Decide which property
 owns those keyword clusters (record it in **Admin → Keyword notes**) so the two sites do not compete for the same
