@@ -36,7 +36,7 @@ export function ScoreCalculator({
   if (!program || !category || !result) return null
 
   return (
-    <div className="my-6 rounded-card border border-border bg-card p-4 sm:p-5">
+    <div className="my-6 rounded-card bg-surface p-5 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row">
         {programs.length > 1 ? (
           <Select
