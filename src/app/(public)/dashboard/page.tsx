@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { DeadlineWidget } from '@/components/content/deadline-widget'
 import { LinkList } from '@/components/content/link-list'
-import { ButtonLink } from '@/components/ui/button'
+import { metaRowClasses } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { getCurrentProfile } from '@/lib/auth/session'
 import { getProgramPage, getPrograms } from '@/lib/data/programs'
@@ -48,14 +48,20 @@ export default async function DashboardPage() {
     <div className="space-y-10">
       <header>
         <h1 className="text-h2 font-semibold text-text">
-          Hi{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''} 👋
+          Hi{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}
         </h1>
-        <p className="mt-1 text-muted">
-          {program ? `${program.shortName} qualifier` : 'No programme chosen yet'}
-          {profile?.current_term ? ` · ${formatTerm(profile.current_term)} term` : ''} ·{' '}
-          <Link href="/dashboard/settings" className="text-accent-ink underline">
-            change
-          </Link>
+        <p className={`mt-2 text-muted ${metaRowClasses}`}>
+          <span>{program ? `${program.shortName} qualifier` : 'No programme chosen yet'}</span>
+          {profile?.current_term ? <span>{formatTerm(profile.current_term)} term</span> : null}
+          {/* Wrapped so the separator dot sits outside the underlined link. */}
+          <span>
+            <Link
+              href="/dashboard/settings"
+              className="text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+            >
+              change
+            </Link>
+          </span>
         </p>
       </header>
 
@@ -63,7 +69,7 @@ export default async function DashboardPage() {
         <div className="space-y-8 lg:col-span-3">
           {programPage ? (
             <section aria-labelledby="my-courses">
-              <h2 id="my-courses" className="mb-3 text-h3 font-semibold">
+              <h2 id="my-courses" className="mb-3 text-h3 font-semibold text-text">
                 Your courses
               </h2>
               <LinkList
@@ -77,7 +83,7 @@ export default async function DashboardPage() {
           ) : null}
 
           <section aria-labelledby="continue">
-            <h2 id="continue" className="mb-3 text-h3 font-semibold">
+            <h2 id="continue" className="mb-3 text-h3 font-semibold text-text">
               Continue reading
             </h2>
             {(history.data ?? []).length > 0 ? (
@@ -96,10 +102,7 @@ export default async function DashboardPage() {
 
         <div className="space-y-6 lg:col-span-2">
           <DeadlineWidget deadlines={myDeadlines} />
-          <section
-            aria-labelledby="saved"
-            className="rounded-card border border-border bg-card p-4"
-          >
+          <section aria-labelledby="saved" className="rounded-card bg-surface p-5">
             <h2 id="saved" className="font-semibold text-text">
               Bookmarks
             </h2>
@@ -121,14 +124,12 @@ export default async function DashboardPage() {
                 Use the Bookmark button on any page to save it here.
               </p>
             )}
-            <ButtonLink
+            <Link
               href="/dashboard/bookmarks"
-              variant="ghost"
-              size="sm"
-              className="mt-2 -ml-3"
+              className="mt-2 inline-flex min-h-11 items-center text-small font-semibold text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
             >
               All bookmarks
-            </ButtonLink>
+            </Link>
           </section>
           <p className="text-small text-muted">
             You have ticked off{' '}
