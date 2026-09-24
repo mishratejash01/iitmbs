@@ -25,8 +25,9 @@ const redirectAllTo = originOf(process.env.REDIRECT_ALL_TO)
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
-  "style-src 'self' 'unsafe-inline'",
+  // accounts.google.com/gsi: Google's sign-in button on /login.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://accounts.google.com/gsi/client`,
+  "style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style",
   "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://i.ytimg.com",
   "font-src 'self' data:",
   [
@@ -34,11 +35,12 @@ const contentSecurityPolicy = [
     supabaseOrigin,
     supabaseOrigin?.replace(/^http/, 'ws'),
     'https://api.cloudinary.com',
+    'https://accounts.google.com/gsi/',
   ]
     .filter(Boolean)
     .join(' '),
   "media-src 'self' https://res.cloudinary.com",
-  "frame-src 'self' https://www.youtube-nocookie.com",
+  "frame-src 'self' https://www.youtube-nocookie.com https://accounts.google.com/gsi/",
   "worker-src 'self'",
   "manifest-src 'self'",
   "object-src 'none'",
