@@ -1,25 +1,20 @@
-import { ArrowRight, CheckCircle2, CircleDashed } from 'lucide-react'
 import Link from 'next/link'
 
 import type { WeekSummary } from '@/lib/data/types'
 
-function Status({ ok, label }: { ok: boolean; label: string }) {
-  const Icon = ok ? CheckCircle2 : CircleDashed
-  return (
-    <span
-      className={
-        ok
-          ? 'inline-flex items-center gap-1 text-success'
-          : 'inline-flex items-center gap-1 text-muted'
-      }
-    >
-      <Icon aria-hidden="true" className="size-3.5" />
-      {label}
-      <span className="sr-only">{ok ? ' available' : ' coming soon'}</span>
-    </span>
-  )
+/** "Notes, graded assignment and practice" from what a week has so far. */
+function readyLine(week: WeekSummary): string {
+  const ready = [
+    week.hasNotes ? 'notes' : null,
+    week.hasGraded ? 'graded assignment' : null,
+    week.hasPractice ? 'practice' : null,
+  ].filter((item): item is string => item !== null)
+  if (ready.length === 0) return 'Coming soon'
+  const list = ready.length > 1 ? `${ready.slice(0, -1).join(', ')} and ${ready.at(-1)}` : ready[0]
+  return `Ready: ${list}`
 }
 
+/** The weeks of a course as a numbered list between hairlines. */
 export function WeekGrid({
   weeks,
   headingLevel = 'h3',
@@ -29,29 +24,27 @@ export function WeekGrid({
 }) {
   const Heading = headingLevel
   return (
-    <ol className="grid gap-4 sm:grid-cols-2">
+    <ol className="border-t border-border">
       {weeks.map((week) => (
-        <li key={week.id}>
+        <li key={week.id} className="border-b border-border">
           <Link
             href={week.path}
-            className="group flex h-full flex-col rounded-card border border-border bg-card p-4 hover:border-accent sm:p-5"
+            className="group grid gap-x-8 gap-y-1 py-5 sm:grid-cols-[6.5rem_1fr]"
             data-track-area="week-grid"
           >
-            <span className="text-small font-medium text-accent-ink">Week {week.number}</span>
-            <Heading className="mt-0.5 font-semibold text-text group-hover:text-accent-ink">
-              {week.title}
-            </Heading>
-            {week.topics.length > 0 ? (
-              <p className="mt-2 line-clamp-2 text-small text-muted">{week.topics.join(' · ')}</p>
-            ) : null}
-            <span className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-4 text-xs">
-              <Status ok={week.hasNotes} label="Notes" />
-              <Status ok={week.hasGraded} label="Graded assignment" />
-              <Status ok={week.hasPractice} label="Practice" />
-              <ArrowRight
-                aria-hidden="true"
-                className="ml-auto size-4 text-accent-ink transition-transform group-hover:translate-x-0.5"
-              />
+            <span className="text-small font-semibold text-accent-ink">Week {week.number}</span>
+            <span className="min-w-0">
+              <Heading className="text-h3 font-semibold text-text decoration-accent-ink/40 underline-offset-4 group-hover:text-accent-ink group-hover:underline">
+                {week.title}
+              </Heading>
+              {week.topics.length > 0 ? (
+                <span className="mt-1 line-clamp-2 block text-small text-muted">
+                  {week.topics.join(' · ')}
+                </span>
+              ) : null}
+              <span className="mt-2 block text-xs font-medium text-accent-ink">
+                {readyLine(week)}
+              </span>
             </span>
           </Link>
         </li>
