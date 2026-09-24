@@ -1,5 +1,3 @@
-import { ChevronDown } from 'lucide-react'
-
 import { Mdx } from '@/components/mdx/render'
 import { JsonLd } from '@/components/seo/json-ld'
 import { SectionHeading } from '@/components/ui/section-heading'
@@ -25,17 +23,25 @@ export function FaqAccordion({
   return (
     <section aria-labelledby={id} className="mt-12">
       <SectionHeading id={id} title={title} />
-      <div className="divide-y divide-border rounded-card border border-border bg-card">
+      <div className="border-t border-border">
         {faqs.map((faq) => (
-          <details key={faq.id} id={`faq-${faq.id}`} className="group">
-            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 font-medium text-text [&::-webkit-details-marker]:hidden">
+          <details key={faq.id} id={`faq-${faq.id}`} className="group border-b border-border">
+            <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-4 font-semibold text-text hover:text-accent-ink [&::-webkit-details-marker]:hidden">
               <span>{faq.question}</span>
-              <ChevronDown
+              <span
                 aria-hidden="true"
-                className="size-5 shrink-0 text-muted transition-transform group-open:rotate-180"
-              />
+                className="shrink-0 text-h3 leading-none font-normal text-accent-ink group-open:hidden"
+              >
+                +
+              </span>
+              <span
+                aria-hidden="true"
+                className="hidden shrink-0 text-h3 leading-none font-normal text-accent-ink group-open:inline"
+              >
+                −
+              </span>
             </summary>
-            <div className="px-4 pb-4 text-muted">
+            <div className="pb-5 text-muted">
               <Mdx source={faq.answerMdx} headingOffset={2} className="text-body" />
             </div>
           </details>
