@@ -17,17 +17,23 @@ export function SectionHeading({
   className?: string
 }) {
   return (
-    <div className={cn('mb-4 flex flex-wrap items-end justify-between gap-x-4 gap-y-1', className)}>
+    <div className={cn('mb-5 flex flex-wrap items-end justify-between gap-x-4 gap-y-1', className)}>
       <div>
         <Tag
           id={id}
-          className={cn('font-semibold text-text', Tag === 'h2' ? 'text-h3 sm:text-h2' : 'text-h3')}
+          className={cn(
+            'font-semibold text-text',
+            Tag === 'h2' ? 'text-[1.375rem] leading-8 sm:text-h2' : 'text-h3',
+          )}
         >
           {title}
         </Tag>
       </div>
       {action ? (
-        <Link href={action.href} className="text-small font-medium text-accent-ink hover:underline">
+        <Link
+          href={action.href}
+          className="text-small font-semibold text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+        >
           {action.label}
         </Link>
       ) : null}
