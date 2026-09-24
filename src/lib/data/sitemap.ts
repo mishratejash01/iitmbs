@@ -38,6 +38,7 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
     tableTag('pages'),
     tableTag('blog_posts'),
     tableTag('blog_categories'),
+    tableTag('note_courses'),
   )
 
   const { data, error } = await getPublicClient().rpc('get_sitemap_entries')
