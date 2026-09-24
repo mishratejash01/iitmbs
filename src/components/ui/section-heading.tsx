@@ -6,14 +6,12 @@ import { cn } from '@/lib/utils/cn'
 export function SectionHeading({
   id,
   title,
-  description,
   action,
   as: Tag = 'h2',
   className,
 }: {
   id?: string
   title: ReactNode
-  description?: ReactNode
   action?: { href: string; label: string }
   as?: 'h2' | 'h3'
   className?: string
@@ -27,7 +25,6 @@ export function SectionHeading({
         >
           {title}
         </Tag>
-        {description ? <p className="mt-1 text-small text-muted">{description}</p> : null}
       </div>
       {action ? (
         <Link href={action.href} className="text-small font-medium text-accent-ink hover:underline">
