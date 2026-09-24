@@ -51,7 +51,7 @@ colours, qualifier rules — comes from the database and is edited in `/admin`. 
 - Google sign-in (feature-flagged; the login page says "coming soon" until the provider is switched on) for bookmarks,
   progress ticks, reading history, data export and account deletion.
 - Installable PWA: recently read pages work offline.
-- WCAG 2.2 AA colours, keyboard support throughout, dark mode, mobile-first down to 360 px.
+- WCAG 2.2 AA colours in a light, three-colour theme, keyboard support throughout, mobile-first down to 360 px.
 
 **For search engines**
 
