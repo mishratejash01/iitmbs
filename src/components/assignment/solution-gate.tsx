@@ -1,9 +1,9 @@
 'use client'
 
-import { Lock, RefreshCw } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { track } from '@/lib/analytics/client'
 import { useNow } from '@/lib/hooks/browser-state'
 import { formatDateTime, formatDuration } from '@/lib/utils/dates'
@@ -59,49 +59,37 @@ export function SolutionGate({
     <section
       aria-labelledby="solution-gate"
       data-solution-gate=""
-      className="rounded-card border border-accent/40 bg-accent-soft px-4 py-4 sm:px-5"
+      className="rounded-panel bg-accent-soft p-5 sm:p-6"
     >
-      <div className="flex items-start gap-3">
-        <Lock aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent-ink" />
-        <div className="min-w-0 flex-1">
-          <h2 id="solution-gate" className="font-semibold text-text">
-            {released
-              ? 'Walkthroughs are unlocking…'
-              : 'Worked solutions unlock after the deadline'}
-          </h2>
-          {released ? (
-            <div className="mt-1 flex flex-wrap items-center gap-3 text-small text-text">
-              <span role="status">Fetching the walkthroughs now.</span>
-              <button
-                type="button"
-                onClick={() => router.refresh()}
-                className="inline-flex min-h-10 items-center gap-1.5 rounded-control border border-accent/40 bg-card px-3 font-medium"
-              >
-                <RefreshCw aria-hidden="true" className="size-4" /> Refresh
-              </button>
-            </div>
-          ) : (
-            <p className="mt-1 text-small text-text">
-              {scheduled ? (
-                <>
-                  Unlocks <time dateTime={releaseAt}>{formatDateTime(releaseAt)}</time>
-                  {now !== null ? (
-                    <span className="font-medium" suppressHydrationWarning>
-                      {' '}
-                      — in {formatDuration((releaseMs - now) / 1000)}
-                    </span>
-                  ) : null}
-                  .
-                </>
-              ) : (
-                'The release time will be set once the official deadline is confirmed.'
-              )}{' '}
-              Until then, work through the concepts and hints below — they are designed to get you
-              unstuck without giving the answer away.
-            </p>
-          )}
+      <h2 id="solution-gate" className="font-semibold text-text">
+        {released ? 'Walkthroughs are unlocking…' : 'Worked solutions unlock after the deadline'}
+      </h2>
+      {released ? (
+        <div className="mt-2 flex flex-wrap items-center gap-3 text-small text-text">
+          <span role="status">Fetching the walkthroughs now.</span>
+          <Button variant="secondary" size="sm" onClick={() => router.refresh()}>
+            Refresh
+          </Button>
         </div>
-      </div>
+      ) : (
+        <p className="mt-1 text-small text-text">
+          {scheduled ? (
+            <>
+              Unlocks <time dateTime={releaseAt}>{formatDateTime(releaseAt)}</time>
+              {now !== null ? (
+                <span className="font-medium" suppressHydrationWarning>
+                  , in {formatDuration((releaseMs - now) / 1000)}
+                </span>
+              ) : null}
+              .
+            </>
+          ) : (
+            'The release time will be set once the official deadline is confirmed.'
+          )}{' '}
+          Until then, work through the concepts and hints below. They are designed to get you
+          unstuck without giving the answer away.
+        </p>
+      )}
     </section>
   )
 }
