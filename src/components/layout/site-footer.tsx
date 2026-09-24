@@ -28,9 +28,6 @@ export async function SiteFooter({ settings }: { settings: SiteSettings }) {
             <LogoMark className="size-7" />
             {settings.site_name}
           </div>
-          {settings.tagline ? (
-            <p className="mt-3 text-small text-muted">{settings.tagline}</p>
-          ) : null}
           {social.length > 0 ? (
             <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-small">
               {social.map(([key, url]) => (
