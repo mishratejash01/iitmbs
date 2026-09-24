@@ -11,7 +11,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { renderMdx } from '@/components/mdx/render'
 import { JsonLd } from '@/components/seo/json-ld'
 import { metaRowClasses } from '@/components/ui/badge'
-import { faqsFromBody, relatedPosts } from '@/lib/blog/helpers'
+import { faqsFromBody, postLanguage, relatedPosts } from '@/lib/blog/helpers'
 import { getBlogPost, getBlogPostIndex } from '@/lib/data/blog'
 import { getPage } from '@/lib/data/pages'
 import { redirectOrNotFound } from '@/lib/data/redirects'
@@ -69,6 +69,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
 
   const { content, toc } = await renderMdx(post.bodyMdx, { toc: true })
   const related = relatedPosts(post, all)
+  const language = postLanguage(post.bodyMdx)
   const blogName = blogPage?.title.split(':')[0] ?? 'Blog'
   const studentNotes = noteCourses.find((n) => n.blogPostId === post.id)
   const papers = pyqCourses.find((p) => p.blogPostId === post.id)
@@ -125,7 +126,14 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
 
         <div className={`${columns} mt-10 sm:mt-12`}>
           <div className="min-w-0">
-            {content ? <div className="prose-content prose-article">{content}</div> : null}
+            {content ? (
+              <div
+                className="prose-content prose-article"
+                lang={language === 'hi' ? 'hi' : undefined}
+              >
+                {content}
+              </div>
+            ) : null}
 
             {papers || studentNotes ? (
               <section
@@ -213,6 +221,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
             reviewer: post.reviewer,
             datePublished: post.publishedAt,
             dateModified: post.updatedAt,
+            inLanguage: language === 'hi' ? 'hi-IN' : 'en-IN',
           }),
           faqJsonLd(faqsFromBody(post.id, post.bodyMdx)),
         ]}
