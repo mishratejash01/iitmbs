@@ -15,7 +15,7 @@ export function Toc({
   return (
     <nav aria-label="On this page" className={className}>
       {heading ? (
-        <p className="mb-3 text-xs font-semibold tracking-wide text-accent-ink uppercase">
+        <p className="mb-4 text-xs font-semibold tracking-[0.08em] text-muted uppercase">
           On this page
         </p>
       ) : null}
@@ -25,8 +25,8 @@ export function Toc({
             <a
               href={`#${item.id}`}
               className={cn(
-                '-ml-px block border-l-2 border-transparent py-1 text-small text-muted hover:border-accent-strong hover:text-accent-ink',
-                item.depth === 3 ? 'pl-6' : 'pl-3',
+                '-ml-px block border-l-2 border-transparent py-1.5 text-muted hover:border-accent-strong hover:text-text',
+                item.depth === 3 ? 'pl-7 text-xs leading-5' : 'pl-4 text-small',
               )}
               data-track="toc_click"
               data-track-heading={item.text.slice(0, 80)}
@@ -42,11 +42,11 @@ export function Toc({
 }
 
 /** Collapsible TOC for small screens. */
-export function MobileToc({ items }: { items: TocItem[] }) {
+export function MobileToc({ items, className }: { items: TocItem[]; className?: string }) {
   if (items.length < 2) return null
   return (
-    <details className="group mb-6 rounded-card bg-surface lg:hidden">
-      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 px-5 font-semibold text-text [&::-webkit-details-marker]:hidden">
+    <details className={cn('group mb-10 border-y border-border lg:hidden', className)}>
+      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-small font-semibold text-text [&::-webkit-details-marker]:hidden">
         On this page
         <span
           aria-hidden="true"
@@ -61,7 +61,7 @@ export function MobileToc({ items }: { items: TocItem[] }) {
           −
         </span>
       </summary>
-      <Toc items={items} heading={false} className="px-5 pb-5" />
+      <Toc items={items} heading={false} className="pb-5" />
     </details>
   )
 }
