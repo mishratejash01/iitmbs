@@ -20,9 +20,6 @@ export function CourseCard({
         </Heading>
         {course.code ? <Badge tone="accent">{course.code}</Badge> : null}
       </div>
-      {course.description ? (
-        <p className="mt-2 line-clamp-3 text-small text-muted">{course.description}</p>
-      ) : null}
       <div className="mt-auto flex items-center justify-between pt-4 text-small">
         <span className="text-muted">
           {course.shortName} · {course.weeksCount} weeks
