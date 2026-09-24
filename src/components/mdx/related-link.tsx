@@ -1,12 +1,11 @@
-import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 import { getLinkIndex } from '@/lib/data/links'
 
 /**
- * <RelatedLink href="/qualifier/eligibility" /> — the title and summary come
- * from the target page, so links stay accurate when pages are renamed.
+ * <RelatedLink href="/qualifier/eligibility" />: the title comes from the
+ * target page, so links stay accurate when pages are renamed.
  */
 export async function RelatedLink({
   href,
@@ -25,19 +24,10 @@ export async function RelatedLink({
   return (
     <Link
       href={href}
-      className="group inline-flex items-start gap-1.5 font-medium text-accent-ink no-underline hover:underline"
+      className="font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
       data-track-area="related"
     >
-      <span>
-        {label}
-        {target?.summary ? (
-          <span className="mt-0.5 block text-small font-normal text-muted">{target.summary}</span>
-        ) : null}
-      </span>
-      <ArrowRight
-        aria-hidden="true"
-        className="mt-1 size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
-      />
+      {label}
     </Link>
   )
 }
