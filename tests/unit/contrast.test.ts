@@ -4,9 +4,8 @@ import { contrastRatio, findContrastIssues } from '@/lib/theme/contrast'
 import { buildThemeCss, defaultTokens, sanitizeThemeOverrides } from '@/lib/theme/tokens'
 
 describe('design tokens', () => {
-  it('meet WCAG 2.2 AA contrast in light and dark mode', () => {
+  it('meet WCAG 2.2 AA contrast', () => {
     expect(findContrastIssues(defaultTokens.light)).toEqual([])
-    expect(findContrastIssues(defaultTokens.dark)).toEqual([])
   })
 
   it('computes known contrast ratios', () => {
@@ -22,10 +21,12 @@ describe('design tokens', () => {
     expect(overrides).toEqual({ light: { accent: '#123456' } })
     const css = buildThemeCss({ light: { bg: 'url(javascript:alert(1))' } } as never)
     expect(css).not.toContain('javascript')
-    expect(css).toContain('--accent:#E8792B')
+    expect(css).toContain('--accent:#0F3D3E')
   })
 
-  it('omits the dark palette when dark mode is disabled', () => {
-    expect(buildThemeCss({}, { dark: false })).not.toContain('prefers-color-scheme')
+  it('has a light palette only', () => {
+    const css = buildThemeCss({ dark: { bg: '#000000' } } as never)
+    expect(css).not.toContain('prefers-color-scheme')
+    expect(css).not.toContain('#000000')
   })
 })
