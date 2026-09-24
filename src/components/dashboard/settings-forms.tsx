@@ -140,7 +140,8 @@ export function ConsentForm({ detailed }: { detailed: boolean }) {
         <span>
           <span className="block font-medium text-text">Detailed</span>
           <span className="block text-small text-muted">
-            Links activity to your account to power history and progress.
+            Links activity to your account to power history and progress, and allows Google
+            Analytics cookies.
           </span>
         </span>
       </label>
