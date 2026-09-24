@@ -32,7 +32,6 @@ export async function CmsPageView({
       <PageHeader
         crumbs={crumbs}
         title={page.title}
-        description={page.summary}
         meta={
           <Byline
             author={page.author}
