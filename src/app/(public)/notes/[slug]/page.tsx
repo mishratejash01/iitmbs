@@ -7,8 +7,9 @@ import { PageHeader } from '@/components/layout/page-header'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Badge } from '@/components/ui/badge'
 import { getBlogPostIndex } from '@/lib/data/blog'
+import { getCourseHubPaths } from '@/lib/data/course-hubs'
 import { getPage } from '@/lib/data/pages'
-import { getProgramPage, getPrograms } from '@/lib/data/programs'
+import { getPyqCourses } from '@/lib/data/question-papers'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
@@ -67,24 +68,19 @@ function sectionLabel(heading: string, shortName: string): string {
   return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
-/** Paths of the qualifier course hubs, by course id. */
-async function courseHubPaths(): Promise<Map<string, string>> {
-  const programs = await getPrograms()
-  const pages = await Promise.all(programs.map((p) => getProgramPage(p.slug)))
-  return new Map(pages.flatMap((page) => page?.courses.map((c) => [c.id, c.path] as const) ?? []))
-}
-
 export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug]'>) {
   const { slug } = await params
   const [courses, notesPage] = await Promise.all([getNoteCourses(), getPage('notes')])
   const course = courses.find((c) => c.slug === slug)
   if (!course) return redirectOrNotFound(noteCoursePath(slug))
 
-  const [notes, posts, hubs] = await Promise.all([
+  const [notes, posts, hubs, pyqCourses] = await Promise.all([
     getCourseNotes(course.id),
     getBlogPostIndex(),
-    courseHubPaths(),
+    getCourseHubPaths(),
+    getPyqCourses(),
   ])
+  const papers = pyqCourses.find((p) => p.id === course.id)
   const groups = groupNotes(notes, course.shortName)
   const guide = course.blogPostId ? posts.find((post) => post.id === course.blogPostId) : undefined
   const hub = course.courseId ? hubs.get(course.courseId) : undefined
@@ -143,8 +139,13 @@ export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug
             </section>
           ))}
 
-          {guide || hub ? (
+          {guide || hub || papers ? (
             <p className="flex flex-wrap gap-x-5 gap-y-2 text-small">
+              {papers ? (
+                <Link href={papers.path} className="text-accent-ink underline underline-offset-2">
+                  {course.shortName} previous year papers
+                </Link>
+              ) : null}
               {hub ? (
                 <Link href={hub} className="text-accent-ink underline underline-offset-2">
                   Week-by-week help for {course.shortName}
