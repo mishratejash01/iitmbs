@@ -11,7 +11,7 @@
         "http://localhost:3000/data-science/maths-1",
         "http://localhost:3000/qualifier/ga-calculator"
       ],
-      "numberOfRuns": 3,
+      "numberOfRuns": 5,
       "settings": {
         "chromeFlags": "--no-sandbox --headless=new"
       }
