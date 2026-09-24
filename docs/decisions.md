@@ -78,10 +78,15 @@ are the majority, and the alternatives keep Electronic Systems one tap away.
 **Decision.** A small tracker (`src/lib/analytics/client.ts`) sends batched events to `/api/track`. There are two consent
 levels: _essential_ (pseudonymous, always on) and _detailed_ (linked to the account, opt-in, 18+). Global Privacy
 Control is respected. Raw IPs are never stored — only a daily-rotating HMAC. Raw events are purged after the
-retention period; daily rollups (computed in IST) are kept. No third-party analytics scripts are loaded.
+retention period; daily rollups (computed in IST) are kept. The tracker itself loads no third-party scripts.
 
 **Why.** The DPDP Act 2023 requires clear consent and purpose limitation, and third-party scripts cost performance and
 trust. The admin still needs real answers: which pages help, which searches fail, where students drop off.
+
+**Update.** Google Analytics 4 now runs alongside it for search and acquisition reports, in consent mode: every visit
+is counted without cookies, GA cookies are allowed only with _detailed_, ad features are always denied, and `/admin`
+is not tracked (`src/components/analytics/google-analytics.tsx`). Vercel Web Analytics, which is cookieless, also
+counts visits.
 
 **Cost.** The dashboard reads rollups that refresh hourly (and on demand), not live data.
 
