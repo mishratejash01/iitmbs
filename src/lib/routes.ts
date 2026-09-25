@@ -74,6 +74,12 @@ export const pyqCoursePath = (slug: string) => `${PYQ_PATH}/${slug}`
 
 export const pyqExamPath = (slug: string, exam: PyqExam) => `${pyqCoursePath(slug)}/${exam}`
 
+/** Exams with a cross-course hub page, e.g. /pyq/quiz-2 (OPPE lives on the practice site). */
+export const PYQ_HUB_EXAMS = ['qualifier', 'quiz-1', 'quiz-2', 'end-term'] as const
+export type PyqHubExam = (typeof PYQ_HUB_EXAMS)[number]
+
+export const pyqHubPath = (exam: PyqHubExam) => `${PYQ_PATH}/${exam}`
+
 export const LECTURES_PATH = '/resources/lectures'
 
 export const lectureCoursePath = (slug: string) => `${LECTURES_PATH}/${slug}`
