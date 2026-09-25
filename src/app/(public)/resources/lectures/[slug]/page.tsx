@@ -19,6 +19,7 @@ import { LECTURES_PATH, lectureCoursePath, lectureWeekPath } from '@/lib/routes'
 import { lectureVideosJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
+import { pickTitle, withDigits } from '@/lib/seo/title'
 
 export async function generateStaticParams() {
   const courses = await getLectureCourses()
@@ -48,18 +49,22 @@ export async function generateMetadata({
   if (!course) return { robots: { index: false } }
   const short = course.shortName.toLowerCase()
   const weekly = course.weeks.length > 0
+  const name = withDigits(course.name)
+  const same = course.shortName.toLowerCase() === name.toLowerCase()
   return buildMetadata({
     settings,
     path: course.path,
     template: 'lecture_course',
     vars: { course: course.name, short: course.shortName, code: course.code },
-    fallbackTitle: `${lectureCourseTitle(course)} (${course.code})${weekly ? ', Week by Week' : ''} | ${settings.site_name}`,
-    shortTitles: [
-      `${lectureCourseTitle(course)}`,
-      `IIT Madras ${course.shortName} Lectures (${course.code})${weekly ? ', Week by Week' : ''}`,
-      `IIT Madras ${course.shortName} Lectures (${course.code})`,
-      `${course.shortName} Lectures (${course.code})`,
-    ],
+    fallbackTitle: pickTitle([
+      same
+        ? `IITM BS ${name} Lectures (IIT Madras)`
+        : `IITM BS ${course.shortName} Lectures: ${name} (IIT Madras)`,
+      !same && `IITM BS ${course.shortName} Lectures: ${name}`,
+      weekly && `IITM BS ${course.shortName} Lectures by Week (IIT Madras)`,
+      `IITM BS ${course.shortName} Lectures (IIT Madras)`,
+      `IITM BS ${course.shortName} Lectures`,
+    ]),
     fallbackDescription: `${course.videoCount} official IIT Madras lecture videos for ${course.name} (${course.shortName}, ${course.code}), ${course.weeks.length > 0 ? `sorted into ${course.weeks.length} weeks` : 'in teaching order'}, with a player on every page.`,
     keywords: [
       `${short} lectures`,
