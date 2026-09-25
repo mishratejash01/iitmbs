@@ -16,8 +16,8 @@ export function fitTitle(title: string, siteName: string, shortTitles: string[] 
   return `${short}${suffix}`.length <= TITLE_LIMIT ? `${short}${suffix}` : short
 }
 
-/** Titles this short show in full on phones and desktops. */
-export const PREFERRED_TITLE = 60
+/** Titles this short usually show in full in Google results (about 600 pixels). */
+export const PREFERRED_TITLE = 65
 
 /**
  * The first candidate within PREFERRED_TITLE, else the first within
