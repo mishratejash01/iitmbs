@@ -7,6 +7,7 @@ import { LecturePlayer } from '@/components/lectures/lecture-player'
 import { JsonLd } from '@/components/seo/json-ld'
 import { Badge } from '@/components/ui/badge'
 import { SectionHeading } from '@/components/ui/section-heading'
+import { getBlogPostIndex } from '@/lib/data/blog'
 import { getCourseHubPaths } from '@/lib/data/course-hubs'
 import { getCourseLectures, getLectureCourses, type LectureCourse } from '@/lib/data/lectures'
 import { getPyqCourses } from '@/lib/data/question-papers'
@@ -65,7 +66,7 @@ export async function generateMetadata({
       `IITM BS ${course.shortName} Lectures (IIT Madras)`,
       `IITM BS ${course.shortName} Lectures`,
     ]),
-    fallbackDescription: `${course.videoCount} official IIT Madras lecture videos for ${course.name} (${course.shortName}, ${course.code}), ${course.weeks.length > 0 ? `sorted into ${course.weeks.length} weeks` : 'in teaching order'}, with a player on every page.`,
+    fallbackDescription: `Watch all ${course.videoCount} official IIT Madras ${course.shortName} lectures for ${name} free, ${weekly ? `week by week (${course.weeks.length} weeks)` : 'in teaching order'}, with a player on every page.`,
     keywords: [
       `${short} lectures`,
       `${short} lecture videos`,
@@ -87,12 +88,14 @@ export default async function LectureCoursePage({
   const course = courses.find((c) => c.slug === slug)
   if (!course) return redirectOrNotFound(lectureCoursePath(slug))
 
-  const [lectures, notes, pyqs, hubs] = await Promise.all([
+  const [lectures, notes, pyqs, hubs, posts] = await Promise.all([
     getCourseLectures(course.id, course.weeks.length > 0),
     getNoteCourses(),
     getPyqCourses(),
     getCourseHubPaths(),
+    getBlogPostIndex(),
   ])
+  const guide = course.blogPostId ? posts.find((post) => post.id === course.blogPostId) : undefined
   const extras = lectures.filter((l) => l.week === null || l.week < 1)
   const notesPage = notes.find((n) => n.id === course.id)
   const papers = pyqs.find((p) => p.id === course.id)
@@ -170,8 +173,16 @@ export default async function LectureCoursePage({
           </section>
         ) : null}
 
-        {notesPage || papers || hub ? (
+        {guide || notesPage || papers || hub ? (
           <p className="flex flex-wrap gap-x-6 gap-y-2 text-small">
+            {guide ? (
+              <Link
+                href={guide.path}
+                className="font-semibold text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+              >
+                {course.shortName} course guide
+              </Link>
+            ) : null}
             {notesPage ? (
               <Link
                 href={notesPage.path}
