@@ -120,7 +120,7 @@ describe('fitTitle', () => {
 })
 
 describe('title helpers', () => {
-  it('picks the first title within 60 characters, then within 70', () => {
+  it('picks the first title within 65 characters, then within 70', () => {
     const long =
       'IITM BS Stats 1 PYQ: Statistics 1 Question Papers 2021 to 2025, All Exams Included'
     expect(
