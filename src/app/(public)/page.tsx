@@ -122,42 +122,32 @@ export default async function HomePage() {
     },
   ].filter((stat) => stat.value > 0)
 
-  const levelCards: LevelCard[] = levels.map((level) =>
-    level.id === 'qualifier'
-      ? {
-          id: level.id,
-          label: level.label,
-          stats: [
-            plural(level.courses.length, 'course', 'courses'),
-            ...(level.paperCount > 0
-              ? [plural(level.paperCount, 'past qualifier paper', 'past qualifier papers')]
-              : []),
-          ],
-          links: [
-            { label: 'How the qualifier works', href: '/qualifier' },
-            ...(programPages.length > 0
-              ? [{ label: 'Week-by-week help', href: '#programmes' }]
-              : []),
-          ],
-        }
-      : {
-          id: level.id,
-          label: level.label,
-          stats: [
-            plural(level.courses.length, 'course', 'courses'),
-            ...(level.noteCount > 0 ? [plural(level.noteCount, 'note', 'notes')] : []),
-            ...(level.paperCount > 0 ? [plural(level.paperCount, 'paper', 'papers')] : []),
-          ],
-          links: [
-            ...(level.noteCount > 0
-              ? [{ label: `${level.label} notes`, href: `${NOTES_PATH}#${level.id}-notes` }]
-              : []),
-            ...(level.paperCount > 0
-              ? [{ label: `${level.label} papers`, href: `${PYQ_PATH}#${level.id}-pyqs` }]
-              : []),
-          ],
-        },
-  )
+  const hasLectures = Boolean(linkIndex['/resources/lectures'])
+  const levelCards: LevelCard[] = degreeLevels.map((level) => ({
+    id: level.id,
+    label: level.label,
+    stats: [
+      plural(level.courses.length, 'course', 'courses'),
+      ...(level.noteCount > 0 ? [plural(level.noteCount, 'note', 'notes')] : []),
+      ...(level.paperCount > 0 ? [plural(level.paperCount, 'paper', 'papers')] : []),
+    ],
+    links: [
+      ...(level.noteCount > 0
+        ? [{ label: `${level.label} notes`, href: `${NOTES_PATH}#${level.id}-notes` }]
+        : []),
+      ...(level.paperCount > 0
+        ? [{ label: `${level.label} papers`, href: `${PYQ_PATH}#${level.id}-pyqs` }]
+        : []),
+      ...(hasLectures ? [{ label: 'Lectures', href: '/resources/lectures' }] : []),
+    ],
+  }))
+  // The picker opens on the degree's levels; the qualifier comes last, for new students.
+  const pickerLevels = [
+    ...degreeLevels,
+    ...levels
+      .filter((level) => level.id === 'qualifier')
+      .map((level) => ({ ...level, label: 'Qualifier (new students)' })),
+  ].map(({ id, label, courses }) => ({ id, label, courses }))
 
   // The current term's banner: dates from the announcement ("September 2026
   // qualifier: applications close …" → the part after the colon), official
@@ -201,11 +191,7 @@ export default async function HomePage() {
             </p>
           ) : null}
 
-          {levels.length > 0 ? (
-            <CoursePicker
-              levels={levels.map(({ id, label, courses }) => ({ id, label, courses }))}
-            />
-          ) : null}
+          {levels.length > 0 ? <CoursePicker levels={pickerLevels} /> : null}
 
           {quickLinks.length > 0 ? (
             <ul className="mt-6 flex flex-wrap justify-center gap-2" aria-label="Quick links">
@@ -225,15 +211,6 @@ export default async function HomePage() {
           ) : null}
         </div>
       </section>
-
-      {settings.current_term ? (
-        <TermBanner
-          brand={displayName(settings)}
-          term={formatTerm(settings.current_term)}
-          dates={bannerDates}
-          links={bannerLinks}
-        />
-      ) : null}
 
       {stats.length > 0 ? (
         <section aria-labelledby="on-this-site">
@@ -276,6 +253,9 @@ export default async function HomePage() {
             <h2 id="levels" className={displayHeading}>
               Every level of your degree
             </h2>
+            <p className={displayLead}>
+              Notes, previous year papers and lectures for every course, from foundation to degree.
+            </p>
             <div className="mt-10 sm:mt-12">
               <LevelCards levels={levelCards} />
             </div>
@@ -283,10 +263,20 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      {/* For new students: everything about getting in through the qualifier. */}
+      {settings.current_term ? (
+        <TermBanner
+          brand={displayName(settings)}
+          term={formatTerm(settings.current_term)}
+          dates={bannerDates}
+          links={bannerLinks}
+        />
+      ) : null}
+
       <section aria-labelledby="how-it-works" className="overflow-hidden">
         <div className="container-page py-16 text-center sm:py-24">
           <p className="text-small font-bold tracking-[0.14em] text-accent-ink uppercase">
-            Starting with the qualifier?
+            How the qualifier weeks work
           </p>
           <h2 id="how-it-works" className={`${displayHeading} mt-3`}>
             Prepare for every graded assignment
@@ -419,8 +409,8 @@ export default async function HomePage() {
             <ButtonLink href="/about" size="lg">
               Learn more about us
             </ButtonLink>
-            <ButtonLink href="/qualifier" size="lg" variant="secondary">
-              Start with the qualifier
+            <ButtonLink href={NOTES_PATH} size="lg" variant="secondary">
+              Browse notes
             </ButtonLink>
           </div>
         </div>

@@ -24,7 +24,7 @@ export function TermBanner({
   links: BannerLink[]
 }) {
   return (
-    <section aria-labelledby="term-banner" className="container-page pt-12 sm:pt-16">
+    <section aria-labelledby="term-banner" className="container-page pt-16 sm:pt-24">
       <div className="grid overflow-hidden rounded-panel bg-accent-strong text-on-accent lg:grid-cols-[1.15fr_1fr]">
         <div className="p-7 sm:p-10 lg:p-12">
           <p className="flex items-center gap-2.5 text-small">
@@ -32,14 +32,14 @@ export function TermBanner({
             {brand}
           </p>
           <p className="mt-6 text-small font-medium tracking-[0.12em] text-lime uppercase">
-            {term} qualifier
+            For new students · {term} qualifier
           </p>
           <h2
             id="term-banner"
             className="mt-2 text-[2.25rem] leading-[2.75rem] font-bold tracking-tight sm:text-[3rem] sm:leading-[3.5rem]"
           >
-            Your qualifier
-            <span className="block text-lime">starts here</span>
+            New to IITM BS?
+            <span className="block text-lime">Start with the qualifier</span>
           </h2>
           <p className="mt-4 max-w-md text-[1.0625rem] leading-7 text-on-accent/85">
             Four weeks of graded assignments, then one exam. We help with every week.

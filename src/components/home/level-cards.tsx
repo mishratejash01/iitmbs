@@ -17,10 +17,10 @@ const LOOK: Record<LevelCard['id'], { icon: LucideIcon; card: string; chip: stri
   degree: { icon: Award, card: 'bg-sun/35 text-text', chip: 'bg-card' },
 }
 
-/** The degree's levels as colour cards; the qualifier comes first and is marked "Start here". */
+/** The degree's levels as colour cards (the qualifier card is marked "Start here" when shown). */
 export function LevelCards({ levels }: { levels: LevelCard[] }) {
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {levels.map((level) => {
         const look = LOOK[level.id]
         const dark = level.id === 'qualifier'

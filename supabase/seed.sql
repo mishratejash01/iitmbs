@@ -65,8 +65,8 @@ values (true, $json${
     "tone": "info"
   },
   "home": {
-    "hero_title": "Clear the qualifier. Ace the degree.",
-    "hero_subtitle": "Free notes, previous year papers and week-by-week help for every IITM BS course, with extra focus on the qualifier so you start strong.",
+    "hero_title": "Every course. Every level. One place.",
+    "hero_subtitle": "Free notes, previous year papers, lectures and guides for every IITM BS course, from foundation to degree. New student? Start with the qualifier.",
     "popular_paths": [
       "/data-science/maths-1",
       "/data-science/stats-1",
