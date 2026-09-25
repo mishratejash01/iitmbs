@@ -22,7 +22,7 @@ import { PYQ_EXAM_LABEL, PYQ_PATH, pyqCoursePath, pyqExamPath } from '@/lib/rout
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
-import { pickTitle, SEARCH_NAMES, yearRange } from '@/lib/seo/title'
+import { pickTitle, SEARCH_NAMES, withDigits, yearRange } from '@/lib/seo/title'
 
 export async function generateStaticParams() {
   const courses = await getPyqCourses()
@@ -42,7 +42,8 @@ function pageTitle(course: PyqCourse): string {
 function description(course: PyqCourse): string {
   const exams = course.exams.map((exam) => PYQ_EXAM_LABEL[exam])
   const list = exams.length > 1 ? `${exams.slice(0, -1).join(', ')} and ${exams.at(-1)}` : exams[0]
-  return `${course.paperCount} ${course.name} (${course.shortName}, ${course.code}) previous year question papers from ${termSpan(course.terms)}: ${list}, with answers marked.`
+  const years = yearRange(course.terms)
+  return `Free IITM BS ${course.shortName} PYQs: ${course.paperCount} ${withDigits(course.name)} previous year question papers (${list})${years ? ` from ${years}` : ''}, answers marked where available.`
 }
 
 export async function generateMetadata({ params }: PageProps<'/pyq/[slug]'>): Promise<Metadata> {
