@@ -43,7 +43,7 @@ function description(course: PyqCourse): string {
   const exams = course.exams.map((exam) => PYQ_EXAM_LABEL[exam])
   const list = exams.length > 1 ? `${exams.slice(0, -1).join(', ')} and ${exams.at(-1)}` : exams[0]
   const years = yearRange(course.terms)
-  return `Free IITM BS ${course.shortName} PYQs: ${course.paperCount} ${withDigits(course.name)} previous year question papers (${list})${years ? ` from ${years}` : ''}, answers marked where available.`
+  return `Free IITM BS ${course.shortName} PYQs: ${course.paperCount} ${withDigits(course.name)} question papers (${list})${years ? ` from ${years}` : ''}, answers marked where available.`
 }
 
 export async function generateMetadata({ params }: PageProps<'/pyq/[slug]'>): Promise<Metadata> {
