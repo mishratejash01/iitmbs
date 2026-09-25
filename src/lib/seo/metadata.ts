@@ -9,6 +9,7 @@ import { absoluteUrl } from '@/lib/routes'
 import type { SiteSettings } from '@/lib/settings/schema'
 
 import { fillTemplate, type TemplateVars } from './templates'
+import { fitTitle } from './title'
 
 export type PageSeoInput = {
   settings: SiteSettings
@@ -19,6 +20,12 @@ export type PageSeoInput = {
   vars?: TemplateVars
   /** Used when there is no template or it cannot be filled. */
   fallbackTitle: string
+  /**
+   * Shorter titles, best first, for when the full one is longer than
+   * TITLE_LIMIT (see ./title) even without the brand suffix. Never applied to titles an
+   * admin wrote (overrides and per-entity SEO titles).
+   */
+  shortTitles?: string[]
   fallbackDescription: string
   /** Used when the entity has no keywords of its own. */
   keywords?: string[]
@@ -42,15 +49,15 @@ function canonicalFor(input: PageSeoInput): string {
 
 export function resolveTitle(input: PageSeoInput): string {
   const vars = { site_name: input.settings.site_name, ...input.vars }
-  return (
-    input.override?.title ||
-    input.seo?.seoTitle ||
+  const admin = input.override?.title || input.seo?.seoTitle
+  const title =
+    admin ||
     fillTemplate(
       input.template ? input.settings.seo.templates[input.template] : null,
       vars,
       input.fallbackTitle,
     )
-  )
+  return fitTitle(title, input.settings.site_name, admin ? [] : (input.shortTitles ?? []))
 }
 
 export function resolveDescription(input: PageSeoInput): string {
