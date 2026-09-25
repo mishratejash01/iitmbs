@@ -17,7 +17,7 @@ import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { BLOG_PATH } from '@/lib/routes'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
 export async function generateStaticParams() {
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps<'/[program]'>): Pro
     getSiteSettings(),
     getSeoOverrides(),
   ])
-  if (!data) return { robots: { index: false } }
+  if (!data) return NOT_FOUND_METADATA
   return buildMetadata({
     settings,
     path: data.program.path,
