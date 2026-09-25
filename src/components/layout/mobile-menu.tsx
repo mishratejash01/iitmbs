@@ -55,6 +55,22 @@ export function MobileMenu({ items, programs }: { items: NavItem[]; programs: Pr
                 >
                   {item.label}
                 </Link>
+                {item.children.length > 0 ? (
+                  <ul>
+                    {item.children.map((child) => (
+                      <li key={child.id}>
+                        <Link
+                          href={child.href}
+                          className="flex min-h-11 items-center border-b border-border pr-1 pl-5 text-small text-text hover:text-accent-ink"
+                          data-track="nav_click"
+                          data-track-label={`mobile:${item.label}:${child.label}`}
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </li>
             ))}
           <li>
