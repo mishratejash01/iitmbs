@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     settings,
     path: LECTURES_PATH,
-    fallbackTitle: `${TITLE}, Week by Week | ${settings.site_name}`,
+    fallbackTitle: 'IITM BS Lectures: IIT Madras BS Degree Lectures by Week',
     fallbackDescription: `${videos} official IIT Madras BS lecture videos for ${courses.length} courses, sorted by week, with a player on every page.`,
     keywords: [
       'iit madras lectures',
