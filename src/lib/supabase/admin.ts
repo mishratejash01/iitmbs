@@ -11,7 +11,8 @@ let client: SupabaseClient<Database> | null | undefined
 /**
  * Privileged client (secret / service-role key). Bypasses RLS — use only for
  * server-side jobs that must: analytics ingest, download counting, account
- * deletion and data export. Returns null when the key is not configured so
+ * deletion and data export, plus the sitemap and link index reads, which
+ * need more than anon's statement timeout under build load. Returns null when the key is not configured so
  * callers can degrade gracefully.
  */
 export function getServiceClient(): SupabaseClient<Database> | null {
