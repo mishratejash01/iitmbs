@@ -5,6 +5,7 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { tableTag } from '@/lib/cache/tags'
 import { getPublicClient } from '@/lib/supabase/public'
 
+import { withRetry } from './retry'
 import { contentCacheProfile } from './settings'
 
 export const SITEMAP_SECTIONS = [
@@ -50,14 +51,14 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   // The API returns at most 1000 rows a request, so this pages (in a stable order).
   const data: Array<{ section: string; path: string; last_modified: string }> = []
   for (let from = 0; ; from += PAGE_SIZE) {
-    const page = await getPublicClient()
-      .rpc('get_sitemap_entries')
-      .order('path')
-      .range(from, from + PAGE_SIZE - 1)
-    if (page.error) {
-      console.error('[data/sitemap] entries failed:', page.error.message)
-      break
-    }
+    const page = await withRetry(() =>
+      getPublicClient()
+        .rpc('get_sitemap_entries')
+        .order('path')
+        .range(from, from + PAGE_SIZE - 1),
+    )
+    // Never cache a partial sitemap: an error keeps the last good copy live.
+    if (page.error) throw new Error(`[data/sitemap] entries failed: ${page.error.message}`)
     data.push(...page.data)
     if (page.data.length < PAGE_SIZE) break
   }
