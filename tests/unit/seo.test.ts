@@ -10,7 +10,7 @@ import {
   weekNotesPath,
 } from '@/lib/routes'
 import { fillTemplate } from '@/lib/seo/templates'
-import { fitTitle, TITLE_LIMIT } from '@/lib/seo/title'
+import { fitTitle, pickTitle, TITLE_LIMIT, withDigits, yearRange } from '@/lib/seo/title'
 import { parseSiteSettings } from '@/lib/settings/schema'
 
 describe('routes', () => {
@@ -116,5 +116,30 @@ describe('fitTitle', () => {
     expect(fitTitle(long, site, ['IITM BS PDSA PYQs (BSCS2002)'])).toBe(
       'IITM BS PDSA PYQs (BSCS2002) | Qualifier Hub',
     )
+  })
+})
+
+describe('title helpers', () => {
+  it('picks the first title within 60 characters, then within 70', () => {
+    const long =
+      'IITM BS Stats 1 PYQ: Statistics 1 Question Papers 2021 to 2025, All Exams Included'
+    expect(
+      pickTitle([
+        long,
+        'IITM BS Stats 1 PYQ: Previous Year Question Papers',
+        'IITM BS Stats 1 PYQ',
+      ]),
+    ).toBe('IITM BS Stats 1 PYQ: Previous Year Question Papers')
+    expect(pickTitle([false, null, 'IITM BS PDSA PYQ'])).toBe('IITM BS PDSA PYQ')
+  })
+
+  it('writes course numbers as digits and terms as a year range', () => {
+    expect(withDigits('Statistics for Data Science II')).toBe('Statistics for Data Science 2')
+    expect(withDigits('AI: Search Methods for Problem Solving')).toBe(
+      'AI: Search Methods for Problem Solving',
+    )
+    expect(yearRange(['2021-sep', '2025-jan', '2023-may'])).toBe('2021 to 2025')
+    expect(yearRange(['2024-sep'])).toBe('2024')
+    expect(yearRange([])).toBeNull()
   })
 })
