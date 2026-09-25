@@ -20,7 +20,7 @@ import { getNoteCourses } from '@/lib/data/student-notes'
 import { paperHeading, papersByExam, pyqFaqs, pyqKeywords, termSpan } from '@/lib/pyq/papers'
 import { PYQ_EXAM_LABEL, PYQ_PATH, pyqCoursePath, pyqExamPath } from '@/lib/routes'
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 import { pickTitle, SEARCH_NAMES, withDigits, yearRange } from '@/lib/seo/title'
 
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: PageProps<'/pyq/[slug]'>): Pr
     getSeoOverrides(),
   ])
   const course = courses.find((c) => c.slug === slug)
-  if (!course) return { robots: { index: false } }
+  if (!course) return NOT_FOUND_METADATA
   const years = yearRange(course.terms) ?? ''
   return buildMetadata({
     settings,
