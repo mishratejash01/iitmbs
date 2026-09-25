@@ -27,6 +27,7 @@ import {
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
+import { pickTitle, SEARCH_NAMES, yearRange } from '@/lib/seo/title'
 
 export async function generateStaticParams() {
   const courses = await getPyqCourses()
@@ -69,6 +70,9 @@ export async function generateMetadata({
   const { course, papers } = found
   const path = pyqExamPath(course.slug, found.exam)
   const span = paperSpan(papers)
+  const years = yearRange(papers.map((paper) => paper.term)) ?? ''
+  const label = PYQ_EXAM_LABEL[found.exam]
+  const subject = SEARCH_NAMES[course.code] ?? course.shortName
   return buildMetadata({
     settings,
     path,
@@ -80,12 +84,19 @@ export async function generateMetadata({
       exam: PYQ_EXAM_LABEL[found.exam],
       count: papers.length,
     },
-    fallbackTitle: `${pageTitle(course, found.exam)} Previous Year Papers | ${settings.site_name}`,
-    shortTitles: [
-      `IITM BS ${course.shortName} ${PYQ_EXAM_LABEL[found.exam]} PYQs: Previous Year Papers`,
-      `IITM BS ${course.shortName} ${PYQ_EXAM_LABEL[found.exam]} PYQs (${course.code})`,
-      `${course.shortName} ${PYQ_EXAM_LABEL[found.exam]} PYQs (${course.code})`,
-    ],
+    fallbackTitle: pickTitle(
+      found.exam === 'qualifier'
+        ? [
+            `IITM Qualifier ${subject} PYQ: Question Papers ${years}`,
+            `IITM Qualifier ${subject} PYQ: Previous Year Question Papers`,
+            `IITM Qualifier ${subject} PYQ`,
+          ]
+        : [
+            `IITM BS ${course.shortName} ${label} PYQ: Previous Year Question Papers`,
+            `IITM BS ${course.shortName} ${label} PYQ: Question Papers ${years}`,
+            `IITM BS ${course.shortName} ${label} PYQ`,
+          ],
+    ),
     fallbackDescription: description(course, found.exam, papers.length, span),
     keywords: pyqKeywords(course, [found.exam], { withoutExam: false }),
     override: overrides[path],
