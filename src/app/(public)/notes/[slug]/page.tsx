@@ -20,6 +20,7 @@ import { noteCoursePath, NOTES_PATH } from '@/lib/routes'
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
+import { pickTitle, withDigits } from '@/lib/seo/title'
 
 export async function generateStaticParams() {
   const courses = await getNoteCourses()
@@ -45,6 +46,8 @@ export async function generateMetadata({ params }: PageProps<'/notes/[slug]'>): 
   ])
   const course = courses.find((c) => c.slug === slug)
   if (!course) return { robots: { index: false } }
+  const name = withDigits(course.name)
+  const same = course.shortName.toLowerCase() === name.toLowerCase()
   return buildMetadata({
     settings,
     path: course.path,
@@ -56,12 +59,11 @@ export async function generateMetadata({ params }: PageProps<'/notes/[slug]'>): 
       count: course.noteCount,
       level: course.level,
     },
-    fallbackTitle: `${pageTitle(course)} (${course.code}) | ${settings.site_name}`,
-    shortTitles: [
-      `IITM BS ${course.shortName} Notes: Handwritten and PDF Notes (${course.code})`,
-      `IITM BS ${course.shortName} Notes (${course.code})`,
-      `${course.shortName} Notes (${course.code})`,
-    ],
+    fallbackTitle: pickTitle([
+      same ? `IITM BS ${name} Notes PDF` : `IITM BS ${course.shortName} Notes PDF: ${name}`,
+      `IITM BS ${course.shortName} Notes PDF`,
+      `IITM BS ${course.shortName} Notes`,
+    ]),
     fallbackDescription: `${course.noteCount} free ${course.name} (${course.shortName}, ${course.code}) notes shared by IITM BS students, week by week.`,
     seo: course.seo,
     override: overrides[course.path],
