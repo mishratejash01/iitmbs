@@ -71,7 +71,7 @@ export async function generateMetadata({
       `IITM BS ${course.shortName} Week ${found.week} Lectures (IIT Madras)`,
       `IITM BS ${course.shortName} Week ${found.week} Lectures`,
     ]),
-    fallbackDescription: `${lectures.length} IIT Madras lecture videos for ${course.name} (${course.code}) week ${found.week}: ${topics}.`,
+    fallbackDescription: `Watch the ${lectures.length} official IIT Madras ${course.shortName} week ${found.week} lectures free: ${topics}.`,
     keywords: [
       `${short} week ${found.week} lectures`,
       `${short} week ${found.week}`,
