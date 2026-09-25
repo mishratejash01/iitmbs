@@ -5,6 +5,7 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { tableTag } from '@/lib/cache/tags'
 import { getPublicClient } from '@/lib/supabase/public'
 
+import { withRetry } from './retry'
 import { contentCacheProfile } from './settings'
 import type { LinkIndexEntry } from './types'
 
@@ -35,15 +36,14 @@ export async function getLinkIndex(): Promise<Record<string, LinkIndexEntry>> {
   // The API returns at most 1000 rows a request, so this pages (in a stable order).
   const data: Array<{ path: string; title: string; summary: string; kind: string }> = []
   for (let from = 0; ; from += PAGE_SIZE) {
-    const page = await getPublicClient()
-      .rpc('get_link_index')
-      .order('path')
-      .range(from, from + PAGE_SIZE - 1)
-    if (page.error) {
-      console.error('[data/links] link index failed:', page.error.message)
-      if (from === 0) return {}
-      break
-    }
+    const page = await withRetry(() =>
+      getPublicClient()
+        .rpc('get_link_index')
+        .order('path')
+        .range(from, from + PAGE_SIZE - 1),
+    )
+    // Never cache a partial index: an error keeps the last good copy live.
+    if (page.error) throw new Error(`[data/links] link index failed: ${page.error.message}`)
     data.push(...page.data)
     if (page.data.length < PAGE_SIZE) break
   }
