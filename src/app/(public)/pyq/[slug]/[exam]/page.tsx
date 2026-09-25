@@ -58,7 +58,11 @@ async function resolve(slug: string, exam: string) {
 
 function description(course: PyqCourse, exam: PyqExam, count: number, span: string | null) {
   const label = PYQ_EXAM_LABEL[exam]
-  const from = span ? ` from ${span}` : ''
+  const years = span ? (span.match(/\d{4}/g) ?? []) : []
+  const from =
+    years.length > 0
+      ? ` from ${years[0] === years.at(-1) ? years[0] : `${years[0]} to ${years.at(-1)}`}`
+      : ''
   return exam === 'qualifier'
     ? `Free IITM qualifier ${course.shortName} PYQs: ${count} qualifier question papers${from}, with the exact ${course.shortName} pages and answers marked where available.`
     : `Free IITM BS ${course.shortName} ${label} PYQs: ${count} ${withDigits(course.name)} ${label} question papers${from}, with the exact pages and answers marked where available.`
