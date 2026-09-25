@@ -21,6 +21,8 @@ export type LectureCourse = {
   /** The programme's slug, e.g. "data-science". */
   program: string
   courseId: string | null
+  /** The course guide post, when there is one. */
+  blogPostId: string | null
   videoCount: number
   /**
    * Weeks with at least one lecture, in order, with how many each has. Empty
@@ -72,7 +74,9 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
   const [courses, lectures] = await Promise.all([
     getPublicClient()
       .from('note_courses')
-      .select('id, code, slug, name, short_name, level, course_id, updated_at, programs(slug)')
+      .select(
+        'id, code, slug, name, short_name, level, course_id, blog_post_id, updated_at, programs(slug)',
+      )
       .order('sort_order')
       .order('name'),
     allLectureRows(),
@@ -111,6 +115,7 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
         level: row.level as NoteLevel,
         program: row.programs?.slug ?? '',
         courseId: row.course_id,
+        blogPostId: row.blog_post_id,
         videoCount: entry.count,
         weeks:
           weekly * 2 >= entry.count
