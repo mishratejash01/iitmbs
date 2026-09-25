@@ -57,6 +57,11 @@ export async function generateMetadata({ params }: PageProps<'/notes/[slug]'>): 
       level: course.level,
     },
     fallbackTitle: `${pageTitle(course)} (${course.code}) | ${settings.site_name}`,
+    shortTitles: [
+      `IITM BS ${course.shortName} Notes: Handwritten and PDF Notes (${course.code})`,
+      `IITM BS ${course.shortName} Notes (${course.code})`,
+      `${course.shortName} Notes (${course.code})`,
+    ],
     fallbackDescription: `${course.noteCount} free ${course.name} (${course.shortName}, ${course.code}) notes shared by IITM BS students, week by week.`,
     seo: course.seo,
     override: overrides[course.path],
