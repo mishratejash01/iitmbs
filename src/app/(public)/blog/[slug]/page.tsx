@@ -17,6 +17,7 @@ import { getPage } from '@/lib/data/pages'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
+import { getLectureCourses } from '@/lib/data/lectures'
 import { getPyqCourses } from '@/lib/data/question-papers'
 import { getNoteCourses } from '@/lib/data/student-notes'
 import { BLOG_PATH } from '@/lib/routes'
@@ -58,12 +59,13 @@ export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): P
 
 export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>) {
   const { slug } = await params
-  const [post, all, blogPage, noteCourses, pyqCourses] = await Promise.all([
+  const [post, all, blogPage, noteCourses, pyqCourses, lectureCourses] = await Promise.all([
     getBlogPost(slug),
     getBlogPostIndex(),
     getPage('blog'),
     getNoteCourses(),
     getPyqCourses(),
+    getLectureCourses(),
   ])
   if (!post) return redirectOrNotFound(`${BLOG_PATH}/${slug}`)
 
@@ -73,6 +75,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
   const blogName = blogPage?.title.split(':')[0] ?? 'Blog'
   const studentNotes = noteCourses.find((n) => n.blogPostId === post.id)
   const papers = pyqCourses.find((p) => p.blogPostId === post.id)
+  const lectures = lectureCourses.find((l) => l.blogPostId === post.id)
 
   const reviewed = post.lastReviewedAt ?? post.updatedAt
   const showToc = toc.length >= 3
@@ -135,7 +138,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
               </div>
             ) : null}
 
-            {papers || studentNotes ? (
+            {papers || studentNotes || lectures ? (
               <section
                 aria-labelledby="for-this-course"
                 className="mt-16 border-t border-border pt-6"
@@ -152,6 +155,18 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
                       >
                         {papers.paperCount} {papers.shortName} previous year question papers with
                         answers
+                      </Link>
+                    </li>
+                  ) : null}
+                  {lectures ? (
+                    <li>
+                      <Link
+                        href={lectures.path}
+                        className="font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+                      >
+                        {lectures.videoCount} official IIT Madras {lectures.shortName} lecture
+                        videos
+                        {lectures.weeks.length > 0 ? ', week by week' : ''}
                       </Link>
                     </li>
                   ) : null}
