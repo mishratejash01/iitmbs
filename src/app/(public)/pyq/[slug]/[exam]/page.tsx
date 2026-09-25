@@ -19,9 +19,12 @@ import { paperHeading, paperSpan, pyqFaqs, pyqKeywords } from '@/lib/pyq/papers'
 import {
   isPyqExam,
   PYQ_EXAM_LABEL,
+  PYQ_HUB_EXAMS,
   PYQ_PATH,
   pyqCoursePath,
   pyqExamPath,
+  pyqHubPath,
+  type PyqHubExam,
   type PyqExam,
 } from '@/lib/routes'
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
@@ -120,6 +123,9 @@ export default async function PyqExamPage({ params }: PageProps<'/pyq/[slug]/[ex
   const span = paperSpan(papers)
   const title = pageTitle(course, found.exam)
   const notesPage = notes.find((note) => note.id === course.id)
+  const hub = (PYQ_HUB_EXAMS as readonly string[]).includes(found.exam)
+    ? pyqHubPath(found.exam as PyqHubExam)
+    : null
 
   return (
     <>
@@ -161,11 +167,23 @@ export default async function PyqExamPage({ params }: PageProps<'/pyq/[slug]/[ex
             showExam={false}
           />
 
-          {notesPage ? (
-            <p className="text-small">
-              <Link href={notesPage.path} className="text-accent-ink underline underline-offset-2">
-                {course.shortName} notes for {label} revision
-              </Link>
+          {notesPage || hub ? (
+            <p className="flex flex-wrap gap-x-6 gap-y-2 text-small">
+              {notesPage ? (
+                <Link
+                  href={notesPage.path}
+                  className="text-accent-ink underline underline-offset-2"
+                >
+                  {course.shortName} notes for {label} revision
+                </Link>
+              ) : null}
+              {hub ? (
+                <Link href={hub} className="text-accent-ink underline underline-offset-2">
+                  {found.exam === 'qualifier'
+                    ? 'Qualifier PYQs for every subject'
+                    : `${label} PYQs for every course`}
+                </Link>
+              ) : null}
             </p>
           ) : null}
 
