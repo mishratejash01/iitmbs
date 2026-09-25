@@ -22,6 +22,7 @@ import { PYQ_EXAM_LABEL, PYQ_PATH, pyqCoursePath, pyqExamPath } from '@/lib/rout
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
+import { pickTitle, SEARCH_NAMES, yearRange } from '@/lib/seo/title'
 
 export async function generateStaticParams() {
   const courses = await getPyqCourses()
@@ -53,6 +54,7 @@ export async function generateMetadata({ params }: PageProps<'/pyq/[slug]'>): Pr
   ])
   const course = courses.find((c) => c.slug === slug)
   if (!course) return { robots: { index: false } }
+  const years = yearRange(course.terms) ?? ''
   return buildMetadata({
     settings,
     path: course.path,
@@ -64,13 +66,14 @@ export async function generateMetadata({ params }: PageProps<'/pyq/[slug]'>): Pr
       count: course.paperCount,
       level: course.level,
     },
-    fallbackTitle: `${pageTitle(course)} Previous Year Question Papers (${course.code}) | ${settings.site_name}`,
-    shortTitles: [
-      `IITM BS ${course.shortName} PYQs: Previous Year Question Papers (${course.code})`,
-      `IITM BS ${course.shortName} PYQs: Previous Year Papers (${course.code})`,
-      `IITM BS ${course.shortName} PYQs (${course.code})`,
-      `${course.shortName} PYQs (${course.code})`,
-    ],
+    fallbackTitle: pickTitle([
+      SEARCH_NAMES[course.code] &&
+        `IITM BS ${course.shortName} PYQ: ${SEARCH_NAMES[course.code]} Question Papers ${years}`,
+      `IITM BS ${course.shortName} PYQ: Previous Year Question Papers ${years}`,
+      `IITM BS ${course.shortName} PYQ: Previous Year Question Papers`,
+      `IITM BS ${course.shortName} PYQ: Question Papers ${years}`,
+      `IITM BS ${course.shortName} PYQ`,
+    ]),
     fallbackDescription: description(course),
     keywords: pyqKeywords(course, course.exams),
     override: overrides[course.path],
