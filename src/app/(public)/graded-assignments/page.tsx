@@ -4,25 +4,56 @@ import Link from 'next/link'
 import { PageContext } from '@/components/analytics/page-context'
 import { DeadlineWidget } from '@/components/content/deadline-widget'
 import { PageHeader } from '@/components/layout/page-header'
+import { JsonLd } from '@/components/seo/json-ld'
 import { getLinkIndex } from '@/lib/data/links'
 import { getProgramPage, getPrograms } from '@/lib/data/programs'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getUpcomingDeadlines } from '@/lib/data/upcoming'
+import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
+import { pickTitle } from '@/lib/seo/title'
 
 const PATH = '/graded-assignments'
+const TITLE = 'IITM BS Graded Assignments, Week by Week'
 // The latest term of a week's graded assignment lives at the base path.
 const GRADED = /\/week-(\d+)\/graded-assignment$/
 
+/** Every live graded assignment page, from the link index (published weeks only). */
+async function gradedLinks() {
+  const index = await getLinkIndex()
+  return Object.values(index).filter(
+    (entry) => entry.kind === 'assignment' && GRADED.test(entry.path),
+  )
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const [settings, overrides] = await Promise.all([getSiteSettings(), getSeoOverrides()])
+  const [settings, overrides, graded] = await Promise.all([
+    getSiteSettings(),
+    getSeoOverrides(),
+    gradedLinks(),
+  ])
+  const courses = new Set(graded.map((entry) => entry.path.replace(/\/week-.*$/, ''))).size
   return buildMetadata({
     settings,
     path: PATH,
-    fallbackTitle: 'IITM BS Graded Assignments, Week by Week',
+    fallbackTitle: pickTitle([
+      'IITM BS Graded Assignments: Week by Week Hints for Every Course',
+      TITLE,
+    ]),
     fallbackDescription:
-      'Every IITM BS graded assignment by programme, course and week, with hints before the deadline and walkthroughs after it.',
+      graded.length > 0
+        ? `Free IITM BS graded assignment help for ${courses} ${courses === 1 ? 'course' : 'courses'}, week by week: hints and the concepts tested before each deadline, full walkthroughs after it.`
+        : 'Free IITM BS graded assignment help, week by week: hints and the concepts tested before each deadline, full walkthroughs after it.',
+    keywords: [
+      'iitm bs graded assignment',
+      'iitm bs week 1 graded assignment',
+      'iitm bs graded assignment hints',
+      'iit madras bs graded assignments',
+      'iitm bs ga solutions after deadline',
+    ],
+    // An empty hub is a thin page: keep it out of search until a week is published.
+    noindex: graded.length === 0,
     override: overrides[PATH],
   })
 }
@@ -32,16 +63,13 @@ export async function generateMetadata(): Promise<Metadata> {
  * index (so only published weeks are linked), with the upcoming deadlines.
  */
 export default async function GradedAssignmentsPage() {
-  const [programs, index, deadlines] = await Promise.all([
+  const [programs, graded, deadlines] = await Promise.all([
     getPrograms(),
-    getLinkIndex(),
+    gradedLinks(),
     getUpcomingDeadlines(),
   ])
   const pages = (await Promise.all(programs.map((p) => getProgramPage(p.slug)))).filter(
     (page): page is NonNullable<typeof page> => page !== null,
-  )
-  const graded = Object.values(index).filter(
-    (entry) => entry.kind === 'assignment' && GRADED.test(entry.path),
   )
 
   const sections = pages.map(({ program, courses }) => ({
@@ -58,10 +86,7 @@ export default async function GradedAssignmentsPage() {
   return (
     <>
       <PageContext type="page" />
-      <PageHeader
-        crumbs={[{ name: 'Graded assignments', path: PATH }]}
-        title="Graded assignments"
-      />
+      <PageHeader crumbs={[{ name: 'Graded assignments', path: PATH }]} title={TITLE} />
       <div className="container-page py-10 sm:py-12">
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-x-10">
           <div className="space-y-12">
@@ -117,6 +142,16 @@ export default async function GradedAssignmentsPage() {
           </aside>
         </div>
       </div>
+      {graded.length > 0 ? (
+        <JsonLd
+          data={notesCollectionJsonLd({
+            name: TITLE,
+            description: TITLE,
+            path: PATH,
+            items: graded.map((entry) => ({ name: entry.title, url: entry.path })),
+          })}
+        />
+      ) : null}
     </>
   )
 }
