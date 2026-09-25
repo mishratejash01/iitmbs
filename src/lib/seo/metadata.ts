@@ -41,6 +41,12 @@ export type PageSeoInput = {
 
 const DESCRIPTION_LIMIT = 160
 
+/** Metadata for a page whose item does not exist (the page then calls notFound()). */
+export const NOT_FOUND_METADATA: Metadata = {
+  title: 'Page not found',
+  robots: { index: false },
+}
+
 function canonicalFor(input: PageSeoInput): string {
   const explicit = input.override?.canonical ?? input.seo?.canonicalPath
   if (explicit) return /^https?:\/\//.test(explicit) ? explicit : absoluteUrl(env.siteUrl, explicit)
