@@ -31,6 +31,12 @@ const url = (path: string) => absoluteUrl(env.siteUrl, path)
 const orgId = () => `${env.siteUrl}/#organization`
 const siteId = () => `${env.siteUrl}/#website`
 
+/**
+ * Other names people know the site by: its earlier name and its domain. They
+ * help search engines connect those searches to the current name.
+ */
+const ALTERNATE_NAMES = ['Qualifier Hub', 'iitmbsdegree.in']
+
 export function organizationJsonLd(settings: SiteSettings): WithContext<Organization> {
   const sameAs = Object.values(settings.social).filter((value): value is string => Boolean(value))
   return {
@@ -38,6 +44,7 @@ export function organizationJsonLd(settings: SiteSettings): WithContext<Organiza
     '@type': 'Organization',
     '@id': orgId(),
     name: settings.organization.name || settings.site_name,
+    alternateName: ALTERNATE_NAMES,
     ...(settings.organization.legal_name ? { legalName: settings.organization.legal_name } : {}),
     url: env.siteUrl,
     logo: url('/icon.svg'),
@@ -53,6 +60,7 @@ export function websiteJsonLd(settings: SiteSettings): WithContext<WebSite> {
     '@type': 'WebSite',
     '@id': siteId(),
     name: settings.site_name,
+    alternateName: ALTERNATE_NAMES,
     url: env.siteUrl,
     inLanguage: 'en-IN',
     publisher: { '@id': orgId() },
