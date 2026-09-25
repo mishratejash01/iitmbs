@@ -36,7 +36,7 @@ export function ProgramCard({
       ) : null}
       <span
         className={cn(
-          'mt-auto pt-8 text-small font-semibold underline underline-offset-4',
+          'mt-auto pt-8 text-small font-medium underline underline-offset-4',
           teal ? 'decoration-on-accent/40' : 'decoration-accent-strong/30',
           'group-hover:decoration-current',
         )}

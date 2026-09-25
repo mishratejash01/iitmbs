@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+import { FileText, Library, NotebookPen } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -8,8 +8,13 @@ import { DeadlineWidget } from '@/components/content/deadline-widget'
 import { FaqAccordion } from '@/components/content/faq-accordion'
 import { LinkList } from '@/components/content/link-list'
 import { ProgramCard } from '@/components/content/program-card'
+import { CoursePicker } from '@/components/home/course-picker'
+import { DownloadIllustration } from '@/components/home/download-illustration'
+import { type LevelCard, LevelCards } from '@/components/home/level-cards'
+import { StudyFlow } from '@/components/home/study-flow'
+import { type BannerLink, TermBanner } from '@/components/home/term-banner'
 import { JsonLd } from '@/components/seo/json-ld'
-import { Button, ButtonLink } from '@/components/ui/button'
+import { ButtonLink } from '@/components/ui/button'
 import { SectionHeading } from '@/components/ui/section-heading'
 import { getBlogPostIndex } from '@/lib/data/blog'
 import { getGlobalFaqs } from '@/lib/data/faqs'
@@ -21,10 +26,18 @@ import { getPyqCourses } from '@/lib/data/question-papers'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getNoteCourses } from '@/lib/data/student-notes'
-import { BLOG_PATH, NOTES_PATH, PYQ_PATH } from '@/lib/routes'
+import { BLOG_PATH, formatTerm, NOTES_PATH, PYQ_PATH } from '@/lib/routes'
+import { displayName } from '@/lib/settings/schema'
 import { getUpcomingDeadlines } from '@/lib/data/upcoming'
+import { buildLevels } from '@/lib/home/levels'
 import { organizationJsonLd, websiteJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
+
+// Big, centred section titles in the style of the hero, and the line under them.
+const displayHeading =
+  'text-center text-[1.75rem] leading-9 font-bold tracking-tight text-text sm:text-[2.5rem] sm:leading-[3rem]'
+const displayLead =
+  'mx-auto mt-4 max-w-2xl text-center text-[1.0625rem] leading-8 text-text sm:text-[1.1875rem]'
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, overrides] = await Promise.all([getSiteSettings(), getSeoOverrides()])
@@ -70,21 +83,107 @@ export default async function HomePage() {
   })
 
   const featuredPosts = posts.filter((post) => post.isFeatured).slice(0, 6)
+  const levels = buildLevels({ programPages, noteCourses, pyqCourses })
+  const degreeLevels = levels.filter((level) => level.id !== 'qualifier')
+  const plural = (count: number, one: string, many: string) =>
+    `${count.toLocaleString('en-IN')} ${count === 1 ? one : many}`
+  const acrossCourses = (count: number) =>
+    count > 0 ? `Across ${plural(count, 'course', 'courses')}` : null
+  const coursesCovered = degreeLevels.reduce((sum, level) => sum + level.courses.length, 0)
+  const levelSpan =
+    degreeLevels.length > 1
+      ? `${degreeLevels[0]?.label} to ${degreeLevels.at(-1)?.label}`
+      : (degreeLevels[0]?.label ?? null)
+
   const stats = [
     {
       value: pyqCourses.reduce((sum, course) => sum + course.paperCount, 0),
       label: 'previous year papers',
       href: PYQ_PATH,
+      icon: FileText,
+      badge: acrossCourses(pyqCourses.length),
+      tone: 'bg-violet',
     },
     {
       value: noteCourses.reduce((sum, course) => sum + course.noteCount, 0),
       label: 'student notes',
       href: NOTES_PATH,
+      icon: NotebookPen,
+      badge: acrossCourses(noteCourses.length),
+      tone: 'bg-green',
     },
-    { value: posts.length, label: 'guides on the blog', href: BLOG_PATH },
+    {
+      value: coursesCovered,
+      label: 'courses covered',
+      href: NOTES_PATH,
+      icon: Library,
+      badge: levelSpan,
+      tone: 'bg-sun',
+    },
   ].filter((stat) => stat.value > 0)
 
+  const levelCards: LevelCard[] = levels.map((level) =>
+    level.id === 'qualifier'
+      ? {
+          id: level.id,
+          label: level.label,
+          stats: [
+            plural(level.courses.length, 'course', 'courses'),
+            ...(level.paperCount > 0
+              ? [plural(level.paperCount, 'past qualifier paper', 'past qualifier papers')]
+              : []),
+          ],
+          links: [
+            { label: 'How the qualifier works', href: '/qualifier' },
+            ...(programPages.length > 0
+              ? [{ label: 'Week-by-week help', href: '#programmes' }]
+              : []),
+          ],
+        }
+      : {
+          id: level.id,
+          label: level.label,
+          stats: [
+            plural(level.courses.length, 'course', 'courses'),
+            ...(level.noteCount > 0 ? [plural(level.noteCount, 'note', 'notes')] : []),
+            ...(level.paperCount > 0 ? [plural(level.paperCount, 'paper', 'papers')] : []),
+          ],
+          links: [
+            ...(level.noteCount > 0
+              ? [{ label: `${level.label} notes`, href: `${NOTES_PATH}#${level.id}-notes` }]
+              : []),
+            ...(level.paperCount > 0
+              ? [{ label: `${level.label} papers`, href: `${PYQ_PATH}#${level.id}-pyqs` }]
+              : []),
+          ],
+        },
+  )
+
+  // The current term's banner: dates from the announcement ("September 2026
+  // qualifier: applications close …" → the part after the colon), official
+  // application pages, then our eligibility and timeline guides if live.
+  const announcement = settings.announcement.enabled ? settings.announcement.text : ''
+  const datesText = announcement.includes(':')
+    ? announcement.slice(announcement.indexOf(':') + 1).trim()
+    : announcement
+  const bannerDates = datesText ? datesText.charAt(0).toUpperCase() + datesText.slice(1) : null
+  const bannerLinks: BannerLink[] = [
+    ...programPages.flatMap(({ program }) =>
+      program.officialUrl
+        ? [{ label: `Apply for ${program.shortName}`, href: program.officialUrl, external: true }]
+        : [],
+    ),
+    ...(linkIndex['/qualifier/eligibility']
+      ? [{ label: 'Check eligibility', href: '/qualifier/eligibility' }]
+      : []),
+    ...(linkIndex['/qualifier/timeline']
+      ? [{ label: 'See the timeline', href: '/qualifier/timeline' }]
+      : []),
+  ]
+
   const heroTitle = settings.home.hero_title || settings.tagline || settings.site_name
+  const heroSubtitle = settings.home.hero_subtitle
+  const courseNames = levels.find((level) => level.id === 'qualifier')?.courses.map((c) => c.name)
 
   return (
     <>
@@ -92,75 +191,33 @@ export default async function HomePage() {
       <JsonLd data={[organizationJsonLd(settings), websiteJsonLd(settings)]} />
 
       <section className="bg-accent-strong text-on-accent">
-        <div className="container-page grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.35fr_1fr] lg:py-24">
-          <div>
-            <h1 className="max-w-2xl text-[2.25rem] leading-[2.75rem] font-semibold sm:text-display sm:leading-[3.875rem]">
-              {heroTitle}
-            </h1>
+        <div className="container-page pt-12 pb-16 text-center sm:pt-20 sm:pb-24">
+          <h1 className="mx-auto max-w-3xl text-[2.375rem] leading-[2.875rem] font-bold tracking-tight sm:text-[3.5rem] sm:leading-[4.125rem]">
+            {heroTitle}
+          </h1>
+          {heroSubtitle ? (
+            <p className="mx-auto mt-5 max-w-2xl text-[1.0625rem] leading-7 text-on-accent/85 sm:text-[1.1875rem] sm:leading-8">
+              {heroSubtitle}
+            </p>
+          ) : null}
 
-            {settings.features.search ? (
-              <form action="/search" role="search" className="mt-8 flex max-w-xl gap-2">
-                <label htmlFor="home-search" className="sr-only">
-                  Search courses, weeks and topics
-                </label>
-                <div className="relative flex-1">
-                  <Search
-                    aria-hidden="true"
-                    className="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-muted"
-                  />
-                  <input
-                    id="home-search"
-                    name="q"
-                    type="search"
-                    enterKeyHint="search"
-                    placeholder="e.g. maths 1 week 2"
-                    className="min-h-13 w-full rounded-control border-0 bg-card pr-3 pl-11 text-body text-text placeholder:text-muted focus-visible:outline-accent-soft"
-                  />
-                </div>
-                <Button type="submit" size="lg" variant="soft" className="min-h-13">
-                  Search
-                </Button>
-              </form>
-            ) : null}
+          {levels.length > 0 ? (
+            <CoursePicker
+              levels={levels.map(({ id, label, courses }) => ({ id, label, courses }))}
+            />
+          ) : null}
 
-            {quickLinks.length > 0 ? (
-              <ul
-                className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-small"
-                aria-label="Quick links"
-              >
-                {quickLinks.map((link) => (
-                  <li key={link.id}>
-                    <Link
-                      href={link.href}
-                      className="font-medium text-accent-soft underline decoration-accent-soft/40 underline-offset-4 hover:decoration-accent-soft"
-                      data-track="nav_click"
-                      data-track-label={`quick:${link.label}`}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-
-          {stats.length > 0 ? (
-            <ul
-              aria-label="On this site"
-              className="rounded-panel bg-accent-soft p-7 text-accent-strong sm:p-9"
-            >
-              {stats.map((stat, index) => (
-                <li
-                  key={stat.href}
-                  className={index > 0 ? 'mt-5 border-t border-accent-strong/15 pt-5' : ''}
-                >
-                  <Link href={stat.href} className="group flex items-baseline gap-3">
-                    <span className="text-[2.5rem] leading-none font-semibold tabular-nums">
-                      {stat.value.toLocaleString('en-IN')}
-                    </span>
-                    <span className="text-body font-medium underline decoration-accent-strong/30 underline-offset-4 group-hover:decoration-accent-strong">
-                      {stat.label}
-                    </span>
+          {quickLinks.length > 0 ? (
+            <ul className="mt-6 flex flex-wrap justify-center gap-2" aria-label="Quick links">
+              {quickLinks.map((link) => (
+                <li key={link.id}>
+                  <Link
+                    href={link.href}
+                    className="inline-flex min-h-10 items-center rounded-full bg-on-accent/10 px-4 text-small font-medium text-on-accent ring-1 ring-on-accent/25 transition-colors hover:bg-on-accent/20"
+                    data-track="nav_click"
+                    data-track-label={`quick:${link.label}`}
+                  >
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -169,11 +226,116 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <div className="container-page space-y-20 py-16 sm:py-20">
-        {programPages.length > 0 ? (
-          <section aria-labelledby="programmes">
-            <SectionHeading id="programmes" title="Choose your programme" />
-            <div className="grid gap-5 md:grid-cols-2">
+      {settings.current_term ? (
+        <TermBanner
+          brand={displayName(settings)}
+          term={formatTerm(settings.current_term)}
+          dates={bannerDates}
+          links={bannerLinks}
+        />
+      ) : null}
+
+      {stats.length > 0 ? (
+        <section aria-labelledby="on-this-site">
+          <div className="container-page py-16 sm:py-20">
+            <h2 id="on-this-site" className={displayHeading}>
+              Free study material for every level, and counting
+            </h2>
+            <div className="mt-10 flex flex-col items-center gap-10 lg:mt-12 lg:flex-row lg:justify-center lg:gap-20">
+              <DownloadIllustration className="w-48 shrink-0 sm:w-56 lg:w-64" />
+              <ul className="flex flex-wrap justify-center gap-x-14 gap-y-10">
+                {stats.map((stat) => (
+                  <li key={stat.label}>
+                    <Link href={stat.href} className="group flex flex-col items-center text-center">
+                      <span className="text-[3.25rem] leading-none font-bold tracking-tight text-text tabular-nums sm:text-[4rem]">
+                        {stat.value.toLocaleString('en-IN')}
+                      </span>
+                      <span className="mt-3 flex items-center gap-1.5 text-body text-muted underline decoration-transparent underline-offset-4 group-hover:text-accent-ink group-hover:decoration-accent-ink/40">
+                        <stat.icon aria-hidden="true" className="size-4" />
+                        {stat.label}
+                      </span>
+                      {stat.badge ? (
+                        <span
+                          className={`mt-2 rounded-full px-2.5 py-0.5 text-xs font-medium text-text ${stat.tone}`}
+                        >
+                          {stat.badge}
+                        </span>
+                      ) : null}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {levelCards.length > 0 ? (
+        <section aria-labelledby="levels" className="bg-surface">
+          <div className="container-page py-16 sm:py-24">
+            <h2 id="levels" className={displayHeading}>
+              Every level of your degree
+            </h2>
+            <div className="mt-10 sm:mt-12">
+              <LevelCards levels={levelCards} />
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <section aria-labelledby="how-it-works" className="overflow-hidden">
+        <div className="container-page py-16 text-center sm:py-24">
+          <p className="text-small font-bold tracking-[0.14em] text-accent-ink uppercase">
+            Starting with the qualifier?
+          </p>
+          <h2 id="how-it-works" className={`${displayHeading} mt-3`}>
+            Prepare for every graded assignment
+          </h2>
+          <p className={displayLead}>
+            Each qualifier week comes with{' '}
+            <span className="whitespace-nowrap">
+              <span
+                aria-hidden="true"
+                className="mr-1.5 inline-block size-3 rounded-[4px] bg-lime align-middle"
+              />
+              concepts,
+            </span>{' '}
+            <span className="whitespace-nowrap">
+              <span
+                aria-hidden="true"
+                className="mr-1.5 inline-block size-3 rounded-[4px] bg-violet align-middle"
+              />
+              hints
+            </span>{' '}
+            and{' '}
+            <span className="whitespace-nowrap">
+              <span
+                aria-hidden="true"
+                className="mr-1.5 inline-block size-3 rounded-[4px] bg-sky align-middle"
+              />
+              worked solutions
+            </span>
+          </p>
+          <div className="mt-12 sm:mt-16">
+            <StudyFlow courses={courseNames ?? []} />
+          </div>
+          <ButtonLink
+            href={programPages.length > 0 ? '#programmes' : '/qualifier'}
+            size="lg"
+            className="mt-12 sm:mt-16"
+          >
+            {programPages.length > 0 ? 'Choose your programme' : 'How the qualifier works'}
+          </ButtonLink>
+        </div>
+      </section>
+
+      {programPages.length > 0 ? (
+        <section aria-labelledby="programmes" className="bg-surface">
+          <div className="container-page py-16 sm:py-24">
+            <h2 id="programmes" className={displayHeading}>
+              Choose your programme
+            </h2>
+            <div className="mt-10 grid gap-5 sm:mt-12 md:grid-cols-2">
               {programPages.map((page, index) => (
                 <ProgramCard
                   key={page.program.id}
@@ -182,66 +344,87 @@ export default async function HomePage() {
                 />
               ))}
             </div>
-          </section>
-        ) : null}
-
-        <div className="grid gap-14 lg:grid-cols-5">
-          <div className="lg:col-span-3">
-            {guides.length > 0 ? (
-              <section aria-labelledby="guides">
-                <SectionHeading
-                  id="guides"
-                  title="Qualifier guides"
-                  action={{ href: '/qualifier', label: 'How the qualifier works' }}
-                />
-                <LinkList items={guides} label="Qualifier guides" />
-              </section>
-            ) : null}
-          </div>
-          <div className="space-y-10 lg:col-span-2">
-            <DeadlineWidget deadlines={deadlines} />
-            {popular.length > 0 ? (
-              <section aria-labelledby="popular">
-                <SectionHeading id="popular" title="Popular right now" as="h3" />
-                <LinkList items={popular} label="Popular pages" />
-              </section>
-            ) : null}
-          </div>
-        </div>
-
-        {featuredPosts.length > 0 ? (
-          <section aria-labelledby="from-the-blog">
-            <SectionHeading
-              id="from-the-blog"
-              title="From the blog"
-              action={{ href: BLOG_PATH, label: `All ${posts.length} posts` }}
-            />
-            <PostGrid posts={featuredPosts} label="Featured blog posts" />
-          </section>
-        ) : null}
-
-        <FaqAccordion faqs={faqs} />
-
-        <section
-          aria-labelledby="start-here"
-          className="rounded-panel bg-accent-soft px-7 py-12 text-center sm:px-12 sm:py-16"
-        >
-          <h2
-            id="start-here"
-            className="text-[1.75rem] leading-9 font-semibold text-accent-strong sm:text-h1"
-          >
-            Starting the qualifier?
-          </h2>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <ButtonLink href="/qualifier" size="lg">
-              Read the qualifier guide
-            </ButtonLink>
-            <ButtonLink href={PYQ_PATH} size="lg" variant="secondary">
-              Practise with previous papers
-            </ButtonLink>
           </div>
         </section>
-      </div>
+      ) : null}
+
+      {guides.length > 0 || popular.length > 0 || deadlines.length > 0 ? (
+        <section aria-labelledby="qualifier-guides">
+          <div className="container-page py-16 sm:py-24">
+            <h2 id="qualifier-guides" className={displayHeading}>
+              Know how the qualifier works
+            </h2>
+            <div className="mt-10 grid gap-6 sm:mt-12 lg:grid-cols-5">
+              {guides.length > 0 ? (
+                <div className="rounded-panel border border-border p-6 sm:p-8 lg:col-span-3">
+                  <SectionHeading
+                    id="guides"
+                    title="Qualifier guides"
+                    as="h3"
+                    action={{ href: '/qualifier', label: 'All guides' }}
+                  />
+                  <LinkList items={guides} label="Qualifier guides" />
+                </div>
+              ) : null}
+              <div className="space-y-6 lg:col-span-2">
+                <DeadlineWidget deadlines={deadlines} />
+                {popular.length > 0 ? (
+                  <div className="rounded-panel border border-border p-6 sm:p-7">
+                    <SectionHeading id="popular" title="Popular right now" as="h3" />
+                    <LinkList items={popular} label="Popular pages" />
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {featuredPosts.length > 0 ? (
+        <section aria-labelledby="from-the-blog" className="bg-surface">
+          <div className="container-page py-16 sm:py-24">
+            <h2 id="from-the-blog" className={displayHeading}>
+              Latest from the blog
+            </h2>
+            <div className="mt-10 sm:mt-12">
+              <PostGrid posts={featuredPosts} label="Featured blog posts" />
+            </div>
+            <div className="mt-12 text-center">
+              <ButtonLink href={BLOG_PATH} size="lg" variant="secondary">
+                Read the blog
+              </ButtonLink>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {faqs.length > 0 ? (
+        <div className="container-page py-16 sm:py-24">
+          <div className="mx-auto max-w-3xl">
+            <FaqAccordion faqs={faqs} display />
+          </div>
+        </div>
+      ) : null}
+
+      {/* The footer's top margin closes this section. */}
+      <section aria-labelledby="our-mission" className="border-t border-border">
+        <div className="container-page pt-16 text-center sm:pt-24">
+          <h2 id="our-mission" className={displayHeading}>
+            Our mission
+          </h2>
+          <p className={displayLead}>
+            Help every IITM BS student find the right material, from the qualifier to the degree.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <ButtonLink href="/about" size="lg">
+              Learn more about us
+            </ButtonLink>
+            <ButtonLink href="/qualifier" size="lg" variant="secondary">
+              Start with the qualifier
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
     </>
   )
 }

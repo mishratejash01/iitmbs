@@ -13,20 +13,32 @@ export function FaqAccordion({
   title = 'Frequently asked questions',
   id = 'faq',
   withSchema = true,
+  display = false,
 }: {
   faqs: Faq[]
   title?: string
   id?: string
   withSchema?: boolean
+  /** A big centred title, for the homepage. */
+  display?: boolean
 }) {
   if (faqs.length === 0) return null
   return (
-    <section aria-labelledby={id} className="mt-12">
-      <SectionHeading id={id} title={title} />
+    <section aria-labelledby={id} className={display ? undefined : 'mt-12'}>
+      {display ? (
+        <h2
+          id={id}
+          className="mb-8 text-center text-[1.75rem] leading-9 font-bold tracking-tight text-text sm:text-[2.5rem] sm:leading-[3rem]"
+        >
+          {title}
+        </h2>
+      ) : (
+        <SectionHeading id={id} title={title} />
+      )}
       <div className="border-t border-border">
         {faqs.map((faq) => (
           <details key={faq.id} id={`faq-${faq.id}`} className="group border-b border-border">
-            <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-4 font-semibold text-text hover:text-accent-ink [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-4 font-medium text-text hover:text-accent-ink [&::-webkit-details-marker]:hidden">
               <span>{faq.question}</span>
               <span
                 aria-hidden="true"
