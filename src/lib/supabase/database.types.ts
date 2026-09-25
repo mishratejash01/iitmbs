@@ -1268,6 +1268,56 @@ export type Database = {
           },
         ]
       }
+      newsletter_subscribers: {
+        Row: {
+          anonymous_id: string | null
+          email: string
+          id: string
+          segment: string
+          source_category: string | null
+          source_entity_id: string | null
+          source_path: string
+          source_type: string | null
+          subscribed_at: string
+          unsubscribed_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          email: string
+          id?: string
+          segment?: string
+          source_category?: string | null
+          source_entity_id?: string | null
+          source_path: string
+          source_type?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          email?: string
+          id?: string
+          segment?: string
+          source_category?: string | null
+          source_entity_id?: string | null
+          source_path?: string
+          source_type?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_subscribers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       note_courses: {
         Row: {
           blog_post_id: string | null
