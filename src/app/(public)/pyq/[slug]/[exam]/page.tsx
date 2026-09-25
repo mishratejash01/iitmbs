@@ -81,6 +81,11 @@ export async function generateMetadata({
       count: papers.length,
     },
     fallbackTitle: `${pageTitle(course, found.exam)} Previous Year Papers | ${settings.site_name}`,
+    shortTitles: [
+      `IITM BS ${course.shortName} ${PYQ_EXAM_LABEL[found.exam]} PYQs: Previous Year Papers`,
+      `IITM BS ${course.shortName} ${PYQ_EXAM_LABEL[found.exam]} PYQs (${course.code})`,
+      `${course.shortName} ${PYQ_EXAM_LABEL[found.exam]} PYQs (${course.code})`,
+    ],
     fallbackDescription: description(course, found.exam, papers.length, span),
     keywords: pyqKeywords(course, [found.exam], { withoutExam: false }),
     override: overrides[path],
