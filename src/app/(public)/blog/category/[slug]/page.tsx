@@ -11,7 +11,7 @@ import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { BLOG_PATH, blogCategoryPath } from '@/lib/routes'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
 export async function generateStaticParams() {
@@ -33,7 +33,7 @@ export async function generateMetadata({
     getSeoOverrides(),
   ])
   const category = categories.find((c) => c.slug === slug)
-  if (!category) return { robots: { index: false } }
+  if (!category) return NOT_FOUND_METADATA
   const count = postsInCategory(posts, category.id).length
   return buildMetadata({
     settings,
