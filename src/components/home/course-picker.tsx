@@ -2,7 +2,7 @@
 
 import { BookOpen, ChevronDown, GraduationCap } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { track } from '@/lib/analytics/client'
@@ -18,14 +18,23 @@ const selectClasses =
 
 /**
  * "Choose your level and course, then Go." With JavaScript, Go opens the
- * course's page. Without it, the form still works: it searches for the
- * chosen course's name.
+ * course's page, which is prefetched as soon as it is chosen, and the button
+ * says so while the page loads. Without JavaScript the form still works: it
+ * searches for the chosen course's name.
  */
 export function CoursePicker({ levels }: { levels: PickerLevel[] }) {
   const router = useRouter()
   const [levelId, setLevelId] = useState(levels[0]?.id ?? '')
   const level = levels.find((l) => l.id === levelId) ?? levels[0]
   const [courseName, setCourseName] = useState(level?.courses[0]?.name ?? '')
+  const [opening, startOpening] = useTransition()
+  const target = level?.courses.find((c) => c.name === courseName)?.href
+
+  // Warm the chosen course's page so Go feels instant.
+  useEffect(() => {
+    if (target) router.prefetch(target)
+  }, [router, target])
+
   if (!level) return null
 
   const onLevelChange = (id: string) => {
@@ -43,7 +52,7 @@ export function CoursePicker({ levels }: { levels: PickerLevel[] }) {
         if (!course) return
         event.preventDefault()
         track('nav_click', { label: `home_picker:${level.id}:${course.name}` })
-        router.push(course.href)
+        startOpening(() => router.push(course.href))
       }}
     >
       <p id="picker-heading" className="text-[1.125rem] leading-7 font-medium sm:text-[1.3125rem]">
@@ -105,9 +114,11 @@ export function CoursePicker({ levels }: { levels: PickerLevel[] }) {
           type="submit"
           size="lg"
           variant="highlight"
+          disabled={opening}
+          aria-live="polite"
           className="min-h-14 px-10 text-[1.125rem] font-bold"
         >
-          Go
+          {opening ? 'Opening…' : 'Go'}
         </Button>
       </div>
     </form>
