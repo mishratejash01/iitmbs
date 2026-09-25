@@ -28,7 +28,7 @@ import {
   type PyqExam,
 } from '@/lib/routes'
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 import { pickTitle, SEARCH_NAMES, withDigits, yearRange } from '@/lib/seo/title'
 
@@ -77,7 +77,7 @@ export async function generateMetadata({
     getSiteSettings(),
     getSeoOverrides(),
   ])
-  if (!found) return { robots: { index: false } }
+  if (!found) return NOT_FOUND_METADATA
   const { course, papers } = found
   const path = pyqExamPath(course.slug, found.exam)
   const span = paperSpan(papers)
