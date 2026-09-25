@@ -7,7 +7,7 @@ eligibility and score calculators, and a full admin CMS with analytics.
 Everything a visitor sees — programmes, courses, weeks, notes, questions, FAQs, navigation, SEO templates, theme
 colours, qualifier rules — comes from the database and is edited in `/admin`. Nothing content-related is hard-coded.
 
-**Live:** https://iitmbs-delta.vercel.app
+**Live:** https://iitmbsdegree.in
 
 ## Contents
 
