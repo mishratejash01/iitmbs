@@ -54,7 +54,7 @@ export async function examHubMetadata(exam: PyqHubExam): Promise<Metadata> {
     fallbackTitle: pickTitle(
       exam === 'qualifier'
         ? [
-            years && `IITM Qualifier PYQ: Qualifier Exam Question Papers ${years}`,
+            years && `IITM Qualifier Exam PYQ: Question Papers ${years}`,
             'IITM Qualifier PYQ: Previous Year Question Papers',
           ]
         : [
