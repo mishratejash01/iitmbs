@@ -18,6 +18,12 @@ const supabaseOrigin = originOf(process.env.NEXT_PUBLIC_SUPABASE_URL)
 // move their index and ranking signals to the new address.
 const redirectAllTo = originOf(process.env.REDIRECT_ALL_TO)
 
+// Old Vercel addresses of this project. Every path moves to the live site with
+// a permanent redirect, except the IndexNow key: search engines read it on the
+// old host itself before they accept "this page moved" pings for its URLs.
+const liveOrigin = originOf(process.env.NEXT_PUBLIC_SITE_URL) ?? 'https://www.iitmbsdegree.in'
+const retiredHosts = ['iitmbs-delta.vercel.app', 'iitmbs-phi.vercel.app']
+
 /**
  * Static Content-Security-Policy. Pages are statically prerendered, so a
  * per-request nonce is not possible; inline scripts are therefore allowed, but
@@ -97,9 +103,15 @@ const nextConfig: NextConfig = {
   },
 
   async redirects() {
-    return redirectAllTo
-      ? [{ source: '/:path*', destination: `${redirectAllTo}/:path*`, permanent: true }]
-      : []
+    if (redirectAllTo) {
+      return [{ source: '/:path*', destination: `${redirectAllTo}/:path*`, permanent: true }]
+    }
+    return retiredHosts.map((host) => ({
+      source: '/:path((?!indexnow-key\\.txt$).*)',
+      has: [{ type: 'host' as const, value: host }],
+      destination: `${liveOrigin}/:path`,
+      permanent: true,
+    }))
   },
 
   async headers() {
