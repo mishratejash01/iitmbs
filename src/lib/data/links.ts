@@ -3,6 +3,7 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 
 import { tableTag } from '@/lib/cache/tags'
+import { getServiceClient } from '@/lib/supabase/admin'
 import { getPublicClient } from '@/lib/supabase/public'
 
 import { withRetry } from './retry'
@@ -35,9 +36,12 @@ export async function getLinkIndex(): Promise<Record<string, LinkIndexEntry>> {
 
   // The API returns at most 1000 rows a request, so this pages (in a stable order).
   const data: Array<{ path: string; title: string; summary: string; kind: string }> = []
+  // The server key: anon's 3 s statement timeout is too tight while a build
+  // renders thousands of pages at once. The link index holds only public paths.
+  const db = getServiceClient() ?? getPublicClient()
   for (let from = 0; ; from += PAGE_SIZE) {
     const page = await withRetry(() =>
-      getPublicClient()
+      db
         .rpc('get_link_index')
         .order('path')
         .range(from, from + PAGE_SIZE - 1),
