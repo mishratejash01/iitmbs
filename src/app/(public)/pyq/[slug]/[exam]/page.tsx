@@ -94,9 +94,11 @@ export async function generateMetadata({
     fallbackTitle: pickTitle(
       found.exam === 'qualifier'
         ? [
-            `IITM Qualifier ${subject} PYQ: Question Papers ${years}`,
-            `IITM Qualifier ${subject} PYQ: Previous Year Question Papers`,
-            `IITM Qualifier ${subject} PYQ`,
+            `IITM Qualifier ${course.shortName} PYQ: Question Papers ${years}`,
+            subject !== course.shortName &&
+              `IITM Qualifier ${course.shortName} PYQ: ${subject} Question Papers`,
+            `IITM Qualifier ${course.shortName} PYQ: Previous Year Question Papers`,
+            `IITM Qualifier ${course.shortName} PYQ`,
           ]
         : [
             `IITM BS ${course.shortName} ${label} PYQ: Previous Year Question Papers`,
