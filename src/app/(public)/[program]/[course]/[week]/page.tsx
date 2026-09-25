@@ -22,7 +22,7 @@ import type { AssignmentSummary } from '@/lib/data/types'
 import { getWeekPage, getWeekParams } from '@/lib/data/weeks'
 import { formatTerm, parseWeekSegment } from '@/lib/routes'
 import { learningResourceJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { weekVars } from '@/lib/seo/vars'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 import { formatDateTime } from '@/lib/utils/dates'
@@ -49,7 +49,7 @@ export async function generateMetadata({
     getSiteSettings(),
     getSeoOverrides(),
   ])
-  if (!data) return { robots: { index: false } }
+  if (!data) return NOT_FOUND_METADATA
   const { core, week } = data
   return buildMetadata({
     settings,
