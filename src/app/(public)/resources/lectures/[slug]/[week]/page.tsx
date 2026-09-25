@@ -15,7 +15,7 @@ import { getSiteSettings } from '@/lib/data/settings'
 import { formatDuration } from '@/lib/lectures/videos'
 import { LECTURES_PATH, lectureWeekPath, parseWeekSegment } from '@/lib/routes'
 import { lectureVideosJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 import { pickTitle } from '@/lib/seo/title'
 
@@ -54,7 +54,7 @@ export async function generateMetadata({
     getSiteSettings(),
     getSeoOverrides(),
   ])
-  if (!found) return { robots: { index: false } }
+  if (!found) return NOT_FOUND_METADATA
   const { course, lectures } = found
   const path = lectureWeekPath(course.slug, found.week)
   const short = course.shortName.toLowerCase()
