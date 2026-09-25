@@ -13,9 +13,9 @@ import type { ReactNode } from 'react'
 import { LogoMark } from '@/components/layout/logo'
 import { cn } from '@/lib/utils/cn'
 
-type Source = { label: string; detail: string; icon: LucideIcon; tone: string; tag?: string }
+type Source = { label: string; detail: string; icon: LucideIcon; tone: string }
 
-// What the site gathers. The qualifier help is tagged for new students.
+// What the site gathers, qualifier help for new students included.
 const SOURCES: Source[] = [
   { label: 'Student notes', detail: 'Handwritten and PDF', icon: NotebookPen, tone: 'bg-lime' },
   {
@@ -26,13 +26,7 @@ const SOURCES: Source[] = [
   },
   { label: 'IIT Madras lectures', detail: 'Week by week', icon: CirclePlay, tone: 'bg-sky' },
   { label: 'Guides', detail: 'Plain, sourced answers', icon: Newspaper, tone: 'bg-sun' },
-  {
-    label: 'Qualifier help',
-    detail: 'Hints and walkthroughs',
-    icon: Lightbulb,
-    tone: 'bg-green',
-    tag: 'New students',
-  },
+  { label: 'Qualifier help', detail: 'For new students', icon: Lightbulb, tone: 'bg-green' },
 ]
 // Staggered so the stack reads as a loose pile.
 const OFFSETS = ['ml-0', 'ml-10', 'ml-4', 'ml-12', 'ml-2'] as const
@@ -93,11 +87,6 @@ export function ResourceFlow({ course }: { course: string }) {
               >
                 <source.icon className="size-4" />
               </span>
-              {source.tag ? (
-                <span className="absolute -top-4 -right-2 rounded-full bg-accent-strong px-2 py-0.5 text-[0.625rem] font-medium whitespace-nowrap text-on-accent">
-                  {source.tag}
-                </span>
-              ) : null}
               <span className="min-w-0">
                 <span className="block text-small font-medium text-text">{source.label}</span>
                 <span className="block truncate text-xs text-muted">{source.detail}</span>
@@ -147,7 +136,7 @@ export function ResourceFlow({ course }: { course: string }) {
 
       <li className="flex flex-col gap-8 lg:row-span-2 lg:grid lg:grid-rows-subgrid">
         <div aria-hidden="true" className="flex flex-1 items-center justify-center">
-          <div className="relative w-64 rounded-card border border-border bg-card p-5 text-left shadow-card">
+          <div className="w-64 rounded-card border border-border bg-card p-5 text-left shadow-card">
             <p className="text-small font-semibold text-text">{course}</p>
             <ul className="mt-3 space-y-2.5">
               {COURSE_ROWS.map((row) => (
@@ -157,9 +146,6 @@ export function ResourceFlow({ course }: { course: string }) {
                 </li>
               ))}
             </ul>
-            <span className="absolute -top-3 -right-3 rounded-full bg-green px-2.5 py-0.5 text-xs font-medium text-text">
-              All in one place
-            </span>
           </div>
         </div>
         <Caption step={3}>Everything for your course, found in one place</Caption>

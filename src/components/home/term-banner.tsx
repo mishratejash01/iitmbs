@@ -81,9 +81,7 @@ export function TermBanner({
             </ul>
             <p className="mt-5 flex items-center justify-between border-t border-border pt-4 text-small">
               Qualifier exam
-              <span className="rounded-full bg-green px-2.5 py-0.5 text-xs font-medium">
-                Hall ticket
-              </span>
+              <span className="text-muted">Hall ticket</span>
             </p>
           </div>
         </div>

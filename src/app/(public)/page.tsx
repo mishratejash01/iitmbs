@@ -190,9 +190,6 @@ export default async function HomePage() {
 
       <section className="bg-accent-strong text-on-accent">
         <div className="container-page pt-12 pb-16 text-center sm:pt-20 sm:pb-24">
-          <p className="mb-5 inline-flex items-center rounded-full bg-on-accent/10 px-4 py-1.5 text-small font-medium text-lime ring-1 ring-lime/40">
-            Completely free for every IITM BS student
-          </p>
           <h1 className="mx-auto max-w-3xl text-[2.375rem] leading-[2.875rem] font-bold tracking-tight sm:text-[3.5rem] sm:leading-[4.125rem]">
             {heroTitle}
           </h1>
