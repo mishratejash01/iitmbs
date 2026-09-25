@@ -18,7 +18,7 @@ import { getNoteCourses } from '@/lib/data/student-notes'
 import { formatDuration } from '@/lib/lectures/videos'
 import { LECTURES_PATH, lectureCoursePath, lectureWeekPath } from '@/lib/routes'
 import { lectureVideosJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 import { pickTitle, withDigits } from '@/lib/seo/title'
 
@@ -47,7 +47,7 @@ export async function generateMetadata({
     getSeoOverrides(),
   ])
   const course = courses.find((c) => c.slug === slug)
-  if (!course) return { robots: { index: false } }
+  if (!course) return NOT_FOUND_METADATA
   const short = course.shortName.toLowerCase()
   const weekly = course.weeks.length > 0
   const name = withDigits(course.name)
