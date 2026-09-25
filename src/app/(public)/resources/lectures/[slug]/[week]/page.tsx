@@ -17,6 +17,7 @@ import { LECTURES_PATH, lectureWeekPath, parseWeekSegment } from '@/lib/routes'
 import { lectureVideosJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
+import { pickTitle } from '@/lib/seo/title'
 
 export async function generateStaticParams() {
   const courses = await getLectureCourses()
@@ -66,12 +67,10 @@ export async function generateMetadata({
     path,
     template: 'lecture_week',
     vars: { course: course.name, short: course.shortName, code: course.code, week: found.week },
-    fallbackTitle: `${pageTitle(course, found.week)} | ${settings.site_name}`,
-    shortTitles: [
-      `IIT Madras ${course.shortName} Week ${found.week} Lectures (${course.code})`,
-      `IIT Madras ${course.shortName} Week ${found.week} Lectures`,
-      `${course.shortName} Week ${found.week} Lectures (${course.code})`,
-    ],
+    fallbackTitle: pickTitle([
+      `IITM BS ${course.shortName} Week ${found.week} Lectures (IIT Madras)`,
+      `IITM BS ${course.shortName} Week ${found.week} Lectures`,
+    ]),
     fallbackDescription: `${lectures.length} IIT Madras lecture videos for ${course.name} (${course.code}) week ${found.week}: ${topics}.`,
     keywords: [
       `${short} week ${found.week} lectures`,
