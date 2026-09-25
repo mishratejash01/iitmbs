@@ -72,7 +72,7 @@ describe('site settings', () => {
       features: 'broken',
       announcement: { enabled: 'yes', tone: 'loud' },
     })
-    expect(settings.site_name).toBe('Qualifier Hub')
+    expect(settings.site_name).toBe("IITM BS Students' Corner")
     expect(settings.features.login).toBe(true)
     expect(settings.announcement).toMatchObject({ enabled: false, tone: 'info' })
     expect(settings.theme).toEqual({})
