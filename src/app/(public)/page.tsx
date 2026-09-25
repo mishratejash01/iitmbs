@@ -11,11 +11,12 @@ import { ProgramCard } from '@/components/content/program-card'
 import { CoursePicker } from '@/components/home/course-picker'
 import { DownloadIllustration } from '@/components/home/download-illustration'
 import { type LevelCard, LevelCards } from '@/components/home/level-cards'
-import { StudyFlow } from '@/components/home/study-flow'
+import { ResourceFlow } from '@/components/home/resource-flow'
 import { type BannerLink, TermBanner } from '@/components/home/term-banner'
 import { JsonLd } from '@/components/seo/json-ld'
 import { ButtonLink } from '@/components/ui/button'
 import { SectionHeading } from '@/components/ui/section-heading'
+import { topPosts } from '@/lib/blog/helpers'
 import { getBlogPostIndex } from '@/lib/data/blog'
 import { getGlobalFaqs } from '@/lib/data/faqs'
 import { getLinkIndex } from '@/lib/data/links'
@@ -122,7 +123,6 @@ export default async function HomePage() {
     },
   ].filter((stat) => stat.value > 0)
 
-  const hasLectures = Boolean(linkIndex['/resources/lectures'])
   const levelCards: LevelCard[] = degreeLevels.map((level) => ({
     id: level.id,
     label: level.label,
@@ -138,7 +138,7 @@ export default async function HomePage() {
       ...(level.paperCount > 0
         ? [{ label: `${level.label} papers`, href: `${PYQ_PATH}#${level.id}-pyqs` }]
         : []),
-      ...(hasLectures ? [{ label: 'Lectures', href: '/resources/lectures' }] : []),
+      { label: 'Lectures', href: '/resources/lectures' },
     ],
   }))
   // The picker opens on the degree's levels; the qualifier comes last, for new students.
@@ -173,7 +173,15 @@ export default async function HomePage() {
 
   const heroTitle = settings.home.hero_title || settings.tagline || settings.site_name
   const heroSubtitle = settings.home.hero_subtitle
-  const courseNames = levels.find((level) => level.id === 'qualifier')?.courses.map((c) => c.name)
+  // "Know how the degree works": the top guide of each big-picture topic.
+  const degreeGuides = ['about', 'structure', 'exams', 'rules', 'fees', 'careers']
+    .flatMap((slug) =>
+      topPosts(
+        posts.filter((post) => post.category.slug === slug),
+        1,
+      ),
+    )
+    .map((post) => ({ path: post.path, title: post.title }))
 
   return (
     <>
@@ -182,6 +190,9 @@ export default async function HomePage() {
 
       <section className="bg-accent-strong text-on-accent">
         <div className="container-page pt-12 pb-16 text-center sm:pt-20 sm:pb-24">
+          <p className="mb-5 inline-flex items-center rounded-full bg-on-accent/10 px-4 py-1.5 text-small font-medium text-lime ring-1 ring-lime/40">
+            Completely free for every IITM BS student
+          </p>
           <h1 className="mx-auto max-w-3xl text-[2.375rem] leading-[2.875rem] font-bold tracking-tight sm:text-[3.5rem] sm:leading-[4.125rem]">
             {heroTitle}
           </h1>
@@ -247,8 +258,25 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      <section aria-labelledby="all-resources" className="overflow-hidden bg-surface">
+        <div className="container-page py-16 text-center sm:py-24">
+          <h2 id="all-resources" className={displayHeading}>
+            All the best IITM BS resources, in one place
+          </h2>
+          <p className={displayLead}>
+            From your first qualifier week to your last degree course, and completely free.
+          </p>
+          <div className="mt-12 sm:mt-16">
+            <ResourceFlow course="Your course" />
+          </div>
+          <ButtonLink href={NOTES_PATH} size="lg" className="mt-12 sm:mt-16">
+            Explore every course
+          </ButtonLink>
+        </div>
+      </section>
+
       {levelCards.length > 0 ? (
-        <section aria-labelledby="levels" className="bg-surface">
+        <section aria-labelledby="levels">
           <div className="container-page py-16 sm:py-24">
             <h2 id="levels" className={displayHeading}>
               Every level of your degree
@@ -263,7 +291,39 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {/* For new students: everything about getting in through the qualifier. */}
+      {degreeGuides.length > 0 || popular.length > 0 || deadlines.length > 0 ? (
+        <section aria-labelledby="degree-guides" className="bg-surface">
+          <div className="container-page py-16 sm:py-24">
+            <h2 id="degree-guides" className={displayHeading}>
+              Know how the degree works
+            </h2>
+            <div className="mt-10 grid gap-6 sm:mt-12 lg:grid-cols-5">
+              {degreeGuides.length > 0 ? (
+                <div className="rounded-panel border border-border bg-card p-6 sm:p-8 lg:col-span-3">
+                  <SectionHeading
+                    id="guides"
+                    title="Degree guides"
+                    as="h3"
+                    action={{ href: BLOG_PATH, label: 'All guides' }}
+                  />
+                  <LinkList items={degreeGuides} label="Degree guides" />
+                </div>
+              ) : null}
+              <div className="space-y-6 lg:col-span-2">
+                <DeadlineWidget deadlines={deadlines} />
+                {popular.length > 0 ? (
+                  <div className="rounded-panel border border-border bg-card p-6 sm:p-7">
+                    <SectionHeading id="popular" title="Popular right now" as="h3" />
+                    <LinkList items={popular} label="Popular pages" />
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* For new students: getting in through the qualifier. */}
       {settings.current_term ? (
         <TermBanner
           brand={displayName(settings)}
@@ -273,58 +333,13 @@ export default async function HomePage() {
         />
       ) : null}
 
-      <section aria-labelledby="how-it-works" className="overflow-hidden">
-        <div className="container-page py-16 text-center sm:py-24">
-          <p className="text-small font-bold tracking-[0.14em] text-accent-ink uppercase">
-            How the qualifier weeks work
-          </p>
-          <h2 id="how-it-works" className={`${displayHeading} mt-3`}>
-            Prepare for every graded assignment
-          </h2>
-          <p className={displayLead}>
-            Each qualifier week comes with{' '}
-            <span className="whitespace-nowrap">
-              <span
-                aria-hidden="true"
-                className="mr-1.5 inline-block size-3 rounded-[4px] bg-lime align-middle"
-              />
-              concepts,
-            </span>{' '}
-            <span className="whitespace-nowrap">
-              <span
-                aria-hidden="true"
-                className="mr-1.5 inline-block size-3 rounded-[4px] bg-violet align-middle"
-              />
-              hints
-            </span>{' '}
-            and{' '}
-            <span className="whitespace-nowrap">
-              <span
-                aria-hidden="true"
-                className="mr-1.5 inline-block size-3 rounded-[4px] bg-sky align-middle"
-              />
-              worked solutions
-            </span>
-          </p>
-          <div className="mt-12 sm:mt-16">
-            <StudyFlow courses={courseNames ?? []} />
-          </div>
-          <ButtonLink
-            href={programPages.length > 0 ? '#programmes' : '/qualifier'}
-            size="lg"
-            className="mt-12 sm:mt-16"
-          >
-            {programPages.length > 0 ? 'Choose your programme' : 'How the qualifier works'}
-          </ButtonLink>
-        </div>
-      </section>
-
       {programPages.length > 0 ? (
-        <section aria-labelledby="programmes" className="bg-surface">
+        <section aria-labelledby="programmes">
           <div className="container-page py-16 sm:py-24">
             <h2 id="programmes" className={displayHeading}>
               Choose your programme
             </h2>
+            <p className={displayLead}>Qualifier help, week by week, for each programme.</p>
             <div className="mt-10 grid gap-5 sm:mt-12 md:grid-cols-2">
               {programPages.map((page, index) => (
                 <ProgramCard
@@ -334,38 +349,25 @@ export default async function HomePage() {
                 />
               ))}
             </div>
-          </div>
-        </section>
-      ) : null}
-
-      {guides.length > 0 || popular.length > 0 || deadlines.length > 0 ? (
-        <section aria-labelledby="qualifier-guides">
-          <div className="container-page py-16 sm:py-24">
-            <h2 id="qualifier-guides" className={displayHeading}>
-              Know how the qualifier works
-            </h2>
-            <div className="mt-10 grid gap-6 sm:mt-12 lg:grid-cols-5">
-              {guides.length > 0 ? (
-                <div className="rounded-panel border border-border p-6 sm:p-8 lg:col-span-3">
-                  <SectionHeading
-                    id="guides"
-                    title="Qualifier guides"
-                    as="h3"
-                    action={{ href: '/qualifier', label: 'All guides' }}
-                  />
-                  <LinkList items={guides} label="Qualifier guides" />
-                </div>
-              ) : null}
-              <div className="space-y-6 lg:col-span-2">
-                <DeadlineWidget deadlines={deadlines} />
-                {popular.length > 0 ? (
-                  <div className="rounded-panel border border-border p-6 sm:p-7">
-                    <SectionHeading id="popular" title="Popular right now" as="h3" />
-                    <LinkList items={popular} label="Popular pages" />
-                  </div>
-                ) : null}
-              </div>
-            </div>
+            {guides.length > 0 ? (
+              <nav aria-labelledby="qualifier-guides" className="mt-10 text-center">
+                <h3 id="qualifier-guides" className="text-small font-semibold text-text">
+                  Qualifier guides
+                </h3>
+                <ul className="mt-4 flex flex-wrap justify-center gap-2">
+                  {guides.map((guide) => (
+                    <li key={guide.path}>
+                      <Link
+                        href={guide.path}
+                        className="inline-flex min-h-10 items-center rounded-full border border-border-strong bg-card px-4 text-small text-text transition-colors hover:border-accent-ink hover:text-accent-ink"
+                      >
+                        {guide.title.split(':')[0]}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ) : null}
           </div>
         </section>
       ) : null}
