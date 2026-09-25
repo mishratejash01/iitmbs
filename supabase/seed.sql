@@ -14,6 +14,7 @@
 insert into public.site_settings (id, data)
 values (true, $json${
   "site_name": "Qualifier Hub",
+  "display_name": "IITM BS Students' Corner",
   "tagline": "Week-by-week help for the IIT Madras BS qualifier",
   "description": "An independent study companion for IIT Madras BS qualifier students: weekly graded-assignment concepts and hints, clear notes, formula sheets and qualifier exam preparation for Data Science and Electronic Systems.",
   "base_url": "",
@@ -64,8 +65,8 @@ values (true, $json${
     "tone": "info"
   },
   "home": {
-    "hero_title": "Clear the IITM BS qualifier, one week at a time",
-    "hero_subtitle": "Concepts, hints and practice for every week's graded assignment — with full walkthroughs once the deadline has passed. Free, fast and made for your phone.",
+    "hero_title": "Clear the qualifier. Ace the degree.",
+    "hero_subtitle": "Free notes, previous year papers and week-by-week help for every IITM BS course, with extra focus on the qualifier so you start strong.",
     "popular_paths": [
       "/data-science/maths-1",
       "/data-science/stats-1",

@@ -13,7 +13,7 @@ export function ProgrammeSwitcher({
   return (
     <Disclosure
       label="Choose a programme"
-      summaryClassName="flex min-h-11 cursor-pointer items-center gap-1 px-3 text-small font-medium text-text hover:text-accent-ink"
+      summaryClassName="flex min-h-11 cursor-pointer items-center gap-1 px-2.5 text-small font-medium whitespace-nowrap xl:px-3 text-text hover:text-accent-ink group-data-[tone=dark]/header:text-on-accent group-data-[tone=dark]/header:hover:text-lime"
       summary={
         <>
           Programmes

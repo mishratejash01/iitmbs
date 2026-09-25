@@ -7,6 +7,7 @@ import { ImageResponse } from 'next/og'
 
 import { truncate } from '@/lib/mdx/plain'
 import { resolveTokens, type ThemeOverrides } from '@/lib/theme/tokens'
+import { MARK } from '@/lib/brand/mark'
 
 export const OG_SIZE = { width: 1200, height: 630 } as const
 
@@ -59,9 +60,15 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
             justifyContent: 'center',
           }}
         >
-          <svg width="46" height="46" viewBox="0 0 32 32">
-            <circle cx="15.2" cy="15.2" r="7.4" fill="none" stroke={teal} strokeWidth="3.2" />
-            <path d="M19.6 19.6l5 5" stroke={teal} strokeWidth="3.2" strokeLinecap="round" />
+          <svg width="46" height="46" viewBox={MARK.viewBox}>
+            <path
+              d={MARK.corner}
+              fill="none"
+              stroke={teal}
+              strokeWidth={MARK.stroke}
+              strokeLinecap="round"
+            />
+            <circle cx={MARK.dot.cx} cy={MARK.dot.cy} r={MARK.dot.r} fill={teal} />
           </svg>
         </div>
         <div style={{ fontSize: 30, fontWeight: 600, color: tokens['on-accent'] }}>
@@ -108,7 +115,7 @@ export async function renderOgCard(card: OgCard): Promise<ImageResponse> {
         }}
       >
         <div>{card.host}</div>
-        <div>IITM BS Qualifier</div>
+        <div>For every IITM BS student</div>
       </div>
     </div>,
     {

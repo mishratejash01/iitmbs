@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 
 import { getSiteSettings } from '@/lib/data/settings'
+import { displayName } from '@/lib/settings/schema'
 
 export async function SiteName() {
   const settings = await getSiteSettings()
-  return <>{settings.site_name}</>
+  return <>{displayName(settings)}</>
 }
 
 export async function ContactEmail() {
