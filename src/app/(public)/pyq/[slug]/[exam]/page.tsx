@@ -30,7 +30,7 @@ import {
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
-import { pickTitle, SEARCH_NAMES, yearRange } from '@/lib/seo/title'
+import { pickTitle, SEARCH_NAMES, withDigits, yearRange } from '@/lib/seo/title'
 
 export async function generateStaticParams() {
   const courses = await getPyqCourses()
@@ -57,7 +57,11 @@ async function resolve(slug: string, exam: string) {
 }
 
 function description(course: PyqCourse, exam: PyqExam, count: number, span: string | null) {
-  return `${count} ${course.name} (${course.shortName}, ${course.code}) ${PYQ_EXAM_LABEL[exam]} previous year question papers from ${span}, with answers marked and the exact pages for ${course.shortName}.`
+  const label = PYQ_EXAM_LABEL[exam]
+  const from = span ? ` from ${span}` : ''
+  return exam === 'qualifier'
+    ? `Free IITM qualifier ${course.shortName} PYQs: ${count} qualifier question papers${from}, with the exact ${course.shortName} pages and answers marked where available.`
+    : `Free IITM BS ${course.shortName} ${label} PYQs: ${count} ${withDigits(course.name)} ${label} question papers${from}, with the exact pages and answers marked where available.`
 }
 
 export async function generateMetadata({
