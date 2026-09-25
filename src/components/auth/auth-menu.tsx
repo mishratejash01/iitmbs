@@ -29,7 +29,7 @@ export function AuthMenu() {
       <Link
         href={`/login?next=${encodeURIComponent(pathname)}`}
         onClick={() => track('login_click', { provider: 'google', source: 'header' })}
-        className="ml-1 flex min-h-11 min-w-[4.75rem] items-center justify-center rounded-control bg-accent-strong px-4 text-small font-semibold text-on-accent hover:bg-accent-hover sm:min-h-10"
+        className="ml-1 flex min-h-11 items-center justify-center rounded-full bg-accent-strong px-3.5 text-small font-semibold text-on-accent group-data-[tone=dark]/header:bg-green group-data-[tone=dark]/header:text-text hover:bg-accent-hover group-data-[tone=dark]/header:hover:bg-lime sm:min-h-10 sm:min-w-[4.75rem] sm:px-4"
       >
         Log in
       </Link>

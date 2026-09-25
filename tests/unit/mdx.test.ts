@@ -64,6 +64,22 @@ describe('processMdx', () => {
     expect(await shape('Made by <SiteName /> students.')).toEqual(['p'])
   })
 
+  it('previews links written on their own line, but not links in lists or text', async () => {
+    const result = await processMdx(
+      [
+        'https://youtu.be/dQw4w9WgXcQ',
+        '[Eligibility](/qualifier/eligibility)',
+        '- [In a list](/qualifier)',
+        'See [this](/qualifier).',
+      ].join('\n\n'),
+    )
+    const [video, page, list, text] = result.tree.children.filter((node) => node.type !== 'text')
+    expect(video).toMatchObject({ type: 'mdxJsxFlowElement', name: 'LinkPreview' })
+    expect(page).toMatchObject({ type: 'mdxJsxFlowElement', name: 'LinkPreview' })
+    expect(list).toMatchObject({ type: 'element', tagName: 'ul' })
+    expect(text).toMatchObject({ type: 'element', tagName: 'p' })
+  })
+
   it('falls back to markdown when MDX cannot be parsed', async () => {
     const result = await html('If x<5 then {broken\n\n## Still renders')
     expect(result.mode).toBe('markdown')

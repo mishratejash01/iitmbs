@@ -36,6 +36,9 @@ const section = <T extends z.ZodRawShape>(shape: T) =>
 
 export const siteSettingsSchema = section({
   site_name: text('Qualifier Hub'),
+  // The name people see in the header, footer and banners. Page titles, SEO
+  // and structured data keep site_name. Empty = use site_name.
+  display_name: text(''),
   tagline: text(''),
   description: text(''),
   base_url: text(''),
@@ -161,3 +164,8 @@ export function parseSiteSettings(data: unknown): SiteSettings {
 
 /** Settings used when the database cannot be reached. */
 export const fallbackSettings: SiteSettings = siteSettingsSchema.parse({})
+
+/** The brand shown on the page (header, footer, banners); SEO keeps site_name. */
+export function displayName(settings: Pick<SiteSettings, 'site_name' | 'display_name'>): string {
+  return settings.display_name.trim() || settings.site_name
+}

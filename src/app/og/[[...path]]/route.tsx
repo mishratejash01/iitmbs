@@ -33,7 +33,7 @@ export async function GET(_request: Request, { params }: RouteContext<'/og/[[...
     siteName: settings.site_name,
     host,
     theme: settings.theme,
-    eyebrow: entry ? (EYEBROW[entry.kind] ?? 'IITM BS') : 'IITM BS qualifier',
+    eyebrow: entry ? (EYEBROW[entry.kind] ?? 'IITM BS') : 'For every IITM BS student',
     title: entry?.title ?? (settings.home.hero_title || settings.tagline || settings.site_name),
     subtitle: entry ? entry.summary : settings.tagline,
   })

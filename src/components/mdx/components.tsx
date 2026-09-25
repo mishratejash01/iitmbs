@@ -8,6 +8,7 @@ import { Callout } from './callout'
 import { CodeBlock } from './code-block'
 import { Figure } from './figure'
 import { headingWithAnchor } from './heading'
+import { LinkPreview } from './link-preview'
 import { RelatedLink } from './related-link'
 import { ContactEmail, ContactLink, SiteName } from './site-bits'
 import { SmartLink } from './smart-link'
@@ -47,6 +48,7 @@ export function createMdxComponents({ media }: { media: Record<string, MediaInfo
     },
     Callout,
     RelatedLink,
+    LinkPreview,
     SiteName,
     ContactEmail,
     ContactLink,

@@ -1,14 +1,11 @@
 import type { ReactNode } from 'react'
 
-// No icons: a soft peach panel or a left teal rule, with a small uppercase label.
+// No icons and no side rules: a soft panel with a small uppercase label.
 const styles = {
   info: { box: 'rounded-card bg-surface px-5 py-4', label: 'Note' },
   tip: { box: 'rounded-card bg-accent-soft px-5 py-4', label: 'Tip' },
-  warning: {
-    box: 'rounded-r-card border-l-4 border-accent-strong bg-accent-soft px-5 py-4',
-    label: 'Heads up',
-  },
-  note: { box: 'border-l-2 border-accent-strong py-1 pl-5', label: 'Note' },
+  warning: { box: 'rounded-card bg-sun/25 px-5 py-4', label: 'Heads up' },
+  note: { box: 'rounded-card bg-surface px-5 py-4', label: 'Note' },
 } as const
 
 export function Callout({

@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Logo } from '@/components/layout/logo'
 import { getSiteSettings } from '@/lib/data/settings'
+import { displayName } from '@/lib/settings/schema'
 
 // Signed-in areas read cookies up front so auth redirects are real HTTP redirects.
 export const instant = false
@@ -12,7 +13,7 @@ export default async function AuthLayout({ children }: LayoutProps<'/'>) {
     <>
       <header className="border-b border-border">
         <div className="container-page flex h-16 items-center">
-          <Logo siteName={settings.site_name} />
+          <Logo siteName={displayName(settings)} />
         </div>
       </header>
       <main

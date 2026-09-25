@@ -173,6 +173,13 @@ export function SettingsForm({ initial }: { initial: SiteSettings }) {
             label="Site name"
             value={settings.site_name}
             onChange={(v) => set(['site_name'], v)}
+            help="Used in page titles, SEO and structured data."
+          />
+          <Text
+            label="Display name"
+            value={settings.display_name}
+            onChange={(v) => set(['display_name'], v)}
+            help="Shown in the header, footer and banners. Leave empty to use the site name."
           />
           <Text label="Tagline" value={settings.tagline} onChange={(v) => set(['tagline'], v)} />
           <Text
@@ -818,6 +825,11 @@ const TOKEN_LABELS: Partial<Record<TokenName, string>> = {
   'accent-ink': 'Accent text and links',
   'on-accent': 'Text on buttons',
   focus: 'Focus ring',
+  lime: 'Highlight: lime',
+  violet: 'Highlight: violet',
+  sky: 'Highlight: sky',
+  sun: 'Highlight: sun',
+  green: 'Highlight: green',
 }
 
 function ThemeEditor({

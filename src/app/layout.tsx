@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Poppins, Source_Serif_4 } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 
 import './globals.css'
 
@@ -16,20 +16,10 @@ import { buildThemeCss, resolveTokens } from '@/lib/theme/tokens'
 
 const poppins = Poppins({
   subsets: ['latin'],
-  // Only the weights the design uses (400 body, 500 medium, 600 headings).
-  weight: ['400', '500', '600'],
+  // Only the weights the design uses (400 body, 500 medium, 600 headings, 700 display).
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-poppins',
-})
-
-// Book face for long reads (blog articles). Not preloaded: only pages that
-// use it download it.
-const sourceSerif = Source_Serif_4({
-  subsets: ['latin'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-  preload: false,
-  variable: '--font-source-serif',
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -77,11 +67,7 @@ export default async function RootLayout({ children }: LayoutProps<'/'>) {
   const settings = await getSiteSettings()
 
   return (
-    <html
-      lang="en"
-      className={`${poppins.variable} ${sourceSerif.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <head>
         <style
           id="theme-tokens"

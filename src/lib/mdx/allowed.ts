@@ -11,6 +11,7 @@
 export const ALLOWED_COMPONENTS: Record<string, readonly string[]> = {
   Callout: ['type', 'title'],
   RelatedLink: ['href', 'title'],
+  LinkPreview: ['href', 'title'],
   SiteName: [],
   ContactEmail: [],
   ContactLink: [],
@@ -39,6 +40,7 @@ export const BLOCK_ELEMENTS: ReadonlySet<string> = new Set([
   'Steps',
   'Definition',
   'details',
+  'LinkPreview',
 ])
 
 /** Plain HTML elements authors may use inline, with their allowed attributes. */

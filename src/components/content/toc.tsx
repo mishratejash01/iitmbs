@@ -19,14 +19,14 @@ export function Toc({
           On this page
         </p>
       ) : null}
-      <ol className="space-y-1 border-l border-border">
+      <ol className="space-y-0.5">
         {items.map((item) => (
           <li key={item.id}>
             <a
               href={`#${item.id}`}
               className={cn(
-                '-ml-px block border-l-2 border-transparent py-1.5 text-muted hover:border-accent-strong hover:text-text',
-                item.depth === 3 ? 'pl-7 text-xs leading-5' : 'pl-4 text-small',
+                'block py-1.5 text-muted hover:text-accent-ink hover:underline',
+                item.depth === 3 ? 'pl-4 text-xs leading-5' : 'text-small',
               )}
               data-track="toc_click"
               data-track-heading={item.text.slice(0, 80)}

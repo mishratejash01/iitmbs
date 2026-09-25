@@ -114,6 +114,35 @@ function remarkLiftBlocks() {
   }
 }
 
+/**
+ * A link written on a line of its own (a bare URL or [text](url)) becomes a
+ * <LinkPreview>: a YouTube player, a card for one of our pages, or a card for
+ * another site. Only top-level paragraphs, so lists of links stay lists.
+ */
+function remarkLinkPreviews() {
+  return (tree: MdastRoot) => {
+    tree.children = tree.children.map((node) => {
+      if (node.type !== 'paragraph') return node
+      const content = node.children.filter(
+        (child) => !(child.type === 'text' && child.value.trim() === ''),
+      )
+      const link = content[0]
+      if (content.length !== 1 || link?.type !== 'link') return node
+      const title = link.children.map((child) => ('value' in child ? child.value : '')).join('')
+      return {
+        type: 'mdxJsxFlowElement',
+        name: 'LinkPreview',
+        attributes: [
+          { type: 'mdxJsxAttribute', name: 'href', value: link.url },
+          { type: 'mdxJsxAttribute', name: 'title', value: title },
+        ],
+        children: [],
+        position: node.position,
+      }
+    })
+  }
+}
+
 function rehypeHeadingOffset(offset: number) {
   return () => (tree: HastRoot) => {
     if (!offset) return
@@ -174,7 +203,7 @@ async function build(mode: 'mdx' | 'markdown', options: ProcessOptions) {
     .use(mode === 'mdx' ? [remarkMdx] : [])
     .use(remarkGfm)
     .use(remarkMath)
-    .use(mode === 'mdx' ? [remarkSanitizeMdx, remarkLiftBlocks] : [])
+    .use(mode === 'mdx' ? [remarkSanitizeMdx, remarkLiftBlocks, remarkLinkPreviews] : [])
     .use(remarkImages)
     .use(remarkRehype, { passThrough: [...MDX_NODE_TYPES] })
     .use(rehypeHeadingOffset(options.headingOffset ?? 0))

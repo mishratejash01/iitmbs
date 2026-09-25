@@ -12,7 +12,7 @@ export function MobileMenu({ items, programs }: { items: NavItem[]; programs: Pr
     <Disclosure
       className="lg:hidden"
       label="Menu"
-      summaryClassName="flex size-11 cursor-pointer items-center justify-center rounded-control text-text hover:bg-surface"
+      summaryClassName="flex size-11 cursor-pointer items-center justify-center rounded-control text-text hover:bg-surface group-data-[tone=dark]/header:text-on-accent group-data-[tone=dark]/header:hover:bg-on-accent/10"
       summary={
         <>
           <Menu aria-hidden="true" className="size-6 group-open:hidden" />

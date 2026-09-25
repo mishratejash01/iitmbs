@@ -3,11 +3,11 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'reac
 
 import { cn } from '@/lib/utils/cn'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'soft' | 'ghost' | 'inverse'
+export type ButtonVariant = 'primary' | 'secondary' | 'soft' | 'ghost' | 'inverse' | 'highlight'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-control font-semibold whitespace-nowrap ' +
+  'inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap ' +
   'transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 select-none'
 
 const variants: Record<ButtonVariant, string> = {
@@ -16,8 +16,10 @@ const variants: Record<ButtonVariant, string> = {
     'border border-accent-strong/35 bg-card text-accent-ink hover:border-accent-strong hover:bg-surface',
   soft: 'bg-accent-soft text-accent-strong hover:brightness-[0.96]',
   ghost: 'text-accent-ink hover:bg-surface',
-  // For teal bands: a light outline on the brand colour.
+  // For green bands: a light outline on the brand colour.
   inverse: 'border border-on-accent/45 text-on-accent hover:border-on-accent hover:bg-on-accent/10',
+  // The lime call to action on green bands.
+  highlight: 'bg-lime text-accent-strong hover:brightness-[0.94]',
 }
 
 // Every size keeps a 44px minimum touch target on mobile.

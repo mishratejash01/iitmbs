@@ -77,6 +77,12 @@ const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
   poweredByHeader: false,
   trailingSlash: false,
+  // Dev only: other hosts that may open the dev server, e.g. a phone on the
+  // LAN or a tunnel. DEV_ALLOWED_ORIGINS="192.168.1.5,*.trycloudflare.com"
+  allowedDevOrigins: (process.env.DEV_ALLOWED_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 
   cacheLife: {
     // Published study content. On-demand revalidation (admin publish, database

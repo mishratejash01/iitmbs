@@ -32,7 +32,7 @@ export function SectionHeading({
       {action ? (
         <Link
           href={action.href}
-          className="text-small font-semibold text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
+          className="text-small font-medium text-accent-ink underline decoration-accent-ink/30 underline-offset-4 hover:decoration-accent-ink"
         >
           {action.label}
         </Link>

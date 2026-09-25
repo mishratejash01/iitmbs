@@ -9,10 +9,7 @@ export function KeyIdea({
   children?: ReactNode
 }) {
   return (
-    <section
-      className="rounded-r-card border-l-4 border-accent-strong bg-surface px-5 py-4"
-      aria-label={title}
-    >
+    <section className="rounded-card bg-surface px-5 py-4" aria-label={title}>
       <p className="text-xs font-semibold tracking-wide text-accent-ink uppercase">{title}</p>
       <div className="mt-1.5 [&>*+*]:mt-2">{children}</div>
     </section>
