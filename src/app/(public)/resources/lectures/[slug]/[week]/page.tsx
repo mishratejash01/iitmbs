@@ -67,6 +67,11 @@ export async function generateMetadata({
     template: 'lecture_week',
     vars: { course: course.name, short: course.shortName, code: course.code, week: found.week },
     fallbackTitle: `${pageTitle(course, found.week)} | ${settings.site_name}`,
+    shortTitles: [
+      `IIT Madras ${course.shortName} Week ${found.week} Lectures (${course.code})`,
+      `IIT Madras ${course.shortName} Week ${found.week} Lectures`,
+      `${course.shortName} Week ${found.week} Lectures (${course.code})`,
+    ],
     fallbackDescription: `${lectures.length} IIT Madras lecture videos for ${course.name} (${course.code}) week ${found.week}: ${topics}.`,
     keywords: [
       `${short} week ${found.week} lectures`,
