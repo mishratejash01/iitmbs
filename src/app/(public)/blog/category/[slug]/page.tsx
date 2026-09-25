@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { PostGrid } from '@/components/blog/post-card'
-import { LinkList } from '@/components/content/link-list'
-import { PageHeader } from '@/components/layout/page-header'
+import { TopicPills } from '@/components/blog/topic-pills'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { postsInCategory } from '@/lib/blog/helpers'
 import { getBlogCategories, getBlogPostIndex } from '@/lib/data/blog'
 import { getPage } from '@/lib/data/pages'
@@ -62,33 +62,39 @@ export default async function BlogCategoryPage({ params }: PageProps<'/blog/cate
   const posts = postsInCategory(all, category.id)
   const others = categories
     .filter((c) => c.id !== category.id && all.some((post) => post.category.id === c.id))
-    .map((c) => ({ path: c.path, title: c.name }))
+    .map((c) => ({ path: c.path, name: c.name }))
   const blogName = blogPage?.title.split(':')[0] ?? 'Blog'
 
   return (
     <>
       <PageContext type="blog_category" entityId={category.id} />
-      <PageHeader
-        crumbs={[
-          { name: blogName, path: BLOG_PATH },
-          { name: category.name, path: category.path },
-        ]}
-        title={category.name}
-        meta={
-          <p className="text-small text-muted">
-            {posts.length} {posts.length === 1 ? 'post' : 'posts'}
-          </p>
-        }
-      />
-      <div className="container-page py-8 sm:py-10">
-        <PostGrid posts={posts} label={`Posts in ${category.name}`} />
+      <header className="border-b border-border">
+        <div className="container-page pt-6 pb-10 sm:pb-12">
+          <Breadcrumbs
+            items={[
+              { name: blogName, path: BLOG_PATH },
+              { name: category.name, path: category.path },
+            ]}
+          />
+          <h1 className="text-[2rem] leading-[2.75rem] font-bold text-text sm:text-[2.5rem] sm:leading-[3.5rem]">
+            {category.name}
+          </h1>
+          {category.description ? (
+            <p className="mt-3 max-w-2xl text-[1.0625rem] leading-7 text-muted">
+              {category.description}
+            </p>
+          ) : null}
+        </div>
+      </header>
+      <div className="container-page py-10 sm:py-14">
+        <PostGrid posts={posts} label={`Posts in ${category.name}`} showTopic={false} />
         {others.length > 0 ? (
-          <section aria-labelledby="other-topics" className="container-reading mt-12">
-            <h2 id="other-topics" className="mb-3 text-h3 font-semibold">
+          <nav aria-labelledby="other-topics" className="mt-16 border-t border-border pt-10">
+            <h2 id="other-topics" className="mb-5 text-h3 font-semibold text-text">
               More topics
             </h2>
-            <LinkList items={others} label="Other blog categories" />
-          </section>
+            <TopicPills topics={others} label="Other blog topics" />
+          </nav>
         ) : null}
       </div>
     </>
