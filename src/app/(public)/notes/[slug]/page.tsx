@@ -18,7 +18,7 @@ import { getCourseNotes, getNoteCourses, type NoteCourse } from '@/lib/data/stud
 import { groupNotes } from '@/lib/notes/group'
 import { noteCoursePath, NOTES_PATH } from '@/lib/routes'
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 import { pickTitle, withDigits } from '@/lib/seo/title'
 
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps<'/notes/[slug]'>): 
     getSeoOverrides(),
   ])
   const course = courses.find((c) => c.slug === slug)
-  if (!course) return { robots: { index: false } }
+  if (!course) return NOT_FOUND_METADATA
   const name = withDigits(course.name)
   const same = course.shortName.toLowerCase() === name.toLowerCase()
   return buildMetadata({
