@@ -30,7 +30,7 @@ import { getPyqCourses } from '@/lib/data/question-papers'
 import { getNoteCourses } from '@/lib/data/student-notes'
 import { BLOG_PATH } from '@/lib/routes'
 import { blogPostingJsonLd, faqJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { formatDate } from '@/lib/utils/dates'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): P
     getSiteSettings(),
     getSeoOverrides(),
   ])
-  if (!post) return { robots: { index: false } }
+  if (!post) return NOT_FOUND_METADATA
   return buildMetadata({
     settings,
     path: post.path,
