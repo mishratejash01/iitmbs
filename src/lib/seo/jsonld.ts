@@ -231,7 +231,8 @@ export function notesCollectionJsonLd(input: {
         item: {
           '@type': 'CreativeWork',
           name: item.name,
-          ...(item.url ? { url: item.url } : {}),
+          // Site paths become absolute URLs; outside links (papers on Drive) stay as they are.
+          ...(item.url ? { url: item.url.startsWith('/') ? url(item.url) : item.url } : {}),
           ...(item.author ? { author: { '@type': 'Person', name: item.author } } : {}),
         },
       })),
