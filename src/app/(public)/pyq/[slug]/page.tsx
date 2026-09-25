@@ -65,6 +65,12 @@ export async function generateMetadata({ params }: PageProps<'/pyq/[slug]'>): Pr
       level: course.level,
     },
     fallbackTitle: `${pageTitle(course)} Previous Year Question Papers (${course.code}) | ${settings.site_name}`,
+    shortTitles: [
+      `IITM BS ${course.shortName} PYQs: Previous Year Question Papers (${course.code})`,
+      `IITM BS ${course.shortName} PYQs: Previous Year Papers (${course.code})`,
+      `IITM BS ${course.shortName} PYQs (${course.code})`,
+      `${course.shortName} PYQs (${course.code})`,
+    ],
     fallbackDescription: description(course),
     keywords: pyqKeywords(course, course.exams),
     override: overrides[course.path],
