@@ -35,7 +35,7 @@ const section = <T extends z.ZodRawShape>(shape: T) =>
   )
 
 export const siteSettingsSchema = section({
-  site_name: text('Qualifier Hub'),
+  site_name: text("IITM BS Students' Corner"),
   // The name people see in the header, footer and banners. Page titles, SEO
   // and structured data keep site_name. Empty = use site_name.
   display_name: text(''),
