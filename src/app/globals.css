@@ -35,10 +35,16 @@
   --color-warning-soft: var(--warning-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+  --color-lime: var(--lime);
+  --color-violet: var(--violet);
+  --color-sky: var(--sky);
+  --color-sun: var(--sun);
+  --color-green: var(--green);
 
   --font-sans:
     var(--font-poppins), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: var(--font-source-serif), Georgia, 'Times New Roman', serif;
+  /* Blog pages: Reddit Sans (loaded by the blog layout) for titles and cards. */
+  --font-blog: var(--font-reddit-sans), 'Helvetica Neue', Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Type scale: size / line-height pairs from the design system. */
@@ -57,15 +63,22 @@
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.125rem;
 
+  --container-reading: 45rem; /* ~720px reading measure */
+  /* 1256px of content between 24px gutters on desktop. */
+  --container-page: 81.5rem;
+
+  --shadow-card: 0 10px 30px -18px rgb(11 58 45 / 0.35);
+}
+
+/*
+ * Radii stay variables (not inlined) so a section can square them off: the
+ * blog sets all three to 0.
+ */
+@theme {
   --radius-card: 16px;
   --radius-control: 10px;
-  /* Large colour panels (peach and teal blocks). */
+  /* Large colour panels (lavender and green blocks). */
   --radius-panel: 28px;
-
-  --container-reading: 45rem; /* ~720px reading measure */
-  --container-page: 72rem;
-
-  --shadow-card: 0 10px 30px -18px rgb(15 61 62 / 0.35);
 }
 
 @layer base {
@@ -168,13 +181,13 @@
     color: inherit;
     text-decoration: none;
   }
-  .prose-content a:not(.heading-anchor) {
+  .prose-content a:not(.heading-anchor, [data-card]) {
     color: var(--accent-ink);
     text-decoration: underline;
     text-decoration-color: color-mix(in srgb, var(--accent-ink) 40%, transparent);
     text-decoration-thickness: 1px;
   }
-  .prose-content a:not(.heading-anchor):hover {
+  .prose-content a:not(.heading-anchor, [data-card]):hover {
     text-decoration-color: var(--accent-ink);
   }
   .prose-content strong {
@@ -197,8 +210,9 @@
     color: var(--text-muted);
   }
   .prose-content blockquote {
-    border-left: 3px solid var(--accent);
-    padding: 0.25rem 0 0.25rem 1.25rem;
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    padding: 0.875rem 1.25rem;
     color: var(--text);
   }
   .prose-content :not(pre) > code {
@@ -262,50 +276,45 @@
   }
 
   /*
-   * Long-form articles (blog posts): a book face for the text, the brand sans
-   * for headings, tables and captions, generous measure and spacing.
+   * Long-form articles (blog posts): plain Helvetica/Arial at 18px, bordered
+   * tables and bold headings, the way students expect study guides to look.
    */
   .prose-article {
-    font-family: var(--font-serif);
-    font-size: 1.1875rem;
-    line-height: 1.78;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.4;
     color: var(--text);
-    font-optical-sizing: auto;
   }
   .prose-article > * + * {
-    margin-top: 1.4em;
-  }
-  .prose-article > p:first-of-type {
-    font-size: 1.3125rem;
-    line-height: 1.66;
+    margin-top: 1.25em;
   }
   .prose-article h2,
   .prose-article h3,
   .prose-article h4 {
-    font-family: var(--font-sans);
     color: var(--text);
-    font-weight: 600;
-    letter-spacing: -0.015em;
+    font-weight: 700;
+    letter-spacing: normal;
   }
   .prose-article h2 {
-    margin-top: 3.25rem;
-    font-size: 1.75rem;
-    line-height: 2.25rem;
+    margin-top: 2.75rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
   }
   .prose-article h3 {
-    margin-top: 2.5rem;
-    font-size: 1.3125rem;
-    line-height: 1.875rem;
+    margin-top: 2rem;
+    font-size: 1.1875rem;
+    line-height: 1.75rem;
   }
   .prose-article h2 + *,
   .prose-article h3 + *,
   .prose-article h4 + * {
-    margin-top: 0.85rem;
+    margin-top: 0.75rem;
   }
   .prose-article strong {
     font-weight: 600;
   }
-  .prose-article a:not(.heading-anchor) {
+  .prose-article a:not(.heading-anchor, [data-card]) {
+    font-weight: 500;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
   }
@@ -314,60 +323,30 @@
     padding-left: 1.4rem;
   }
   .prose-article li + li {
-    margin-top: 0.55em;
+    margin-top: 0.5em;
   }
   .prose-article li::marker {
     color: var(--accent-ink);
   }
   .prose-article ol li::marker {
-    font-family: var(--font-sans);
-    font-size: 0.875em;
+    font-size: 0.9375em;
     font-weight: 600;
   }
   .prose-article blockquote {
-    border-left: 2px solid var(--accent-strong);
-    padding: 0 0 0 1.5rem;
-    font-style: italic;
-    font-size: 1.3125rem;
-    line-height: 1.6;
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    padding: 0.875rem 1.25rem;
   }
   .prose-article hr {
-    width: 4rem;
-    margin: 3rem auto;
-    border-top: 1px solid var(--border-strong);
-  }
-  /* Tables read like a printed report: rules only, small caps headers. */
-  .prose-article .table-scroll {
-    border: 0;
-    border-radius: 0;
-    border-top: 1px solid var(--accent-strong);
+    margin: 2.5rem 0;
   }
   .prose-article table {
-    font-family: var(--font-sans);
     font-size: 0.9375rem;
     line-height: 1.5rem;
     font-variant-numeric: tabular-nums;
   }
-  .prose-article th {
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border-strong);
-    padding: 0.85rem 1rem 0.65rem 0;
-  }
-  .prose-article td {
-    padding: 0.85rem 1rem 0.85rem 0;
-  }
-  .prose-article tr:last-child td {
-    border-bottom: 1px solid var(--border-strong);
-  }
   .prose-article :not(pre) > code {
-    font-size: 0.8em;
-  }
-  .prose-article img {
-    border-radius: 6px;
+    font-size: 0.85em;
   }
 
   /* Shiki emits --shiki-light colours; the site has only the light scheme. */

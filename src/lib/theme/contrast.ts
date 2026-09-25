@@ -39,6 +39,13 @@ export const REQUIRED_CONTRAST: ReadonlyArray<[TokenName, TokenName, number]> = 
   ['warning', 'warning-soft', 4.5],
   ['danger', 'danger-soft', 4.5],
   ['danger', 'bg', 4.5],
+  // Highlight shapes and badges on the homepage carry dark text or the band green.
+  ['text', 'lime', 4.5],
+  ['text', 'violet', 4.5],
+  ['text', 'sky', 4.5],
+  ['text', 'sun', 4.5],
+  ['text', 'green', 4.5],
+  ['accent-strong', 'lime', 4.5],
 ]
 
 export type ContrastIssue = {
