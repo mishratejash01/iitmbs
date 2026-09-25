@@ -13,7 +13,7 @@
 -- ── Site settings ────────────────────────────────────────────────────────────
 insert into public.site_settings (id, data)
 values (true, $json${
-  "site_name": "Qualifier Hub",
+  "site_name": "IITM BS Students' Corner",
   "display_name": "IITM BS Students' Corner",
   "tagline": "Week-by-week help for the IIT Madras BS qualifier",
   "description": "An independent study companion for IIT Madras BS qualifier students: weekly graded-assignment concepts and hints, clear notes, formula sheets and qualifier exam preparation for Data Science and Electronic Systems.",
@@ -43,7 +43,7 @@ values (true, $json${
     "grievance_officer": ""
   },
   "organization": {
-    "name": "Qualifier Hub",
+    "name": "IITM BS Students' Corner",
     "legal_name": "",
     "logo_public_id": "",
     "founding_date": "2026"
@@ -65,7 +65,7 @@ values (true, $json${
     "tone": "info"
   },
   "home": {
-    "hero_title": "Every course. Every level. One place.",
+    "hero_title": "Every IIT Madras BS course. Every level. One place.",
     "hero_subtitle": "Free notes, previous year papers, lectures and guides for every IITM BS course, from foundation to degree. New student? Start with the qualifier.",
     "popular_paths": [
       "/data-science/maths-1",
@@ -78,7 +78,7 @@ values (true, $json${
   },
   "seo": {
     "title_template": "%s | {site_name}",
-    "default_title": "IITM BS Qualifier Hub – Weekly Graded Assignment Help, Notes & Exam Prep",
+    "default_title": "IIT Madras BS Degree (IITM BS): Qualifier, PYQs, Notes, Lectures",
     "default_description": "Week-by-week help for the IIT Madras BS qualifier: graded assignment hints and solutions, notes, formula sheets and exam prep for Data Science and Electronic Systems.",
     "templates": {
       "program": "IITM BS {program} Qualifier – Courses, Week-wise Help & Exam Guide",
@@ -174,7 +174,7 @@ insert into public.authors (slug, name, headline, bio)
 values (
   'editorial-team',
   'Editorial Team',
-  'Qualifier Hub editors',
+  'IITM BS Students'' Corner editors',
   'The team behind this site. We check every guide against the official IIT Madras BS pages and show the date each page was last reviewed. Edit this bio in the admin to introduce the people who write and review the content.'
 )
 on conflict (slug) do nothing;
