@@ -10,6 +10,7 @@ import {
   weekNotesPath,
 } from '@/lib/routes'
 import { fillTemplate } from '@/lib/seo/templates'
+import { fitTitle, TITLE_LIMIT } from '@/lib/seo/title'
 import { parseSiteSettings } from '@/lib/settings/schema'
 
 describe('routes', () => {
@@ -89,5 +90,31 @@ describe('site settings', () => {
       current_term: '2026-sep',
       revalidate_seconds: 120,
     })
+  })
+})
+
+describe('fitTitle', () => {
+  const site = 'Qualifier Hub'
+
+  it('keeps short titles and drops the brand suffix when it does not fit', () => {
+    expect(fitTitle('IITM BS Notes | Qualifier Hub', site)).toBe('IITM BS Notes | Qualifier Hub')
+    const long = 'IITM BS Notes: Free Handwritten and PDF Notes for Every Course | Qualifier Hub'
+    expect(fitTitle(long, site)).toBe(
+      'IITM BS Notes: Free Handwritten and PDF Notes for Every Course',
+    )
+  })
+
+  it('falls back to the first shorter title that fits, with the suffix when there is room', () => {
+    const long =
+      'IITM BS PDSA PYQs: Programming, Data Structures and Algorithms using Python Previous Year Question Papers (BSCS2002) | Qualifier Hub'
+    const result = fitTitle(long, site, [
+      'IITM BS PDSA PYQs: Programming, Data Structures and Algorithms using Python',
+      'IITM BS PDSA PYQs: Previous Year Question Papers (BSCS2002)',
+    ])
+    expect(result).toBe('IITM BS PDSA PYQs: Previous Year Question Papers (BSCS2002)')
+    expect(result.length).toBeLessThanOrEqual(TITLE_LIMIT)
+    expect(fitTitle(long, site, ['IITM BS PDSA PYQs (BSCS2002)'])).toBe(
+      'IITM BS PDSA PYQs (BSCS2002) | Qualifier Hub',
+    )
   })
 })
