@@ -25,7 +25,7 @@ import { getNoteCourses } from '@/lib/data/student-notes'
 import { getProgramWeek } from '@/lib/data/weeks'
 import { parseWeekSegment, pyqExamPath } from '@/lib/routes'
 import { courseJsonLd } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { courseVars } from '@/lib/seo/vars'
 import { PLACEHOLDER_SEGMENT, withPlaceholder } from '@/lib/static-params'
 
@@ -62,7 +62,7 @@ export async function generateMetadata({
 
   if (weekNumber !== null) {
     const data = await getProgramWeek(program, weekNumber)
-    if (!data) return { robots: { index: false } }
+    if (!data) return NOT_FOUND_METADATA
     const path = `/${program}/week-${weekNumber}`
     return buildMetadata({
       settings,
@@ -81,7 +81,7 @@ export async function generateMetadata({
   }
 
   const data = await getCoursePage(program, course)
-  if (!data) return { robots: { index: false } }
+  if (!data) return NOT_FOUND_METADATA
   return buildMetadata({
     settings,
     path: data.course.path,
