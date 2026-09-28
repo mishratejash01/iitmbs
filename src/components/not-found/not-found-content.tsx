@@ -5,10 +5,9 @@ import { PageContext } from '@/components/analytics/page-context'
 import { Button } from '@/components/ui/button'
 import { getLectureCourses } from '@/lib/data/lectures'
 import { getLinkIndex } from '@/lib/data/links'
-import { getPyqCourses } from '@/lib/data/question-papers'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getNoteCourses } from '@/lib/data/student-notes'
-import { LECTURES_PATH, NOTES_PATH, PYQ_PATH } from '@/lib/routes'
+import { LECTURES_PATH, NOTES_PATH } from '@/lib/routes'
 import { cn } from '@/lib/utils/cn'
 
 import { LostTicketIllustration } from './lost-ticket-illustration'
@@ -21,10 +20,9 @@ const count = (value: number) => value.toLocaleString('en-IN')
  * both not-found files, inside the site header and footer.
  */
 export async function NotFoundContent() {
-  const [settings, linkIndex, pyqs, lectures, notes] = await Promise.all([
+  const [settings, linkIndex, lectures, notes] = await Promise.all([
     getSiteSettings(),
     getLinkIndex(),
-    getPyqCourses(),
     getLectureCourses(),
     getNoteCourses(),
   ])
@@ -32,17 +30,10 @@ export async function NotFoundContent() {
     const entry = linkIndex[path]
     return entry ? [{ path, title: entry.title }] : []
   })
-  const papers = pyqs.reduce((sum, course) => sum + course.paperCount, 0)
   const videos = lectures.reduce((sum, course) => sum + course.videoCount, 0)
   const noteCount = notes.reduce((sum, course) => sum + course.noteCount, 0)
 
   const tiles = [
-    {
-      href: PYQ_PATH,
-      value: papers > 0 ? count(papers) : null,
-      label: 'previous year papers',
-      tone: 'bg-violet/35',
-    },
     {
       href: LECTURES_PATH,
       value: videos > 0 ? count(videos) : null,
@@ -60,6 +51,12 @@ export async function NotFoundContent() {
       value: 'Qualifier',
       label: 'cut-offs, syllabus and dates',
       tone: 'bg-sun/35',
+    },
+    {
+      href: '/graded-assignments',
+      value: 'Assignments',
+      label: 'graded assignment help, week by week',
+      tone: 'bg-violet/35',
     },
   ].filter((tile) => tile.value !== null)
 
