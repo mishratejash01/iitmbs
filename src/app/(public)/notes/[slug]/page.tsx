@@ -10,12 +10,12 @@ import { getBlogPostIndex } from '@/lib/data/blog'
 import { getCourseHubPaths } from '@/lib/data/course-hubs'
 import { getPage } from '@/lib/data/pages'
 import { getLectureCourses } from '@/lib/data/lectures'
-import { getPyqCourses } from '@/lib/data/question-papers'
 import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getCourseNotes, getNoteCourses, type NoteCourse } from '@/lib/data/student-notes'
 import { groupNotes } from '@/lib/notes/group'
+import { quizSpaceCourseUrl } from '@/lib/quizspace'
 import { noteCoursePath, NOTES_PATH } from '@/lib/routes'
 import { notesCollectionJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
@@ -82,14 +82,13 @@ export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug
   const course = courses.find((c) => c.slug === slug)
   if (!course) return redirectOrNotFound(noteCoursePath(slug))
 
-  const [notes, posts, hubs, pyqCourses, lectureCourses] = await Promise.all([
+  const [notes, posts, hubs, lectureCourses] = await Promise.all([
     getCourseNotes(course.id),
     getBlogPostIndex(),
     getCourseHubPaths(),
-    getPyqCourses(),
     getLectureCourses(),
   ])
-  const papers = pyqCourses.find((p) => p.id === course.id)
+  const papers = quizSpaceCourseUrl(course.slug)
   const lectures = lectureCourses.find((l) => l.id === course.id)
   const groups = groupNotes(notes, course.shortName)
   const guide = course.blogPostId ? posts.find((post) => post.id === course.blogPostId) : undefined
@@ -157,8 +156,8 @@ export default async function NoteCoursePage({ params }: PageProps<'/notes/[slug
                 </Link>
               ) : null}
               {papers ? (
-                <Link href={papers.path} className="text-accent-ink underline underline-offset-2">
-                  {course.shortName} previous year papers
+                <Link href={papers} className="text-accent-ink underline underline-offset-2">
+                  {course.shortName} previous year papers on QuizSpace
                 </Link>
               ) : null}
               {hub ? (
