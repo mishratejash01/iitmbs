@@ -1,5 +1,7 @@
 import type { NextConfig } from 'next'
 
+import { quizSpaceRedirects } from './src/lib/quizspace'
+
 const isDev = process.env.NODE_ENV !== 'production'
 
 function originOf(value: string | undefined): string | null {
@@ -112,12 +114,16 @@ const nextConfig: NextConfig = {
     if (redirectAllTo) {
       return [{ source: '/:path*', destination: `${redirectAllTo}/:path*`, permanent: true }]
     }
-    return retiredHosts.map((host) => ({
-      source: '/:path((?!indexnow-key\\.txt$).*)',
-      has: [{ type: 'host' as const, value: host }],
-      destination: `${liveOrigin}/:path`,
-      permanent: true,
-    }))
+    return [
+      // First, so old domains also reach QuizSpace in one hop.
+      ...quizSpaceRedirects(),
+      ...retiredHosts.map((host) => ({
+        source: '/:path((?!indexnow-key\\.txt$).*)',
+        has: [{ type: 'host' as const, value: host }],
+        destination: `${liveOrigin}/:path`,
+        permanent: true,
+      })),
+    ]
   },
 
   async headers() {
