@@ -2,10 +2,13 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 import { LogoMark } from '@/components/layout/logo'
+import { QUIZSPACE_ORIGIN } from '@/lib/quizspace'
 import { cn } from '@/lib/utils/cn'
 
 type Promo = {
   href: string
+  /** Shown instead of the site's name and logo when the banner leaves the site. */
+  brand?: string
   title: string
   ribbon: string
   note: string
@@ -40,11 +43,12 @@ const PROMOS: Promo[] = [
     },
   },
   {
-    href: '/pyq',
-    title: 'Previous year papers with answers',
+    href: `${QUIZSPACE_ORIGIN}/`,
+    brand: 'QuizSpace',
+    title: 'Previous year papers as practice quizzes',
     ribbon: 'Quiz 1 · Quiz 2 · End term',
     note: 'Foundation to degree courses',
-    books: ['Quiz 1', 'Quiz 2', 'End term', 'OPPE'],
+    books: ['Qualifier', 'Quiz 1', 'Quiz 2', 'End term'],
     cta: 'Practise now',
     look: {
       card: 'bg-accent-soft text-accent-strong',
@@ -74,7 +78,8 @@ const PROMOS: Promo[] = [
 /**
  * The sidebar's promotional banners, in the style of a study store's ads: a
  * headline, a ribbon, a shelf of "books" and a button. They advertise the
- * site's own sections. Each banner is one link.
+ * site's own sections and QuizSpace's practice quizzes. Each banner is one
+ * link.
  */
 export function PromoBanners({ siteName }: { siteName: string }) {
   return (
@@ -91,8 +96,8 @@ export function PromoBanners({ siteName }: { siteName: string }) {
             data-track-label={`blog_promo:${promo.href}`}
           >
             <span className="flex items-center gap-2 text-[0.6875rem] font-bold tracking-[0.14em] uppercase">
-              <LogoMark inverse={promo.look.dark} className="size-5" />
-              {siteName}
+              {promo.brand ? null : <LogoMark inverse={promo.look.dark} className="size-5" />}
+              {promo.brand ?? siteName}
             </span>
             <span className="mt-3 text-[1.375rem] leading-7 font-bold">{promo.title}</span>
             <span
