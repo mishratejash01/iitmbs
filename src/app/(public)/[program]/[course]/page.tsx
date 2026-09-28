@@ -20,10 +20,10 @@ import { redirectOrNotFound } from '@/lib/data/redirects'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getLectureCourses } from '@/lib/data/lectures'
-import { getPyqCourses } from '@/lib/data/question-papers'
 import { getNoteCourses } from '@/lib/data/student-notes'
 import { getProgramWeek } from '@/lib/data/weeks'
-import { parseWeekSegment, pyqExamPath } from '@/lib/routes'
+import { quizSpaceCourseUrl } from '@/lib/quizspace'
+import { parseWeekSegment } from '@/lib/routes'
 import { courseJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
 import { courseVars } from '@/lib/seo/vars'
@@ -104,33 +104,24 @@ export default async function CoursePage({ params }: PageProps<'/[program]/[cour
     return <ProgramWeekView data={data} />
   }
 
-  const [data, noteCourses, pyqCourses, lectureCourses] = await Promise.all([
+  const [data, noteCourses, lectureCourses] = await Promise.all([
     getCoursePage(program, course),
     getNoteCourses(),
-    getPyqCourses(),
     getLectureCourses(),
   ])
   if (!data) return redirectOrNotFound(`/${program}/${course}`)
   const { course: c } = data
   const intro = await renderMdx(c.introMdx)
   const studentNotes = noteCourses.find((n) => n.courseId === c.id)
-  const papers = pyqCourses.find((p) => p.courseId === c.id)
   const lectures = lectureCourses.find((l) => l.courseId === c.id)
-  const qualifierPapers = papers?.examCounts.qualifier ?? 0
+  const paperSlug = studentNotes?.slug ?? lectures?.slug
+  const qualifierPapers = paperSlug ? quizSpaceCourseUrl(paperSlug, 'qualifier') : null
   const studyLinks = [
-    ...(papers && qualifierPapers
+    ...(qualifierPapers
       ? [
           {
-            path: pyqExamPath(papers.slug, 'qualifier'),
-            title: `${qualifierPapers} ${c.shortName} qualifier exam papers with answers`,
-          },
-        ]
-      : []),
-    ...(papers
-      ? [
-          {
-            path: papers.path,
-            title: `${papers.paperCount} ${c.shortName} previous year question papers with answers`,
+            path: qualifierPapers,
+            title: `${c.shortName} qualifier previous year papers, as practice quizzes on QuizSpace`,
           },
         ]
       : []),
