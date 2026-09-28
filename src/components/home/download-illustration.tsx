@@ -58,7 +58,7 @@ export function DownloadIllustration({ className }: { className?: string }) {
           fontWeight="700"
           fill="var(--accent-strong)"
         >
-          PYQ
+          PDF
         </text>
       </g>
     </svg>
