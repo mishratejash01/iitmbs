@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { PageContext } from '@/components/analytics/page-context'
 import { PageHeader } from '@/components/layout/page-header'
-import { CourseFilter } from '@/components/pyq/course-filter'
+import { CourseFilter } from '@/components/content/course-filter'
 import { JsonLd } from '@/components/seo/json-ld'
 import { getLectureCourses, type LectureCourse } from '@/lib/data/lectures'
 import { getPrograms } from '@/lib/data/programs'
