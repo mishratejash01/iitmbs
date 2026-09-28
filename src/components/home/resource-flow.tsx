@@ -19,8 +19,8 @@ type Source = { label: string; detail: string; icon: LucideIcon; tone: string }
 const SOURCES: Source[] = [
   { label: 'Student notes', detail: 'Handwritten and PDF', icon: NotebookPen, tone: 'bg-lime' },
   {
-    label: 'Previous year papers',
-    detail: 'Quiz, end term and more',
+    label: 'Assignment help',
+    detail: 'Graded, week by week',
     icon: FileText,
     tone: 'bg-violet',
   },
@@ -30,7 +30,7 @@ const SOURCES: Source[] = [
 ]
 // Staggered so the stack reads as a loose pile.
 const OFFSETS = ['ml-0', 'ml-10', 'ml-4', 'ml-12', 'ml-2'] as const
-const COURSE_ROWS = ['Notes', 'Previous year papers', 'Lectures', 'Guides'] as const
+const COURSE_ROWS = ['Notes', 'Lectures', 'Assignment help', 'Guides'] as const
 
 function Caption({
   step,
@@ -57,7 +57,7 @@ function Caption({
 }
 
 /**
- * "All the best resources, in one place": notes, papers, lectures, guides and
+ * "All the best resources, in one place": notes, lectures, assignment help, guides and
  * the qualifier help flow into the site (the mark) and come out as one course,
  * with everything for it. On wide screens the sources fan in with curved
  * lines; on phones the steps stack. The drawing is decorative; the captions
@@ -95,7 +95,7 @@ export function ResourceFlow({ course }: { course: string }) {
           ))}
         </div>
         <Caption step={1} className="lg:mr-0">
-          Notes, papers, lectures and guides from across the degree
+          Notes, lectures, assignment help and guides from across the degree
         </Caption>
       </li>
 
