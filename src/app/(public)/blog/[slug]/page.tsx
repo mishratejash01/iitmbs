@@ -26,8 +26,8 @@ import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getLectureCourses } from '@/lib/data/lectures'
 import { displayName } from '@/lib/settings/schema'
-import { getPyqCourses } from '@/lib/data/question-papers'
 import { getNoteCourses } from '@/lib/data/student-notes'
+import { quizSpaceCourseUrl } from '@/lib/quizspace'
 import { BLOG_PATH } from '@/lib/routes'
 import { blogPostingJsonLd, faqJsonLd } from '@/lib/seo/jsonld'
 import { buildMetadata, NOT_FOUND_METADATA } from '@/lib/seo/metadata'
@@ -67,13 +67,12 @@ export async function generateMetadata({ params }: PageProps<'/blog/[slug]'>): P
 
 export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>) {
   const { slug } = await params
-  const [post, all, blogPage, noteCourses, pyqCourses, categories, settings, lectureCourses] =
+  const [post, all, blogPage, noteCourses, categories, settings, lectureCourses] =
     await Promise.all([
       getBlogPost(slug),
       getBlogPostIndex(),
       getPage('blog'),
       getNoteCourses(),
-      getPyqCourses(),
       getBlogCategories(),
       getSiteSettings(),
       getLectureCourses(),
@@ -91,15 +90,16 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
     .slice(0, 3)
   const blogName = blogPage?.title.split(':')[0] ?? 'Blog'
   const studentNotes = noteCourses.find((n) => n.blogPostId === post.id)
-  const papers = pyqCourses.find((p) => p.blogPostId === post.id)
   const lectures = lectureCourses.find((l) => l.blogPostId === post.id)
+  const course = studentNotes ?? lectures
+  const papers = course ? quizSpaceCourseUrl(course.slug) : null
   const resources: CourseResource[] = [
-    ...(papers
+    ...(course && papers
       ? [
           {
-            href: papers.path,
+            href: papers,
             kind: 'papers' as const,
-            title: `${papers.shortName} previous year papers`,
+            title: `${course.shortName} PYQ practice on QuizSpace`,
           },
         ]
       : []),
@@ -131,7 +131,7 @@ export default async function BlogPostPage({ params }: PageProps<'/blog/[slug]'>
     .slice(0, 3)
   const segment = segmentForPost({
     ...post,
-    courseLevel: papers?.level ?? studentNotes?.level ?? null,
+    courseLevel: course?.level ?? null,
   })
   const inserts = [
     <MoreFrom
