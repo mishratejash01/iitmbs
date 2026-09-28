@@ -1,4 +1,4 @@
-import { FileText, Library, NotebookPen } from 'lucide-react'
+import { CirclePlay, Library, NotebookPen } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -19,15 +19,15 @@ import { SectionHeading } from '@/components/ui/section-heading'
 import { topPosts } from '@/lib/blog/helpers'
 import { getBlogPostIndex } from '@/lib/data/blog'
 import { getGlobalFaqs } from '@/lib/data/faqs'
+import { getLectureCourses } from '@/lib/data/lectures'
 import { getLinkIndex } from '@/lib/data/links'
 import { getNavItems } from '@/lib/data/navigation'
 import { getChildPages } from '@/lib/data/pages'
 import { getProgramPage, getPrograms } from '@/lib/data/programs'
-import { getPyqCourses } from '@/lib/data/question-papers'
 import { getSeoOverrides } from '@/lib/data/seo-overrides'
 import { getSiteSettings } from '@/lib/data/settings'
 import { getNoteCourses } from '@/lib/data/student-notes'
-import { BLOG_PATH, formatTerm, NOTES_PATH, PYQ_PATH } from '@/lib/routes'
+import { BLOG_PATH, formatTerm, LECTURES_PATH, NOTES_PATH } from '@/lib/routes'
 import { displayName } from '@/lib/settings/schema'
 import { getUpcomingDeadlines } from '@/lib/data/upcoming'
 import { buildLevels } from '@/lib/home/levels'
@@ -61,7 +61,7 @@ export default async function HomePage() {
     faqs,
     linkIndex,
     posts,
-    pyqCourses,
+    lectureCourses,
     noteCourses,
   ] = await Promise.all([
     getSiteSettings(),
@@ -72,7 +72,7 @@ export default async function HomePage() {
     getGlobalFaqs(),
     getLinkIndex(),
     getBlogPostIndex(),
-    getPyqCourses(),
+    getLectureCourses(),
     getNoteCourses(),
   ])
   const programPages = (await Promise.all(programs.map((p) => getProgramPage(p.slug)))).filter(
@@ -84,7 +84,7 @@ export default async function HomePage() {
   })
 
   const featuredPosts = posts.filter((post) => post.isFeatured).slice(0, 6)
-  const levels = buildLevels({ programPages, noteCourses, pyqCourses })
+  const levels = buildLevels({ programPages, noteCourses, lectureCourses })
   const degreeLevels = levels.filter((level) => level.id !== 'qualifier')
   const plural = (count: number, one: string, many: string) =>
     `${count.toLocaleString('en-IN')} ${count === 1 ? one : many}`
@@ -98,20 +98,20 @@ export default async function HomePage() {
 
   const stats = [
     {
-      value: pyqCourses.reduce((sum, course) => sum + course.paperCount, 0),
-      label: 'previous year papers',
-      href: PYQ_PATH,
-      icon: FileText,
-      badge: acrossCourses(pyqCourses.length),
-      tone: 'bg-violet',
-    },
-    {
       value: noteCourses.reduce((sum, course) => sum + course.noteCount, 0),
       label: 'student notes',
       href: NOTES_PATH,
       icon: NotebookPen,
       badge: acrossCourses(noteCourses.length),
       tone: 'bg-green',
+    },
+    {
+      value: lectureCourses.reduce((sum, course) => sum + course.videoCount, 0),
+      label: 'IIT Madras lectures',
+      href: LECTURES_PATH,
+      icon: CirclePlay,
+      badge: acrossCourses(lectureCourses.length),
+      tone: 'bg-violet',
     },
     {
       value: coursesCovered,
@@ -129,16 +129,13 @@ export default async function HomePage() {
     stats: [
       plural(level.courses.length, 'course', 'courses'),
       ...(level.noteCount > 0 ? [plural(level.noteCount, 'note', 'notes')] : []),
-      ...(level.paperCount > 0 ? [plural(level.paperCount, 'paper', 'papers')] : []),
+      ...(level.videoCount > 0 ? [plural(level.videoCount, 'lecture', 'lectures')] : []),
     ],
     links: [
       ...(level.noteCount > 0
         ? [{ label: `${level.label} notes`, href: `${NOTES_PATH}#${level.id}-notes` }]
         : []),
-      ...(level.paperCount > 0
-        ? [{ label: `${level.label} papers`, href: `${PYQ_PATH}#${level.id}-pyqs` }]
-        : []),
-      { label: 'Lectures', href: '/resources/lectures' },
+      { label: 'Lectures', href: LECTURES_PATH },
     ],
   }))
   // The picker opens on the degree's levels; the qualifier comes last, for new students.
@@ -279,7 +276,7 @@ export default async function HomePage() {
               Every level of your degree
             </h2>
             <p className={displayLead}>
-              Notes, previous year papers and lectures for every course, from foundation to degree.
+              Notes, lectures and guides for every course, from foundation to degree.
             </p>
             <div className="mt-10 sm:mt-12">
               <LevelCards levels={levelCards} />
