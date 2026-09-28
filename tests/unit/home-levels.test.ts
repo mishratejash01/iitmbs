@@ -23,33 +23,20 @@ describe('buildLevels', () => {
       { courses: [hubCourse('English 1', '/es/e1'), hubCourse('ESTC', '/es/estc')] },
     ],
     noteCourses: [
-      {
-        code: 'BSMA1002',
-        slug: 'maths-2',
-        shortName: 'Maths 2',
-        path: '/notes/maths-2',
-        level: 'foundation',
-        noteCount: 12,
-      },
+      { shortName: 'Maths 2', path: '/notes/maths-2', level: 'foundation', noteCount: 12 },
     ],
-    pyqCourses: [
+    lectureCourses: [
       {
-        code: 'BSMA1002',
-        slug: 'maths-2',
         shortName: 'Maths 2',
-        path: '/pyq/maths-2',
+        path: '/resources/lectures/maths-2',
         level: 'foundation',
-        paperCount: 8,
-        examCounts: { 'quiz-1': 8 },
+        videoCount: 40,
       },
       {
-        code: 'BSMA1001',
-        slug: 'maths-1',
         shortName: 'Maths 1',
-        path: '/pyq/maths-1',
+        path: '/resources/lectures/maths-1',
         level: 'foundation',
-        paperCount: 10,
-        examCounts: { qualifier: 4, 'end-term': 6 },
+        videoCount: 50,
       },
     ],
   })
@@ -58,23 +45,22 @@ describe('buildLevels', () => {
     expect(levels.map((level) => level.id)).toEqual(['qualifier', 'foundation'])
   })
 
-  it('lists each qualifier course once and counts past qualifier papers', () => {
+  it('lists each qualifier course once', () => {
     const [qualifier] = levels
     expect(qualifier?.courses).toEqual([
       { name: 'Maths 1', href: '/data-science/maths-1' },
       { name: 'English 1', href: '/ds/e1' },
       { name: 'ESTC', href: '/es/estc' },
     ])
-    expect(qualifier?.paperCount).toBe(4)
   })
 
-  it('prefers notes over papers, sorts by name and totals each level', () => {
+  it('prefers notes over lectures, sorts by name and totals each level', () => {
     const foundation = levels[1]
     expect(foundation?.courses).toEqual([
-      { name: 'Maths 1', href: '/pyq/maths-1' },
+      { name: 'Maths 1', href: '/resources/lectures/maths-1' },
       { name: 'Maths 2', href: '/notes/maths-2' },
     ])
     expect(foundation?.noteCount).toBe(12)
-    expect(foundation?.paperCount).toBe(18)
+    expect(foundation?.videoCount).toBe(90)
   })
 })
