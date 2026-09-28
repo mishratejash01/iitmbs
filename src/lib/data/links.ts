@@ -30,7 +30,6 @@ export async function getLinkIndex(): Promise<Record<string, LinkIndexEntry>> {
     tableTag('blog_posts'),
     tableTag('blog_categories'),
     tableTag('note_courses'),
-    tableTag('question_papers'),
     tableTag('lecture_videos'),
   )
 
