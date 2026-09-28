@@ -13,7 +13,6 @@ const EYEBROW: Record<string, string> = {
   page: 'Guide',
   blog_post: 'Blog',
   blog_category: 'Blog',
-  pyq_course: 'Previous year papers',
   lecture_course: 'IIT Madras lectures',
   note_course: 'Student notes',
 }
