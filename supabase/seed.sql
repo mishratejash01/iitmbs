@@ -66,7 +66,7 @@ values (true, $json${
   },
   "home": {
     "hero_title": "Every IIT Madras BS course. Every level. One place.",
-    "hero_subtitle": "Free notes, previous year papers, lectures and guides for every IITM BS course, from foundation to degree. New student? Start with the qualifier.",
+    "hero_subtitle": "Free notes, lectures, assignment help and guides for every IITM BS course, from foundation to degree. New student? Start with the qualifier.",
     "popular_paths": [
       "/data-science/maths-1",
       "/data-science/stats-1",
@@ -78,7 +78,7 @@ values (true, $json${
   },
   "seo": {
     "title_template": "%s | {site_name}",
-    "default_title": "IIT Madras BS Degree (IITM BS): Qualifier, PYQs, Notes, Lectures",
+    "default_title": "IIT Madras BS Degree (IITM BS): Qualifier, Notes, Lectures, Guides",
     "default_description": "Week-by-week help for the IIT Madras BS qualifier: graded assignment hints and solutions, notes, formula sheets and exam prep for Data Science and Electronic Systems.",
     "templates": {
       "program": "IITM BS {program} Qualifier – Courses, Week-wise Help & Exam Guide",
