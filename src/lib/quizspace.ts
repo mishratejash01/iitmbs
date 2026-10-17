@@ -7,7 +7,7 @@
  * Plain data and functions only: next.config.ts imports this file.
  */
 
-export const QUIZSPACE_ORIGIN = 'https://quizspace.unknowniitians.com'
+export const QUIZSPACE_ORIGIN = 'https://quizspacee.com'
 
 export const QUIZSPACE_EXAMS = ['qualifier', 'quiz-1', 'quiz-2', 'end-term'] as const
 export type QuizSpaceExam = (typeof QUIZSPACE_EXAMS)[number]
@@ -16,7 +16,8 @@ export type QuizSpaceExam = (typeof QUIZSPACE_EXAMS)[number]
  * [our course slug, QuizSpace course slug, old alias slugs]. Our slug is the
  * note_courses slug that /pyq, /notes and /resources/lectures share. Checked
  * against QuizSpace's sitemap: every exam page we had exists there. QuizSpace
- * has no Electronic Systems English II, so es-english-2 goes to English 2.
+ * has no Electronic Systems English II, so es-english-2 goes to English 2, and
+ * it merged ES Python into Python.
  */
 const COURSES: ReadonlyArray<readonly [string, string, string]> = [
   ['advanced-algorithms', 'advanced-algorithms', 'bscs4021 cs4021'],
@@ -53,7 +54,7 @@ const COURSES: ReadonlyArray<readonly [string, string, string]> = [
   ['es-english-1', 'es-english-1', 'hs1101'],
   ['es-english-2', 'english-2', 'hs1102'],
   ['es-linux-programming', 'es-linux', 'cs1102'],
-  ['es-python-programming', 'es-python', 'cs1002'],
+  ['es-python-programming', 'python', 'cs1002'],
   ['estc', 'estc', 'ee1101'],
   ['financial-forensics', 'financial-forensics', 'bsms4003 ms4003'],
   ['game-theory', 'game-theory', 'bsms4023 ms4023'],
