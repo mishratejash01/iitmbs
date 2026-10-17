@@ -985,7 +985,7 @@ from (values
   ('header', 'Qualifier', '/qualifier', 'Eligibility, exam pattern and dates', 3),
   ('header', 'Notes', '/notes', null, 4),
   ('header', 'Graded Assignment', '/graded-assignments', null, 5),
-  ('header', 'PYQs', 'https://quizspace.unknowniitians.com/', null, 6),
+  ('header', 'PYQs', 'https://quizspacee.com/', null, 6),
   ('header', 'Resources', '/resources', null, 7),
   ('header', 'Blog', '/blog', null, 8),
   ('quick', 'Maths 1', '/data-science/maths-1', 'Mathematics for Data Science I', 1),
