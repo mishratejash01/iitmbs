@@ -1,11 +1,14 @@
 import 'server-only'
 
+import { env } from '@/env'
 import { getServiceClient } from '@/lib/supabase/admin'
 
 /**
  * Two-layer rate limiting: a per-instance sliding window stops floods
  * cheaply, then a shared Postgres window (check_rate_limit) enforces the
- * limit across all serverless instances.
+ * limit across all serverless instances. A single long-running server sees
+ * every request itself, so there the in-memory window is enough and no
+ * database call is made.
  */
 const memory = new Map<string, { windowStart: number; hits: number }>()
 
@@ -35,6 +38,7 @@ export async function allowRequest(
 ): Promise<boolean> {
   if (key === null) return true
   if (!allowInMemory(key, windowSeconds * 1000, max)) return false
+  if (!env.serverless) return true
   const db = getServiceClient()
   if (!db) return true
   const { data, error } = await db.rpc('check_rate_limit', {
