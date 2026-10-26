@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -2697,6 +2697,15 @@ export type Database = {
           solutions_released: boolean
         }[]
       }
+      get_lecture_stats: {
+        Args: never
+        Returns: {
+          note_course_id: string
+          updated_at: string
+          video_count: number
+          weeks: Json
+        }[]
+      }
       get_link_index: {
         Args: never
         Returns: {
@@ -2704,6 +2713,13 @@ export type Database = {
           path: string
           summary: string
           title: string
+        }[]
+      }
+      get_note_counts: {
+        Args: never
+        Returns: {
+          note_count: number
+          note_course_id: string
         }[]
       }
       get_program_week_numbers: {
