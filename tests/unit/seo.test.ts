@@ -76,7 +76,7 @@ describe('site settings', () => {
     expect(settings.features.login).toBe(true)
     expect(settings.announcement).toMatchObject({ enabled: false, tone: 'info' })
     expect(settings.theme).toEqual({})
-    expect(settings.revalidate_seconds).toBe(3600)
+    expect(settings.revalidate_seconds).toBe(86400)
   })
 
   it('keeps valid values', () => {
