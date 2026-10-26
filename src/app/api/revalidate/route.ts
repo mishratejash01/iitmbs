@@ -37,10 +37,12 @@ export async function POST(request: Request) {
   const immediate = reason === 'schedule' || reason === 'unpublish'
   const tags = revalidateTables(tables, { immediate })
 
-  after(async () => {
-    const changed = paths ?? (await getSitemapEntries()).map((entry) => entry.path)
-    if (reason === 'schedule' || reason?.startsWith('publish') || paths) await pingIndexNow(changed)
-  })
+  // Only pings need the URL list: every other edit skips reading the sitemap.
+  if (reason === 'schedule' || reason?.startsWith('publish') || paths) {
+    after(async () => {
+      await pingIndexNow(paths ?? (await getSitemapEntries()).map((entry) => entry.path))
+    })
+  }
 
   return Response.json({ revalidated: tags, immediate })
 }
