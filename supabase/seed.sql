@@ -20,7 +20,7 @@ values (true, $json${
   "base_url": "",
   "locale": "en-IN",
   "current_term": "2026-sep",
-  "revalidate_seconds": 3600,
+  "revalidate_seconds": 86400,
   "theme": {
     "light": {},
     "dark": {}
