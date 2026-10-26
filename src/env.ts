@@ -85,6 +85,8 @@ export const env = {
   deploymentEnv: (process.env.VERCEL_ENV ??
     (process.env.NODE_ENV === 'production' ? 'production' : 'development')) as
     'production' | 'preview' | 'development',
+  // Many short-lived instances (Vercel) rather than one long-running server.
+  serverless: process.env.VERCEL === '1',
 } as const
 
 /** Which optional integrations are configured in this environment. */
