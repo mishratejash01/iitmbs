@@ -49,7 +49,7 @@ export const siteSettingsSchema = section({
     .nullable()
     .catch(null)
     .default(null),
-  revalidate_seconds: int(3600, 60, 604800),
+  revalidate_seconds: int(86400, 60, 604800),
   // Missing or malformed themes become {} (defaults); only valid hex tokens survive.
   theme: z.preprocess(
     (value) => sanitizeThemeOverrides(value),
