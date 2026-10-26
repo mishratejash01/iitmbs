@@ -86,12 +86,17 @@ const nextConfig: NextConfig = {
     .map((origin) => origin.trim())
     .filter(Boolean),
 
+  // One long-running server: a cache big enough that shared data (navigation,
+  // link index, course lists) is read from the database once, not again after
+  // being pushed out by page entries.
+  cacheMaxMemorySize: 256 * 1024 * 1024,
+
   cacheLife: {
     // Published study content. On-demand revalidation (admin publish, database
     // webhook) handles real edits; this is only the safety-net interval.
-    content: { stale: 300, revalidate: 3600, expire: 60 * 60 * 24 * 30 },
-    // Site settings, navigation and footer.
-    settings: { stale: 300, revalidate: 600, expire: 60 * 60 * 24 * 7 },
+    content: { stale: 300, revalidate: 60 * 60 * 24, expire: 60 * 60 * 24 * 30 },
+    // Site settings, navigation and footer (also revalidated by the webhook).
+    settings: { stale: 300, revalidate: 60 * 60 * 24, expire: 60 * 60 * 24 * 7 },
     // Search results for a given query.
     search: { stale: 60, revalidate: 300, expire: 60 * 60 },
   },
