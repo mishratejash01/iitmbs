@@ -43,26 +43,28 @@ export type Lecture = {
   uploadedAt: string | null
 }
 
-const PAGE_SIZE = 1000
+type LectureStats = { count: number; weeks: Array<{ week: number; count: number }>; updated: string }
 
-/** Every live lecture's course and week. The API returns at most 1000 rows a request, so this pages. */
-async function allLectureRows() {
-  const db = getPublicClient()
-  const rows: Array<{ note_course_id: string; week: number | null; updated_at: string }> = []
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await db
-      .from('lecture_videos')
-      .select('note_course_id, week, updated_at')
-      .order('id')
-      .range(from, from + PAGE_SIZE - 1)
-    if (error) {
-      console.error('[data/lectures] lectures failed:', error.message)
-      break
-    }
-    rows.push(...data)
-    if (data.length < PAGE_SIZE) break
+/**
+ * Each course's live lecture count, per-week counts (weeks 1 and up, in
+ * order) and latest edit, counted by the database (get_lecture_stats).
+ */
+async function lectureStats(): Promise<Map<string, LectureStats>> {
+  const { data, error } = await getPublicClient().rpc('get_lecture_stats')
+  if (error) {
+    console.error('[data/lectures] lecture stats failed:', error.message)
+    return new Map()
   }
-  return rows
+  return new Map(
+    data.map((row) => [
+      row.note_course_id,
+      {
+        count: row.video_count,
+        weeks: row.weeks as LectureStats['weeks'],
+        updated: row.updated_at,
+      },
+    ]),
+  )
 }
 
 /** Every live course with at least one live lecture, in display order. */
@@ -71,7 +73,7 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
   cacheLife(await contentCacheProfile())
   cacheTag(tableTag('note_courses'), tableTag('lecture_videos'))
 
-  const [courses, lectures] = await Promise.all([
+  const [courses, stats] = await Promise.all([
     getPublicClient()
       .from('note_courses')
       .select(
@@ -79,31 +81,17 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
       )
       .order('sort_order')
       .order('name'),
-    allLectureRows(),
+    lectureStats(),
   ])
   if (courses.error) {
     console.error('[data/lectures] courses failed:', courses.error.message)
     return []
   }
 
-  const stats = new Map<string, { count: number; weeks: Map<number, number>; updated: string }>()
-  for (const row of lectures) {
-    const entry = stats.get(row.note_course_id) ?? {
-      count: 0,
-      weeks: new Map<number, number>(),
-      updated: row.updated_at,
-    }
-    entry.count += 1
-    if (row.week !== null && row.week >= 1)
-      entry.weeks.set(row.week, (entry.weeks.get(row.week) ?? 0) + 1)
-    if (row.updated_at > entry.updated) entry.updated = row.updated_at
-    stats.set(row.note_course_id, entry)
-  }
-
   return courses.data.flatMap((row) => {
     const entry = stats.get(row.id)
     if (!entry) return []
-    const weekly = [...entry.weeks.values()].reduce((sum, count) => sum + count, 0)
+    const weekly = entry.weeks.reduce((sum, week) => sum + week.count, 0)
     return [
       {
         id: row.id,
@@ -117,12 +105,7 @@ export async function getLectureCourses(): Promise<LectureCourse[]> {
         courseId: row.course_id,
         blogPostId: row.blog_post_id,
         videoCount: entry.count,
-        weeks:
-          weekly * 2 >= entry.count
-            ? [...entry.weeks.entries()]
-                .sort(([a], [b]) => a - b)
-                .map(([week, count]) => ({ week, count }))
-            : [],
+        weeks: weekly * 2 >= entry.count ? entry.weeks : [],
         updatedAt: entry.updated > row.updated_at ? entry.updated : row.updated_at,
       },
     ]
