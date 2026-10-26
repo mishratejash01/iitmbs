@@ -33,32 +33,19 @@ export type NoteCourse = {
   seo: SeoFields
 }
 
-const PAGE_SIZE = 1000
-
-/** The course of every live note. The API returns at most 1000 rows a request, so this pages. */
-async function allNoteCourseIds(): Promise<string[]> {
-  const db = getPublicClient()
-  const ids: string[] = []
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await db
-      .from('resources')
-      .select('note_course_id')
-      .not('note_course_id', 'is', null)
-      .order('id')
-      .range(from, from + PAGE_SIZE - 1)
-    if (error) {
-      console.error('[data/student-notes] counts failed:', error.message)
-      break
-    }
-    for (const row of data) if (row.note_course_id) ids.push(row.note_course_id)
-    if (data.length < PAGE_SIZE) break
+/** Live notes per course, counted by the database (get_note_counts). */
+async function noteCounts(): Promise<Map<string, number>> {
+  const { data, error } = await getPublicClient().rpc('get_note_counts')
+  if (error) {
+    console.error('[data/student-notes] counts failed:', error.message)
+    return new Map()
   }
-  return ids
+  return new Map(data.map((row) => [row.note_course_id, row.note_count]))
 }
 
 /**
  * Every live course that has at least one live note, in display order.
- * RLS hides unpublished notes, so the counts are what visitors can open.
+ * Only live notes are counted, so the counts are what visitors can open.
  */
 export async function getNoteCourses(): Promise<NoteCourse[]> {
   'use cache'
@@ -66,7 +53,7 @@ export async function getNoteCourses(): Promise<NoteCourse[]> {
   cacheTag(tableTag('note_courses'), tableTag('resources'))
 
   const db = getPublicClient()
-  const [courses, notes] = await Promise.all([
+  const [courses, counts] = await Promise.all([
     db
       .from('note_courses')
       .select(
@@ -74,14 +61,12 @@ export async function getNoteCourses(): Promise<NoteCourse[]> {
       )
       .order('sort_order')
       .order('name'),
-    allNoteCourseIds(),
+    noteCounts(),
   ])
   if (courses.error) {
     console.error('[data/student-notes] courses failed:', courses.error.message)
     return []
   }
-  const counts = new Map<string, number>()
-  for (const id of notes) counts.set(id, (counts.get(id) ?? 0) + 1)
   return courses.data
     .map((row) => ({
       id: row.id,
