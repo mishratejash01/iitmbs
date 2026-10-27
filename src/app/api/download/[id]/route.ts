@@ -8,6 +8,7 @@ import { getAnalyticsContext } from '@/lib/analytics/server'
 import { getSessionUser } from '@/lib/auth/session'
 import { privateDownloadUrl } from '@/lib/cloudinary/server'
 import { getDownloadTarget } from '@/lib/data/resources'
+import { publicUrl } from '@/lib/public-url'
 import { getServiceClient } from '@/lib/supabase/admin'
 
 /**
@@ -41,7 +42,7 @@ export async function GET(request: Request, { params }: RouteContext<'/api/downl
 
   if (target.requiresLogin && !(await getSessionUser())) {
     const next = pagePath ?? '/resources'
-    return Response.redirect(new URL(`/login?next=${encodeURIComponent(next)}`, request.url), 302)
+    return Response.redirect(new URL(`/login?next=${encodeURIComponent(next)}`, publicUrl(request)), 302)
   }
 
   let destination: string | null = null
