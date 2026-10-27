@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server'
 
 import { completeSignIn, signInFailed } from '@/lib/auth/complete-sign-in'
 import { safeNextPath } from '@/lib/auth/safe-next'
+import { publicUrl } from '@/lib/public-url'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
 /**
@@ -10,7 +11,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
  * with 303 so the browser follows with a GET.
  */
 export async function POST(request: NextRequest) {
-  const url = request.nextUrl
+  const url = publicUrl(request)
   const form = await request.formData().catch(() => null)
   const field = (name: string) => {
     const value = form?.get(name)
