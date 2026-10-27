@@ -44,23 +44,25 @@ export function Select({
   )
 }
 
-/** 0 to 100 score input that keeps an empty string while typing. */
+/** 0 to `max` (default 100) score input that keeps an empty string while typing. */
 export function ScoreInput({
   label,
   value,
   onChange,
   className,
+  max = 100,
 }: {
   label: string
   value: string
   onChange: (value: string) => void
   className?: string
+  max?: number
 }) {
   const id = useId()
   const handle = (event: ChangeEvent<HTMLInputElement>) => {
     const next = event.target.value.replace(/[^0-9.]/g, '').slice(0, 6)
     const numeric = Number(next)
-    onChange(next === '' || Number.isNaN(numeric) ? next : String(Math.min(100, numeric)))
+    onChange(next === '' || Number.isNaN(numeric) ? next : String(Math.min(max, numeric)))
   }
   return (
     <>
