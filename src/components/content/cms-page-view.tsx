@@ -18,10 +18,12 @@ export async function CmsPageView({
   page,
   crumbs,
   childPages = [],
+  childrenTitle = 'All guides',
 }: {
   page: CmsPage
   crumbs: Crumb[]
   childPages?: PageLink[]
+  childrenTitle?: string
 }) {
   const { content, toc } = await renderMdx(page.bodyMdx, { toc: true })
   const isLegal = page.template === 'legal'
@@ -46,9 +48,9 @@ export async function CmsPageView({
         {childPages.length > 0 ? (
           <section aria-labelledby="guides-list" className="mt-10">
             <h2 id="guides-list" className="mb-3 text-h3 font-semibold text-text">
-              All guides
+              {childrenTitle}
             </h2>
-            <LinkList items={childPages} label="Guides" />
+            <LinkList items={childPages} label={childrenTitle} />
           </section>
         ) : null}
         <SourcesList sources={page.sources} />
