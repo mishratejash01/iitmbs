@@ -3,7 +3,7 @@ import type { ComponentProps } from 'react'
 import type { MediaInfo } from '@/lib/data/media'
 
 import { KeyIdea, Definition, Steps } from './blocks'
-import { EligibilityCalculator, ScoreCalculator } from './calculators'
+import { EligibilityCalculator, GradeCalculator, ScoreCalculator } from './calculators'
 import { Callout } from './callout'
 import { CodeBlock } from './code-block'
 import { Figure } from './figure'
@@ -55,6 +55,7 @@ export function createMdxComponents({ media }: { media: Record<string, MediaInfo
     SyllabusOverview,
     EligibilityCalculator,
     ScoreCalculator,
+    GradeCalculator,
     Figure: (props: ComponentProps<typeof Figure>) => (
       <Figure
         {...props}
