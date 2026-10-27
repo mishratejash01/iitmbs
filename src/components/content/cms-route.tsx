@@ -35,9 +35,12 @@ export async function cmsMetadata(path: string): Promise<Metadata> {
 export async function CmsRoute({
   path,
   listChildren = false,
+  childrenTitle,
 }: {
   path: string
   listChildren?: boolean
+  /** Heading above the child page list (default "All guides"). */
+  childrenTitle?: string
 }) {
   const page = await getPage(path)
   if (!page) return redirectOrNotFound(`/${path}`)
@@ -53,5 +56,12 @@ export async function CmsRoute({
   crumbs.push({ name: page.title.split(':')[0] ?? page.title, path: `/${page.path}` })
 
   const childPages = listChildren ? await getChildPages(path) : []
-  return <CmsPageView page={page} crumbs={crumbs} childPages={childPages} />
+  return (
+    <CmsPageView
+      page={page}
+      crumbs={crumbs}
+      childPages={childPages}
+      childrenTitle={childrenTitle}
+    />
+  )
 }
