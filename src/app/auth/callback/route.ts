@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server'
 
 import { completeSignIn, signInFailed } from '@/lib/auth/complete-sign-in'
 import { safeNextPath } from '@/lib/auth/safe-next'
+import { publicUrl } from '@/lib/public-url'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
 /**
@@ -10,7 +11,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
  * onboarding).
  */
 export async function GET(request: NextRequest) {
-  const url = request.nextUrl
+  const url = publicUrl(request)
   const next = safeNextPath(url.searchParams.get('next'))
   const code = url.searchParams.get('code')
   const oauthError = url.searchParams.get('error')
