@@ -1,4 +1,5 @@
 import { EligibilityCalculator as EligibilityCalculatorClient } from '@/components/calculators/eligibility-calculator'
+import { GradeCalculator as GradeCalculatorClient } from '@/components/calculators/grade-calculator'
 import { ScoreCalculator as ScoreCalculatorClient } from '@/components/calculators/score-calculator'
 import type { CalculatorProgram } from '@/components/calculators/shared'
 import { getPrograms, getProgramPage } from '@/lib/data/programs'
@@ -36,4 +37,9 @@ export async function EligibilityCalculator() {
 export async function ScoreCalculator() {
   const data = await loadCalculatorData()
   return data ? <ScoreCalculatorClient programs={data.programs} rules={data.rules} /> : null
+}
+
+/** Course grade calculator; its formulas ship with the code (src/lib/grades). */
+export function GradeCalculator() {
+  return <GradeCalculatorClient />
 }
